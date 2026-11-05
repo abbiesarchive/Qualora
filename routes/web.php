@@ -3,7 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScholarshipController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ScholarshipController as AdminScholarshipController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -12,11 +12,14 @@ Route::get('/', function () {
 
 Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/admin/dashboard', AdminDashboardController::class)
-        ->middleware('admin')
-        ->name('admin.dashboard');
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::resource('scholarships', AdminScholarshipController::class);
+    });
 
+Route::middleware('auth')->group(function () {
     Route::get('/scholarships', [ScholarshipController::class, 'index'])
         ->middleware('verified')
         ->name('scholarships.index');
