@@ -14,18 +14,20 @@
     </head>
     <body class="font-sans text-ink antialiased bg-cream">
         {{-- nav --}}
-        <header class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="/"><x-wordmark /></a>
-            <nav class="flex items-center gap-2 sm:gap-4 text-sm font-medium">
-                @auth
-                    <a href="{{ route('dashboard') }}" class="px-4 py-2 rounded-full bg-aura-gradient text-white shadow-sm shadow-brand-500/30 hover:brightness-105">Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}" class="px-3 py-2 text-ink-soft hover:text-ink">Log in</a>
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="px-4 py-2 rounded-full bg-aura-gradient text-white shadow-sm shadow-brand-500/30 hover:brightness-105">Get started</a>
-                    @endif
-                @endauth
-            </nav>
+        <header class="sticky top-0 z-50 bg-cream">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <a href="/"><x-wordmark /></a>
+                <nav class="flex items-center gap-2 sm:gap-4 text-sm font-medium">
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="px-4 py-2 rounded-full bg-aura-gradient text-white shadow-sm shadow-brand-500/30 hover:brightness-105">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="px-3 py-2 text-ink-soft hover:text-ink">Log in</a>
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="px-4 py-2 rounded-full bg-aura-gradient text-white shadow-sm shadow-brand-500/30 hover:brightness-105">Get started</a>
+                        @endif
+                    @endauth
+                </nav>
+            </div>
         </header>
 
         <main>
