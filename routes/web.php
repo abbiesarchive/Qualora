@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SavedScholarshipController;
 use App\Http\Controllers\ScholarshipController;
 use App\Http\Controllers\Admin\ScholarshipController as AdminScholarshipController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,16 @@ Route::middleware(['auth', 'admin'])
     });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/saved-scholarships', fn () => redirect()->route('scholarships.index', ['view' => 'saved']))
+        ->middleware('verified')
+        ->name('scholarships.saved');
+    Route::post('/scholarships/{scholarship}/bookmark', [SavedScholarshipController::class, 'store'])
+        ->middleware('verified')
+        ->name('scholarships.bookmark.store');
+    Route::delete('/scholarships/{scholarship}/bookmark', [SavedScholarshipController::class, 'destroy'])
+        ->middleware('verified')
+        ->name('scholarships.bookmark.destroy');
+
     Route::get('/scholarships', [ScholarshipController::class, 'index'])
         ->middleware('verified')
         ->name('scholarships.index');

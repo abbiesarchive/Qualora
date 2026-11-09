@@ -11,7 +11,29 @@
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div class="mb-5 inline-flex rounded-full bg-white p-1 ring-1 ring-cream-dark" aria-label="Scholarship list">
+            <a
+                href="{{ route('scholarships.index') }}"
+                @class([
+                    'rounded-full px-4 py-2 text-sm font-semibold transition',
+                    'bg-aura-gradient text-white shadow-sm' => ($filters['view'] ?? 'all') === 'all',
+                    'text-ink-soft hover:text-brand-700' => ($filters['view'] ?? 'all') !== 'all',
+                ])
+                @if (($filters['view'] ?? 'all') === 'all') aria-current="page" @endif
+            >All scholarships</a>
+            <a
+                href="{{ route('scholarships.index', ['view' => 'saved']) }}"
+                @class([
+                    'rounded-full px-4 py-2 text-sm font-semibold transition',
+                    'bg-aura-gradient text-white shadow-sm' => ($filters['view'] ?? 'all') === 'saved',
+                    'text-ink-soft hover:text-brand-700' => ($filters['view'] ?? 'all') !== 'saved',
+                ])
+                @if (($filters['view'] ?? 'all') === 'saved') aria-current="page" @endif
+            >Saved</a>
+        </div>
+
         <form method="GET" action="{{ route('scholarships.index') }}" class="rounded-2xl bg-white ring-1 ring-cream-dark p-4 sm:p-5">
+            <input type="hidden" name="view" value="{{ $filters['view'] ?? 'all' }}">
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <label class="sm:col-span-2">
                     <span class="block text-sm font-medium text-ink mb-1">Search scholarships</span>
@@ -47,8 +69,8 @@
                 <button type="submit" class="inline-flex items-center justify-center rounded-full bg-aura-gradient px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
                     Search
                 </button>
-                @if (count($filters))
-                    <a href="{{ route('scholarships.index') }}" class="text-sm font-semibold text-brand-700 hover:text-brand-900">Clear filters</a>
+                @if (! empty($filters['search']) || ! empty($filters['status']) || ! empty($filters['type']))
+                    <a href="{{ route('scholarships.index', ($filters['view'] ?? 'all') === 'saved' ? ['view' => 'saved'] : []) }}" class="text-sm font-semibold text-brand-700 hover:text-brand-900">Clear filters</a>
                 @endif
                 <p class="text-sm text-ink-soft sm:ms-auto">
                     {{ $scholarships->total() }} {{ \Illuminate\Support\Str::plural('scholarship', $scholarships->total()) }} found
@@ -62,11 +84,14 @@
                     <article class="flex flex-col rounded-2xl bg-white p-6 ring-1 ring-cream-dark">
                         <div class="flex items-start justify-between gap-3">
                             <h2 class="font-display text-xl font-semibold leading-snug">{{ $scholarship->name }}</h2>
-                            <span @class([
-                                'shrink-0 rounded-full px-3 py-1 text-xs font-semibold',
-                                'bg-sage-100 text-sage-800' => $scholarship->is_active,
-                                'bg-clay-100 text-clay-800' => ! $scholarship->is_active,
-                            ])>{{ $scholarship->is_active ? 'Active' : 'Inactive' }}</span>
+                            <div class="flex shrink-0 items-center gap-2">
+                                <x-scholarship-bookmark :scholarship="$scholarship" :is-saved="$scholarship->is_saved" />
+                                <span @class([
+                                    'rounded-full px-3 py-1 text-xs font-semibold',
+                                    'bg-sage-100 text-sage-800' => $scholarship->is_active,
+                                    'bg-clay-100 text-clay-800' => ! $scholarship->is_active,
+                                ])>{{ $scholarship->is_active ? 'Active' : 'Inactive' }}</span>
+                            </div>
                         </div>
 
                         <p class="mt-2 text-sm text-ink-soft">{{ $scholarship->provider }}</p>
@@ -98,8 +123,12 @@
             </div>
         @else
             <section class="mt-6 rounded-2xl bg-white p-10 text-center ring-1 ring-cream-dark">
-                <h2 class="font-display text-xl font-semibold">No scholarships found</h2>
-                <p class="mt-2 text-sm text-ink-soft">Try changing your search or filters.</p>
+                <h2 class="font-display text-xl font-semibold">
+                    {{ ($filters['view'] ?? 'all') === 'saved' ? 'No saved scholarships yet' : 'No scholarships found' }}
+                </h2>
+                <p class="mt-2 text-sm text-ink-soft">
+                    {{ ($filters['view'] ?? 'all') === 'saved' ? 'Save scholarships with the bookmark icon and they will appear here.' : 'Try changing your search or filters.' }}
+                </p>
             </section>
         @endif
     </div>

@@ -13,7 +13,7 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin01@gmail.com'],
             [
                 'name' => 'Admin',
-                'password' => 'admin01',
+                'password' => 'admin001',
                 'email_verified_at' => now(),
             ],
         );

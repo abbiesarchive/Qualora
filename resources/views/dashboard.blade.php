@@ -63,7 +63,10 @@
         <div class="lg:col-span-2 grid gap-6">
             {{-- Saved --}}
             <section class="rounded-2xl bg-white ring-1 ring-cream-dark p-6" aria-labelledby="saved-heading">
-                <h2 id="saved-heading" class="font-display text-xl font-semibold">Saved scholarships</h2>
+                <div class="flex items-center justify-between gap-4">
+                    <h2 id="saved-heading" class="font-display text-xl font-semibold">Saved scholarships</h2>
+                    <a href="{{ route('scholarships.index', ['view' => 'saved']) }}" class="shrink-0 text-sm font-semibold text-brand-700 hover:text-brand-900">View all</a>
+                </div>
 
                 @forelse ($saved as $s)
                     @if ($loop->first)<ul class="mt-4 divide-y divide-cream-dark">@endif

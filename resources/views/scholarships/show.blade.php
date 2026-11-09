@@ -10,11 +10,14 @@
                     <p class="text-sm font-semibold text-aura-700">{{ $scholarship->provider }}</p>
                     <h1 class="mt-1 font-display text-3xl font-semibold tracking-tight">{{ $scholarship->name }}</h1>
                 </div>
-                <span @class([
-                    'rounded-full px-3 py-1 text-sm font-semibold',
-                    'bg-sage-100 text-sage-800' => $scholarship->is_active,
-                    'bg-clay-100 text-clay-800' => ! $scholarship->is_active,
-                ])>{{ $scholarship->is_active ? 'Active' : 'Inactive' }}</span>
+                <div class="flex items-center gap-3">
+                    <x-scholarship-bookmark :scholarship="$scholarship" :is-saved="$scholarship->is_saved" />
+                    <span @class([
+                        'rounded-full px-3 py-1 text-sm font-semibold',
+                        'bg-sage-100 text-sage-800' => $scholarship->is_active,
+                        'bg-clay-100 text-clay-800' => ! $scholarship->is_active,
+                    ])>{{ $scholarship->is_active ? 'Active' : 'Inactive' }}</span>
+                </div>
             </div>
 
             <dl class="mt-8 grid gap-5 sm:grid-cols-2">

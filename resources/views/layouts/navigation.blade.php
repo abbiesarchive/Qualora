@@ -20,7 +20,7 @@
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('scholarships.index')" :active="request()->routeIs('scholarships.*')">
+                        <x-nav-link :href="route('scholarships.index')" :active="request()->routeIs('scholarships.index', 'scholarships.show')">
                             {{ __('Scholarship') }}
                         </x-nav-link>
                     @endif
@@ -84,7 +84,7 @@
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('scholarships.index')" :active="request()->routeIs('scholarships.*')">
+                <x-responsive-nav-link :href="route('scholarships.index')" :active="request()->routeIs('scholarships.index', 'scholarships.show')">
                     {{ __('Scholarship') }}
                 </x-responsive-nav-link>
             @endif

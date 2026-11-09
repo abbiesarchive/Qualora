@@ -14,9 +14,13 @@ class ScholarshipController extends Controller
             'search' => ['nullable', 'string', 'max:100'],
             'status' => ['nullable', 'in:active,inactive'],
             'type' => ['nullable', 'in:full,partial'],
+            'view' => ['nullable', 'in:all,saved'],
         ]);
 
         $scholarships = Scholarship::query()
+            ->when(($filters['view'] ?? 'all') === 'saved', function ($query) use ($request) {
+                $query->whereHas('savedBy', fn ($query) => $query->where('user_id', $request->user()->getKey()));
+            })
             ->when($filters['search'] ?? null, function ($query, string $search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('name', 'like', "%{$search}%")
@@ -29,6 +33,9 @@ class ScholarshipController extends Controller
             ->when($filters['type'] ?? null, function ($query, string $type) {
                 $query->where('scholarship_type', $type);
             })
+            ->withExists([
+                'savedBy as is_saved' => fn ($query) => $query->where('user_id', $request->user()->getKey()),
+            ])
             ->orderByDesc('is_active')
             ->orderBy('name')
             ->paginate(9)
@@ -40,8 +47,13 @@ class ScholarshipController extends Controller
         ]);
     }
 
-    public function show(Scholarship $scholarship): View
+    public function show(Request $request, Scholarship $scholarship): View
     {
+        $scholarship->setAttribute(
+            'is_saved',
+            $request->user()->savedScholarships()->where('scholarship_id', $scholarship->getKey())->exists(),
+        );
+
         return view('scholarships.show', compact('scholarship'));
     }
 }
