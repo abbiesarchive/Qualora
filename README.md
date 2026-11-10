@@ -1,102 +1,119 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Qualora
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Qualora is a scholarship matching website for enrolled S1 students. Students enter their profile and browse scholarships, with the goal of seeing which ones they may be eligible for, with a clear reason for every requirement. Results are never a guarantee: always verify on the scholarship's official site.
 
+ALP Cloud Computing, Team 9.
 
-# Qualora - Scholarship Recommendation Platform
+## Team
 
-## 1. Project Overview
-Qualora is a scholarship recommendation platform designed to help students discover and manage scholarship opportunities based on their personal profiles and qualifications
-
-## 2. Team Members
 | Name | Role |
 |---|---|
 | Graciella Chelsea Lu | Frontend Developer |
 | Chrisensia Abigail Gani | Backend Developer |
 | Michelle Mercy Phe | Database Developer |
 
-## 3. Feature Progress
+## Feature Progress
 
-| No. | Feature | Status | Description |
-|---|---|---|---|
-| 1 | User Registration | Completed | Users can create an account. |
-| 2 | User Login | Completed | Users can log in to the platform. |
-| 3 | User Profile | Completed | Users can manage account details and edit their student and scholarship preference information. |
-| 4 | Scholarship Management | Completed | Admins can add, edit, and delete scholarships. |
-| 5 | Scholarship Recommendation | In Progress | Recommends scholarships based on user profiles. |
-| 6 | Save Scholarship | In Progress | Users can bookmark scholarships. |
+| Feature | Status | Notes |
+|---|---|---|
+| Registration, login, email verification (Laravel Breeze) | Completed | Dashboard and scholarship pages require a verified email. |
+| Student profile | Completed | Eligibility fields (GPA, semester, major, age, campus, nationality, financial need, English test) and context fields (achievements, organizations, goals, scholarship preferences, circumstances). Users can delete their own account and data. |
+| Scholarship browsing | Completed | Search by name or provider, filter by status and type (full/partial), pagination. |
+| Scholarship detail page | Completed | |
+| Save / unsave scholarships | Completed | Saved list is a filter on the scholarship list. |
+| Admin scholarship management | Completed | Create, edit, view and delete scholarships. Admin-only, enforced by middleware. |
+| Eligibility engine (`eligible` / `almost` / `not_eligible`, with reasons) | Not started | Planned as `EligibilityService`, with unit tests. |
+| Results page, match summary on the detail page | Not started | Depends on the eligibility engine. |
+| AI features (Gemini): profile extraction, explanation and checklist, admin extraction | Not started | |
+| Deadline countdown and tracker | Not started | |
 
-## 4. Technologies Used
-- Frontend: Blade, tailwind CSS
-- Backend: PHP 8.3 & Laravel 13
-- Database: Supabase PostgreSQL
-- Other Tools: GitHub
+## Tech Stack
 
-## 5. Current Progress
-- Qualora currently supports user registration and login, editable student profiles, and scholarship browsing with search and filters
-- Users can view scholarship details and save or remove scholarships from their saved list
-- Admin can create, update, and delete scholarship listings
-- Scholarship recommendations based on user profiles are still in development
+- **Frontend:** Laravel Blade, Tailwind CSS, Alpine.js (built with Vite)
+- **Backend:** PHP 8.3+ and Laravel 13, MVC, single repository
+- **Auth:** Laravel Breeze
+- **Database:** Supabase (managed PostgreSQL), accessed through Laravel's `pgsql` driver and Eloquent
+- **Tests:** PHPUnit
+- **Planned:** Google Gemini API (called from the server only), hosting on Domainesia
 
-## 6. Challenges & Improvements
-### Challenges
-- Managing user profile data and scholarship information
-- Implementing scholarship recommendations based on user qualifications
+## Getting Started
 
-### Improvements
-- 
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+You need PHP 8.3+ (with `pdo_pgsql`), Composer, and Node.js.
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <repo-url>
+cd Qualora
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Then edit `.env`. `.env.example` defaults to SQLite, so for the shared Supabase database replace the `DB_*` lines with the values the team shares privately (never commit them):
 
-## Contributing
+```
+DB_CONNECTION=pgsql
+DB_HOST=<supabase pooler host>
+DB_PORT=<pooler port>
+DB_DATABASE=postgres
+DB_USERNAME=<postgres.project-ref>
+DB_PASSWORD=<database password>
+DB_SSLMODE=require
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Run the app in two terminals:
 
-## Code of Conduct
+```bash
+php artisan serve   # http://127.0.0.1:8000
+npm run dev         # Tailwind and Alpine assets (pages look unstyled without it)
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+For production assets use `npm run build`.
 
-## Security Vulnerabilities
+### Shared database: read this first
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+The whole team uses **one** Supabase database.
 
-## License
+- Run `php artisan migrate` after pulling new migrations. It only applies missing ones.
+- **Never** run `migrate:fresh`, `migrate:refresh`, `migrate:rollback` or `db:wipe` against it. They delete everyone's data.
+- Do not run a plain `php artisan db:seed` on a database that already has data. `DatabaseSeeder` creates `test@example.com` (it fails if that user exists), and `ScholarshipSeeder` can create duplicates. To run one seeder, use `php artisan db:seed --class=AdminUserSeeder`.
+- `php artisan test` is safe: `phpunit.xml` forces tests onto in-memory SQLite. Do not run `php artisan config:cache` while developing, because a cached config can bypass that setting.
+- Need to experiment freely? Use a local Postgres or a second Supabase project.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Admin account
+
+`database/seeders/AdminUserSeeder.php` creates an admin (`admin01@gmail.com`, password in that file). Run it once with:
+
+```bash
+php artisan db:seed --class=AdminUserSeeder
+```
+
+Change this password before any deployment. To promote another account, use `php artisan tinker`:
+
+```php
+$u = App\Models\User::where('email', 'you@example.com')->first();
+$u->is_admin = true;
+$u->save();
+```
+
+`is_admin` is intentionally not mass-assignable, so users cannot make themselves admin.
+
+### Tests
+
+```bash
+php artisan test
+```
+
+## Notes
+
+- GPA is on a 4.0 scale. App timezone is `Asia/Jakarta`.
+- Every scholarship shows its `last_verified` date and `official_url`. Always verify requirements on the official site.
+- No scraping and no external scholarship API: all scholarship data lives in our own `scholarships` table.
+- Row Level Security is enabled on the tables, so the Supabase public API (anon key) cannot read them. Laravel connects with its own database role.
+- The scholarships currently seeded are sample data. Real data will be added and re-verified before the demo.
+
+## Known Challenges
+
+- Keeping scholarship data accurate and up to date (each row needs a verification date).
+- Building transparent, deterministic eligibility logic that explains every rule, including near misses.
+- Keeping a shared database safe across three developers.
