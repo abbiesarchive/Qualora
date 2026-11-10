@@ -7,6 +7,50 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+
+# Qualora - Scholarship Recommendation Platform
+
+## 1. Project Overview
+Qualora is a scholarship recommendation platform designed to help students discover and manage scholarship opportunities based on their personal profiles and qualifications
+
+## 2. Team Members
+| Name | Role |
+|---|---|
+| Graciella Chelsea Lu | Frontend Developer |
+| Chrisensia Abigail Gani | Backend Developer |
+| Michelle Mercy Phe | Database Developer |
+
+## 3. Feature Progress
+
+| No. | Feature | Status | Description |
+|---|---|---|---|
+| 1 | User Registration | Completed | Users can create an account. |
+| 2 | User Login | Completed | Users can log in to the platform. |
+| 3 | User Profile | In Progress | Users can manage personal information. |
+| 4 | Scholarship Management | Completed | Admins can add, edit, and delete scholarships. |
+| 5 | Scholarship Recommendation | In Progress | Recommends scholarships based on user profiles. |
+| 6 | Save Scholarship | In Progress | Users can bookmark scholarships. |
+
+## 4. Technologies Used
+- Frontend: Blade, tailwind CSS
+- Backend: PHP 8.3 & Laravel 13
+- Database: Supabase PostgreSQL
+- Other Tools: GitHub
+
+## 5. Current Progress
+- Qualora currently supports user registration and login, profile management, and scholarship browsing with search and filters
+- Users can view scholarship details and save or remove scholarships from their saved list
+- Admin can create, update, and delete scholarship listings
+- Scholarship recommendations based on user profiles are still in development
+
+## 6. Challenges & Improvements
+### Challenges
+- Managing user profile data and scholarship information
+- Implementing scholarship recommendations based on user qualifications
+
+### Improvements
+- 
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
