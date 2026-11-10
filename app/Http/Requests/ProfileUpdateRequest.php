@@ -26,6 +26,21 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+            'campus' => ['nullable', 'string', 'max:255'],
+            'major' => ['nullable', 'string', 'max:255'],
+            'semester' => ['nullable', 'integer', 'min:1', 'max:255'],
+            'gpa' => ['nullable', 'numeric', 'min:0', 'max:4'],
+            'age' => ['nullable', 'integer', 'min:1', 'max:255'],
+            'nationality' => ['nullable', 'string', 'max:255'],
+            'has_financial_need' => ['nullable', 'boolean'],
+            'english_test_type' => ['nullable', 'string', 'max:255'],
+            'english_score' => ['nullable', 'numeric', 'min:0', 'max:9999.9'],
+            'achievements' => ['nullable', 'string', 'max:65535'],
+            'organizations' => ['nullable', 'string', 'max:65535'],
+            'goals' => ['nullable', 'string', 'max:65535'],
+            'preferred_scholarship_type' => ['nullable', Rule::in(['full', 'partial'])],
+            'open_to_abroad' => ['nullable', 'boolean'],
+            'circumstances' => ['nullable', 'string', 'max:65535'],
         ];
     }
 }

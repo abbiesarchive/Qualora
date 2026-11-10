@@ -26,7 +26,7 @@ Qualora is a scholarship recommendation platform designed to help students disco
 |---|---|---|---|
 | 1 | User Registration | Completed | Users can create an account. |
 | 2 | User Login | Completed | Users can log in to the platform. |
-| 3 | User Profile | In Progress | Users can manage personal information. |
+| 3 | User Profile | Completed | Users can manage account details and edit their student and scholarship preference information. |
 | 4 | Scholarship Management | Completed | Admins can add, edit, and delete scholarships. |
 | 5 | Scholarship Recommendation | In Progress | Recommends scholarships based on user profiles. |
 | 6 | Save Scholarship | In Progress | Users can bookmark scholarships. |
@@ -38,7 +38,7 @@ Qualora is a scholarship recommendation platform designed to help students disco
 - Other Tools: GitHub
 
 ## 5. Current Progress
-- Qualora currently supports user registration and login, profile management, and scholarship browsing with search and filters
+- Qualora currently supports user registration and login, editable student profiles, and scholarship browsing with search and filters
 - Users can view scholarship details and save or remove scholarships from their saved list
 - Admin can create, update, and delete scholarship listings
 - Scholarship recommendations based on user profiles are still in development
