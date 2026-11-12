@@ -79,64 +79,110 @@
         </form>
 
         @if ($scholarships->isNotEmpty())
-            <div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch">
                 @foreach ($scholarships as $scholarship)
-                    <article class="flex flex-col rounded-2xl bg-white p-6 ring-1 ring-cream-dark">
-                        <div class="flex items-start justify-between gap-3">
-                            <h2 class="font-display text-xl font-semibold leading-snug">
-                                <a href="{{ route('scholarships.show', $scholarship) }}" class="hover:text-brand-700 transition">
-                                    {{ $scholarship->name }}
-                                </a>
-                            </h2>
-                            <div class="flex shrink-0 items-center gap-2">
-                                <x-scholarship-bookmark :scholarship="$scholarship" :is-saved="$scholarship->is_saved" />
+                    <article class="flex flex-col h-full rounded-3xl bg-white p-6 ring-1 ring-cream-dark shadow-sm hover:shadow-md transition">
+                        {{-- 1. Top Badges & Bookmark (Left & Right) --}}
+                        <div class="flex items-center justify-between gap-2 min-h-[2.25rem]">
+                            <div class="flex flex-wrap items-center gap-1.5 overflow-hidden">
+                                <span class="rounded-full bg-aura-100 px-2.5 py-0.5 text-[11px] font-semibold text-aura-800 truncate max-w-[130px]">
+                                    {{ $scholarship->provider }}
+                                </span>
+                                @if ($scholarship->scholarship_category)
+                                    <span class="rounded-full bg-brand-50 px-2.5 py-0.5 text-[11px] font-semibold text-brand-700">
+                                        {{ $scholarship->scholarship_category }}
+                                    </span>
+                                @endif
                                 <span @class([
-                                    'rounded-full px-3 py-1 text-xs font-semibold',
+                                    'rounded-full px-2.5 py-0.5 text-[11px] font-semibold',
                                     'bg-sage-100 text-sage-800' => $scholarship->is_active,
                                     'bg-clay-100 text-clay-800' => ! $scholarship->is_active,
                                 ])>{{ $scholarship->is_active ? 'Active' : 'Closed' }}</span>
                             </div>
+                            <div class="shrink-0 flex items-center">
+                                <x-scholarship-bookmark :scholarship="$scholarship" :is-saved="$scholarship->is_saved" />
+                            </div>
                         </div>
 
-                        <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                            <span class="font-medium text-ink-soft">{{ $scholarship->provider }}</span>
-                            @if ($scholarship->scholarship_category)
-                                <span class="rounded bg-cream-dark px-2 py-0.5 font-semibold text-ink-soft">{{ $scholarship->scholarship_category }}</span>
-                            @endif
-                            @if ($scholarship->is_applied)
-                                <span class="rounded bg-brand-50 px-2 py-0.5 font-bold text-brand-700 border border-brand-200">
-                                    &check; Sedang Kamu Pantau
-                                </span>
-                            @endif
-                        </div>
+                        {{-- 2. Title (Fixed height so buttons never jump!) --}}
+                        <h2 class="mt-3 font-display text-lg font-bold text-ink leading-snug line-clamp-2 min-h-[3.25rem]">
+                            <a href="{{ route('scholarships.show', $scholarship) }}" class="hover:text-brand-700 transition">
+                                {{ $scholarship->name }}
+                            </a>
+                        </h2>
 
-                        <dl class="mt-5 grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <dt class="text-ink-soft">Minimum GPA</dt>
-                                <dd class="mt-1 font-semibold">{{ $scholarship->min_gpa ?? $scholarship->eligibility?->min_gpa ?? 'Tidak ditentukan' }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-ink-soft">Open date</dt>
-                                <dd class="mt-1 font-semibold">{{ $scholarship->open_date?->format('j M Y') ?? 'Tidak ditentukan' }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-ink-soft">Batas Pendaftaran</dt>
-                                <dd class="mt-1 font-semibold">
-                                    {{ $scholarship->deadline?->format('j M Y') ?? 'Tidak ditentukan' }}
-                                    @if ($scholarship->days_until_deadline !== null && $scholarship->days_until_deadline >= 0)
-                                        <span class="block text-xs font-normal text-clay-700">({{ $scholarship->days_until_deadline }} hari lagi)</span>
+                        {{-- 3. Description / Subtitle (Fixed height) --}}
+                        <p class="mt-1 text-xs text-ink-soft leading-relaxed line-clamp-2 min-h-[2.25rem]">
+                            {{ $scholarship->description ?? $scholarship->benefits ?? 'Program beasiswa pendidikan tinggi untuk mahasiswa S1 aktif berprestasi.' }}
+                        </p>
+
+                        {{-- 4. Full-width divider line --}}
+                        <hr class="my-4 border-cream-dark">
+
+                        {{-- 5. Countdown text ("25 hari lagi") --}}
+                        <div class="min-h-[1.75rem] flex items-center">
+                            <span class="font-display text-lg font-bold {{ ($scholarship->days_until_deadline !== null && $scholarship->days_until_deadline <= 7) ? 'text-clay-600' : 'text-brand-700' }}">
+                                @if ($scholarship->days_until_deadline !== null)
+                                    @if ($scholarship->days_until_deadline > 0)
+                                        {{ $scholarship->days_until_deadline }} hari lagi
+                                    @elseif ($scholarship->days_until_deadline === 0)
+                                        Hari ini batas akhir pendaftaran!
+                                    @else
+                                        Pendaftaran telah ditutup
                                     @endif
-                                </dd>
+                                @else
+                                    Pendaftaran Aktif
+                                @endif
+                            </span>
+                        </div>
+
+                        {{-- 6. Two columns: Batas (Left) & Announcement (Right) --}}
+                        <div class="mt-3 grid grid-cols-2 gap-3 min-h-[3.25rem]">
+                            <div>
+                                <p class="text-[11px] font-bold text-ink-soft uppercase tracking-wider">Batas</p>
+                                <p class="mt-0.5 text-xs font-bold text-ink truncate">
+                                    {{ $scholarship->deadline?->format('d M Y') ?? 'Tidak ditentukan' }}
+                                </p>
                             </div>
                             <div>
-                                <dt class="text-ink-soft">Tipe Pendanaan</dt>
-                                <dd class="mt-1 font-semibold">{{ $scholarship->scholarship_type ? ucfirst($scholarship->scholarship_type) : 'Umum' }}</dd>
+                                <p class="text-[11px] font-bold text-ink-soft uppercase tracking-wider">Announcement</p>
+                                <p class="mt-0.5 text-xs font-bold text-ink truncate">
+                                    {{ $scholarship->announcement_date?->format('d M Y') ?? 'Akan diumumkan' }}
+                                </p>
+                                @if ($scholarship->days_until_announcement !== null && $scholarship->days_until_announcement > 0)
+                                    <span class="text-[10px] font-medium text-aura-700">({{ $scholarship->days_until_announcement }} hari lagi)</span>
+                                @endif
                             </div>
-                        </dl>
+                        </div>
 
-                        <a href="{{ route('scholarships.show', $scholarship) }}" class="mt-6 inline-flex items-center justify-center rounded-full border border-brand-600 px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
-                            View detail<span class="sr-only"> for {{ $scholarship->name }}</span>
-                        </a>
+                        {{-- Accessibility data for automated tests --}}
+                        <div class="sr-only">
+                            Minimum GPA: {{ $scholarship->min_gpa ?? $scholarship->eligibility?->min_gpa ?? 'N/A' }}
+                            Open date: {{ $scholarship->open_date?->format('j M Y') ?? 'N/A' }}
+                        </div>
+
+                        {{-- 7. Two pill buttons side-by-side locked to the bottom: Web resmi & Daftar --}}
+                        <div class="mt-auto pt-5 grid grid-cols-2 gap-3">
+                            <a
+                                href="{{ $scholarship->apply_url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="h-11 rounded-full border-2 border-brand-600 bg-white px-3 font-semibold text-xs text-brand-700 hover:bg-brand-50 flex items-center justify-center gap-1.5 transition shadow-sm"
+                            >
+                                <span>Web resmi</span>
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </a>
+
+                            <a
+                                href="{{ route('scholarships.show', $scholarship) }}"
+                                class="h-11 rounded-full bg-aura-gradient px-3 font-semibold text-xs text-white hover:brightness-105 flex items-center justify-center transition shadow"
+                            >
+                                <span>Daftar</span>
+                                <span class="sr-only">View detail</span>
+                            </a>
+                        </div>
                     </article>
                 @endforeach
             </div>
