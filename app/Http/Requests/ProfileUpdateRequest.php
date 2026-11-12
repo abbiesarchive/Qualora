@@ -33,6 +33,13 @@ class ProfileUpdateRequest extends FormRequest
             'age' => ['nullable', 'integer', 'min:1', 'max:255'],
             'nationality' => ['nullable', 'string', 'max:255'],
             'has_financial_need' => ['nullable', 'boolean'],
+            'faculty' => ['nullable', 'string'],
+            'gender' => ['nullable', 'string'],
+            'city_of_residence' => ['nullable', 'string'],
+            'phone_number' => ['nullable', 'string'],
+            'graduation_year' => ['nullable', 'integer'],
+            'graduation_status' => ['nullable', 'string'],
+            'university_accreditation' => ['nullable', 'string'],
         ];
     }
 }
