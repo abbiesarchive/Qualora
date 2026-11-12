@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -54,14 +55,13 @@ class ProfileTest extends TestCase
             'age' => 20,
             'nationality' => 'Indonesian',
             'has_financial_need' => '1',
-            'english_test_type' => 'IELTS',
-            'english_score' => 7.5,
-            'achievements' => "Dean's List",
-            'organizations' => 'Student Association',
-            'goals' => "Pursue a master's degree",
-            'preferred_scholarship_type' => 'full',
-            'open_to_abroad' => '1',
-            'circumstances' => 'First-generation student',
+            'faculty' => 'Faculty of Computer Science',
+            'gender' => 'Prefer not to say',
+            'city_of_residence' => 'Depok',
+            'phone_number' => '+628123456789',
+            'graduation_year' => 2027,
+            'graduation_status' => 'In progress',
+            'university_accreditation' => 'Excellent',
         ];
 
         $this->actingAs($user)
@@ -79,12 +79,16 @@ class ProfileTest extends TestCase
             'major' => 'Computer Science',
             'semester' => 5,
             'gpa' => '3.75',
+            'age' => 20,
+            'nationality' => 'Indonesian',
             'has_financial_need' => 1,
-            'english_test_type' => 'IELTS',
-            'english_score' => '7.5',
-            'preferred_scholarship_type' => 'full',
-            'open_to_abroad' => 1,
-            'circumstances' => 'First-generation student',
+            'faculty' => 'Faculty of Computer Science',
+            'gender' => 'Prefer not to say',
+            'city_of_residence' => 'Depok',
+            'phone_number' => '+628123456789',
+            'graduation_year' => 2027,
+            'graduation_status' => 'In progress',
+            'university_accreditation' => 'Excellent',
         ]);
 
         $this->patch('/profile', [
@@ -93,8 +97,6 @@ class ProfileTest extends TestCase
             ...$profileData,
             'campus' => 'Bandung Institute of Technology',
             'has_financial_need' => '0',
-            'preferred_scholarship_type' => 'partial',
-            'open_to_abroad' => '0',
         ])
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
@@ -103,8 +105,72 @@ class ProfileTest extends TestCase
             'user_id' => $user->id,
             'campus' => 'Bandung Institute of Technology',
             'has_financial_need' => 0,
-            'preferred_scholarship_type' => 'partial',
-            'open_to_abroad' => 0,
+        ]);
+    }
+
+    public function test_only_requested_profile_columns_are_removed(): void
+    {
+        $removedColumns = [
+            'achievements',
+            'english_test_type',
+            'english_score',
+            'organizations',
+            'goals',
+            'preferred_scholarship_type',
+            'open_to_abroad',
+            'circumstances',
+        ];
+
+        foreach ($removedColumns as $column) {
+            $this->assertFalse(Schema::hasColumn('profiles', $column), "The {$column} column should be removed.");
+        }
+
+        $this->assertTrue(Schema::hasColumns('profiles', [
+            'id',
+            'user_id',
+            'campus',
+            'major',
+            'semester',
+            'gpa',
+            'age',
+            'nationality',
+            'has_financial_need',
+            'faculty',
+            'gender',
+            'city_of_residence',
+            'phone_number',
+            'graduation_year',
+            'graduation_status',
+            'university_accreditation',
+            'created_at',
+            'updated_at',
+        ]));
+    }
+
+    public function test_legacy_profile_fields_are_ignored_when_updating_remaining_profile_information(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->patch('/profile', [
+                'name' => $user->name,
+                'email' => $user->email,
+                'campus' => 'University of Indonesia',
+                'achievements' => "Dean's List",
+                'english_test_type' => 'IELTS',
+                'english_score' => 7.5,
+                'organizations' => 'Student Association',
+                'goals' => "Pursue a master's degree",
+                'preferred_scholarship_type' => 'full',
+                'open_to_abroad' => '1',
+                'circumstances' => 'First-generation student',
+            ])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        $this->assertDatabaseHas('profiles', [
+            'user_id' => $user->id,
+            'campus' => 'University of Indonesia',
         ]);
     }
 
@@ -126,6 +192,23 @@ class ProfileTest extends TestCase
             ->assertSee('3.75');
     }
 
+    public function test_new_profile_fields_are_optional(): void
+    {
+        $columns = collect(Schema::getColumns('profiles'))->keyBy('name');
+
+        foreach ([
+            'faculty',
+            'gender',
+            'city_of_residence',
+            'phone_number',
+            'graduation_year',
+            'graduation_status',
+            'university_accreditation',
+        ] as $column) {
+            $this->assertTrue($columns[$column]['nullable'], "The {$column} column should be nullable.");
+        }
+    }
+
     public function test_profile_details_must_match_database_constraints(): void
     {
         $user = User::factory()->create();
@@ -137,9 +220,8 @@ class ProfileTest extends TestCase
                 'email' => $user->email,
                 'gpa' => 4.1,
                 'semester' => 0,
-                'preferred_scholarship_type' => 'unlimited',
             ])
-            ->assertSessionHasErrors(['gpa', 'semester', 'preferred_scholarship_type'])
+            ->assertSessionHasErrors(['gpa', 'semester'])
             ->assertRedirect('/profile');
 
         $this->assertDatabaseCount('profiles', 0);

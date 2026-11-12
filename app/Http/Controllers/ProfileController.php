@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Profile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -18,9 +19,16 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $profile = Profile::query()
+            ->where('user_id', Auth::id())
+            ->first();
+
         return view('profile.edit', [
             'user' => $request->user(),
-            'profile' => $request->user()->profile,
+            'profile' => $profile,
+            'studyPlan' => $profile?->studyPlan,
+            'languages' => $profile?->languages()->orderBy('language_name')->get() ?? collect(),
+            'experiences' => $profile?->experiences()->orderByDesc('start_date')->orderBy('experience_name')->get() ?? collect(),
         ]);
     }
 
@@ -32,9 +40,9 @@ class ProfileController extends Controller
         $validated = $request->validated();
         $profileFields = [
             'campus', 'major', 'semester', 'gpa', 'age', 'nationality',
-            'has_financial_need', 'english_test_type', 'english_score',
-            'achievements', 'organizations', 'goals', 'preferred_scholarship_type',
-            'open_to_abroad', 'circumstances',
+            'has_financial_need', 'faculty', 'gender', 'city_of_residence',
+            'phone_number', 'graduation_year', 'graduation_status',
+            'university_accreditation',
         ];
         $profileData = Arr::only($validated, $profileFields);
         $userData = Arr::except($validated, $profileFields);
