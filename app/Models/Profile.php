@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 // user_id is deliberately not fillable: it is always set through $user->profile().
 #[Fillable([
@@ -28,5 +29,10 @@ class Profile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function studyPlan(): HasOne
+    {
+        return $this->hasOne(UserStudyPlan::class, 'profile_id');
     }
 }
