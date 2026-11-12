@@ -27,6 +27,7 @@ class ProfileController extends Controller
             'user' => $request->user(),
             'profile' => $profile,
             'studyPlan' => $profile?->studyPlan,
+            'languages' => $profile?->languages()->orderBy('language_name')->get() ?? collect(),
         ]);
     }
 
