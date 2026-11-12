@@ -47,6 +47,12 @@ class DashboardController extends Controller
             ->limit(4)
             ->get();
 
+        $trackedApplications = $user->applications()
+            ->with('scholarship')
+            ->orderByDesc('applied_at')
+            ->limit(3)
+            ->get();
+
         return view('dashboard', [
             'user' => $user,
             'hasProfile' => $profile !== null,
@@ -54,6 +60,7 @@ class DashboardController extends Controller
             'completePercent' => (int) round(($total - $missing->count()) / $total * 100),
             'saved' => $saved,
             'closingSoon' => $closingSoon,
+            'trackedApplications' => $trackedApplications,
         ]);
     }
 }

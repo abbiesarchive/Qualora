@@ -83,31 +83,54 @@
                 @foreach ($scholarships as $scholarship)
                     <article class="flex flex-col rounded-2xl bg-white p-6 ring-1 ring-cream-dark">
                         <div class="flex items-start justify-between gap-3">
-                            <h2 class="font-display text-xl font-semibold leading-snug">{{ $scholarship->name }}</h2>
+                            <h2 class="font-display text-xl font-semibold leading-snug">
+                                <a href="{{ route('scholarships.show', $scholarship) }}" class="hover:text-brand-700 transition">
+                                    {{ $scholarship->name }}
+                                </a>
+                            </h2>
                             <div class="flex shrink-0 items-center gap-2">
                                 <x-scholarship-bookmark :scholarship="$scholarship" :is-saved="$scholarship->is_saved" />
                                 <span @class([
                                     'rounded-full px-3 py-1 text-xs font-semibold',
                                     'bg-sage-100 text-sage-800' => $scholarship->is_active,
                                     'bg-clay-100 text-clay-800' => ! $scholarship->is_active,
-                                ])>{{ $scholarship->is_active ? 'Active' : 'Inactive' }}</span>
+                                ])>{{ $scholarship->is_active ? 'Active' : 'Closed' }}</span>
                             </div>
                         </div>
 
-                        <p class="mt-2 text-sm text-ink-soft">{{ $scholarship->provider }}</p>
+                        <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                            <span class="font-medium text-ink-soft">{{ $scholarship->provider }}</span>
+                            @if ($scholarship->scholarship_category)
+                                <span class="rounded bg-cream-dark px-2 py-0.5 font-semibold text-ink-soft">{{ $scholarship->scholarship_category }}</span>
+                            @endif
+                            @if ($scholarship->is_applied)
+                                <span class="rounded bg-brand-50 px-2 py-0.5 font-bold text-brand-700 border border-brand-200">
+                                    &check; Sedang Kamu Pantau
+                                </span>
+                            @endif
+                        </div>
 
                         <dl class="mt-5 grid grid-cols-2 gap-4 text-sm">
                             <div>
                                 <dt class="text-ink-soft">Minimum GPA</dt>
-                                <dd class="mt-1 font-semibold">{{ $scholarship->min_gpa ?? 'Not specified' }}</dd>
+                                <dd class="mt-1 font-semibold">{{ $scholarship->min_gpa ?? $scholarship->eligibility?->min_gpa ?? 'Tidak ditentukan' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-ink-soft">Open date</dt>
-                                <dd class="mt-1 font-semibold">{{ $scholarship->open_date?->format('j M Y') ?? 'Not specified' }}</dd>
+                                <dd class="mt-1 font-semibold">{{ $scholarship->open_date?->format('j M Y') ?? 'Tidak ditentukan' }}</dd>
                             </div>
-                            <div class="col-span-2">
-                                <dt class="text-ink-soft">Type</dt>
-                                <dd class="mt-1 font-semibold">{{ $scholarship->scholarship_type ? ucfirst($scholarship->scholarship_type) : 'Not specified' }}</dd>
+                            <div>
+                                <dt class="text-ink-soft">Batas Pendaftaran</dt>
+                                <dd class="mt-1 font-semibold">
+                                    {{ $scholarship->deadline?->format('j M Y') ?? 'Tidak ditentukan' }}
+                                    @if ($scholarship->days_until_deadline !== null && $scholarship->days_until_deadline >= 0)
+                                        <span class="block text-xs font-normal text-clay-700">({{ $scholarship->days_until_deadline }} hari lagi)</span>
+                                    @endif
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-ink-soft">Tipe Pendanaan</dt>
+                                <dd class="mt-1 font-semibold">{{ $scholarship->scholarship_type ? ucfirst($scholarship->scholarship_type) : 'Umum' }}</dd>
                             </div>
                         </dl>
 
