@@ -18,7 +18,7 @@ class AdminScholarshipTest extends TestCase
 
         $this->post('/login', [
             'email' => 'admin01@gmail.com',
-            'password' => 'admin01',
+            'password' => 'admin001',
         ])->assertRedirect(route('admin.scholarships.index'));
 
         $this->get(route('admin.scholarships.index'))
