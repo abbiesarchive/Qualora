@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
 class Profile extends Model
 {
     protected $guarded = ['id', 'user_id'];
@@ -26,7 +25,7 @@ class Profile extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function studyPlans(): HasMany
+    public function studyPlan(): HasMany
     {
         return $this->hasMany(UserStudyPlan::class, 'profile_id');
     }
