@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\ScholarshipController as AdminScholarshipController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SavedScholarshipController;
 use App\Http\Controllers\ScholarshipController;
-use App\Http\Controllers\Admin\ScholarshipController as AdminScholarshipController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
