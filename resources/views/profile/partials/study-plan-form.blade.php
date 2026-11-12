@@ -66,17 +66,7 @@
                 <p class="text-sm text-gray-600">{{ __('Saved.') }}</p>
             @elseif (session('status') === 'study-plan-already-exists')
                 <p class="text-sm text-amber-700">{{ __('A study plan already exists. Update the existing plan instead.') }}</p>
-            @elseif (session('status') === 'study-plan-deleted')
-                <p class="text-sm text-gray-600">{{ __('Deleted.') }}</p>
             @endif
         </div>
     </form>
-
-    @if ($studyPlan)
-        <form method="post" action="{{ route('profile.study-plan.destroy', $studyPlan->getKey()) }}" class="mt-6 border-t border-cream-dark pt-6">
-            @csrf
-            @method('delete')
-            <x-danger-button>{{ __('Delete Study Plan') }}</x-danger-button>
-        </form>
-    @endif
 </section>

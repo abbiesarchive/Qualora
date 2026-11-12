@@ -36,7 +36,8 @@ class UserStudyPlanTest extends TestCase
             ->assertOk()
             ->assertSee('Study Plan')
             ->assertSee('Computer Science')
-            ->assertSee('Canada');
+            ->assertSee('Canada')
+            ->assertDontSee('Delete Study Plan');
 
         $this->patch("/profile/study-plan/{$studyPlanId}", [
             'desired_major' => 'Data Science',

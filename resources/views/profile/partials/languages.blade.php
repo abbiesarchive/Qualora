@@ -1,20 +1,45 @@
-<section>
-    <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-            <h2 class="text-lg font-medium text-gray-900">{{ __('Language') }}</h2>
-            <p class="mt-1 text-sm text-gray-600">{{ __('Manage your languages and certificates.') }}</p>
-        </div>
-
-        <details class="group" @if ($errors->hasAny(['language_name', 'proficiency_level', 'certificate_type', 'certificate_score', 'certificate_expiry'])) open @endif>
-            <summary class="inline-flex cursor-pointer list-none items-center rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
-                {{ __('Add Language') }}
-            </summary>
-            <form method="post" action="{{ route('profile.languages.store') }}" class="mt-4 space-y-6 rounded-xl border border-cream-dark p-4">
-                @csrf
-                @include('profile.partials.language-fields', ['language' => null, 'formId' => 'language-create'])
-                <x-primary-button>{{ __('Save Language') }}</x-primary-button>
-            </form>
-        </details>
+<section
+    x-data="{
+        editing: false,
+        updateUrl: '',
+        form: {
+            language_name: @js(old('language_name', '')),
+            proficiency_level: @js(old('proficiency_level', '')),
+            certificate_type: @js(old('certificate_type', '')),
+            certificate_score: @js(old('certificate_score', '')),
+            certificate_expiry: @js(old('certificate_expiry', '')),
+        },
+        startEdit(data) {
+            this.form = {
+                language_name: data.languageName || '',
+                proficiency_level: data.proficiencyLevel || '',
+                certificate_type: data.certificateType || '',
+                certificate_score: data.certificateScore || '',
+                certificate_expiry: data.certificateExpiry || '',
+            };
+            this.updateUrl = data.updateUrl;
+            this.editing = true;
+            this.$nextTick(() => {
+                this.$refs.form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                this.$refs.form.querySelector('[name=language_name]').focus();
+            });
+        },
+        cancelEdit() {
+            this.editing = false;
+            this.updateUrl = '';
+            this.form = {
+                language_name: '',
+                proficiency_level: '',
+                certificate_type: '',
+                certificate_score: '',
+                certificate_expiry: '',
+            };
+        },
+    }"
+>
+    <header>
+        <h2 class="text-lg font-medium text-gray-900">{{ __('Language') }}</h2>
+        <p class="mt-1 text-sm text-gray-600">{{ __('Manage your languages and certificates.') }}</p>
     </header>
 
     @if ($errors->hasAny(['language_name', 'proficiency_level', 'certificate_type', 'certificate_score', 'certificate_expiry']))
@@ -37,59 +62,70 @@
         <p class="mt-4 text-sm text-green-700">{{ __('Language deleted successfully.') }}</p>
     @endif
 
+    <form x-ref="form" method="post" action="{{ route('profile.languages.store') }}" x-bind:action="editing ? updateUrl : $el.dataset.createAction" data-create-action="{{ route('profile.languages.store') }}" class="mt-5 grid w-full grid-cols-1 gap-5 rounded-xl border border-cream-dark bg-cream/20 p-4 sm:grid-cols-2">
+        @csrf
+        <input type="hidden" value="PATCH" x-bind:name="editing ? '_method' : null">
+        @include('profile.partials.language-fields', ['language' => null, 'formId' => 'language-create'])
+        <div class="flex items-center gap-3 sm:col-span-2">
+            <x-primary-button>
+                <span x-show="!editing">{{ __('Add Language') }}</span>
+                <span x-show="editing">{{ __('Save Changes') }}</span>
+            </x-primary-button>
+            <x-secondary-button type="button" x-show="editing" x-on:click="cancelEdit">{{ __('Cancel') }}</x-secondary-button>
+        </div>
+    </form>
+
     @if ($languages->isEmpty())
         <p class="mt-6 rounded-xl border border-cream-dark bg-cream/40 p-4 text-sm text-gray-600">
             {{ __('No languages added yet.') }}
         </p>
     @else
-        <div class="mt-6 space-y-4">
+        <div class="mt-6 overflow-x-auto rounded-xl border border-cream-dark">
+            <table class="min-w-full divide-y divide-cream-dark text-left text-sm">
+                <thead class="bg-brand-700 text-white">
+                    <tr>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Language') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Proficiency Level') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Certificate Type') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Certificate Score') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Certificate Expiry') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 text-center font-semibold">{{ __('Action') }}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cream-dark bg-white">
             @foreach ($languages as $language)
-                <article class="rounded-xl border border-cream-dark p-4">
-                    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                            <h3 class="font-medium text-gray-900">{{ $language->language_name }}</h3>
-                            <dl class="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
-                                <div>
-                                    <dt class="text-gray-500">{{ __('Proficiency Level') }}</dt>
-                                    <dd class="text-gray-900">{{ $language->proficiency_level ?: __('Not provided') }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-gray-500">{{ __('Certificate Type') }}</dt>
-                                    <dd class="text-gray-900">{{ $language->certificate_type ?: __('Not provided') }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-gray-500">{{ __('Certificate Score') }}</dt>
-                                    <dd class="text-gray-900">{{ $language->certificate_score ?: __('Not provided') }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-gray-500">{{ __('Certificate Expiry') }}</dt>
-                                    <dd class="text-gray-900">{{ $language->certificate_expiry?->format('Y-m-d') ?: __('Not provided') }}</dd>
-                                </div>
-                            </dl>
-                        </div>
-
-                        <div class="flex shrink-0 items-center gap-3">
-                            <details class="group">
-                                <summary class="cursor-pointer rounded-xl border border-cream-dark px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-cream focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    <tr class="align-middle">
+                        <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900">{{ $language->language_name }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $language->proficiency_level ?: __('Not provided') }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $language->certificate_type ?: __('Not provided') }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $language->certificate_score ?: __('Not provided') }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $language->certificate_expiry?->format('Y-m-d') ?: __('Not provided') }}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center justify-center gap-2">
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center rounded-lg border border-cream-dark px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-cream focus:outline-none focus:ring-2 focus:ring-brand-500"
+                                    data-update-url="{{ route('profile.languages.update', $language->getKey()) }}"
+                                    data-language-name="{{ $language->language_name }}"
+                                    data-proficiency-level="{{ $language->proficiency_level }}"
+                                    data-certificate-type="{{ $language->certificate_type }}"
+                                    data-certificate-score="{{ $language->certificate_score }}"
+                                    data-certificate-expiry="{{ $language->certificate_expiry?->format('Y-m-d') }}"
+                                    x-on:click="startEdit($event.currentTarget.dataset)"
+                                >
                                     {{ __('Edit') }}
-                                </summary>
-                                <form method="post" action="{{ route('profile.languages.update', $language->getKey()) }}" class="mt-4 space-y-6 rounded-xl border border-cream-dark p-4 sm:min-w-96">
+                                </button>
+                                <form method="post" action="{{ route('profile.languages.destroy', $language->getKey()) }}" onsubmit="return confirm('Delete this language? This action cannot be undone.');">
                                     @csrf
-                                    @method('patch')
-                                    @include('profile.partials.language-fields', ['language' => $language, 'formId' => 'language-'.$language->getKey()])
-                                    <x-primary-button>{{ __('Save Changes') }}</x-primary-button>
+                                    @method('delete')
+                                    <x-danger-button>{{ __('Delete') }}</x-danger-button>
                                 </form>
-                            </details>
-
-                            <form method="post" action="{{ route('profile.languages.destroy', $language->getKey()) }}" onsubmit="return confirm('Delete this language? This action cannot be undone.');">
-                                @csrf
-                                @method('delete')
-                                <x-danger-button>{{ __('Delete') }}</x-danger-button>
-                            </form>
-                        </div>
-                    </div>
-                </article>
+                            </div>
+                        </td>
+                    </tr>
             @endforeach
+                </tbody>
+            </table>
         </div>
     @endif
 </section>
