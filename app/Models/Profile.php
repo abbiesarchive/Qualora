@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 // user_id is deliberately not fillable: it is always set through $user->profile().
 #[Fillable([
     'campus', 'major', 'semester', 'gpa', 'age', 'nationality', 'has_financial_need',
-    'english_test_type', 'english_score',
-    'achievements', 'organizations', 'goals', 'preferred_scholarship_type', 'open_to_abroad', 'circumstances',
 ])]
 class Profile extends Model
 {
@@ -21,8 +19,6 @@ class Profile extends Model
             'gpa' => 'decimal:2',
             'age' => 'integer',
             'has_financial_need' => 'boolean',
-            'english_score' => 'decimal:1',
-            'open_to_abroad' => 'boolean',
         ];
     }
 
