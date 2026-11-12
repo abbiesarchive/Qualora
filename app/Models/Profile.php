@@ -41,4 +41,9 @@ class Profile extends Model
     {
         return $this->hasMany(UserLanguage::class, 'profile_id');
     }
+
+    public function experiences(): HasMany
+    {
+        return $this->hasMany(UserExperience::class, 'profile_id');
+    }
 }

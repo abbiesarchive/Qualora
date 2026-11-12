@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SavedScholarshipController;
 use App\Http\Controllers\ScholarshipController;
+use App\Http\Controllers\UserExperienceController;
 use App\Http\Controllers\UserLanguageController;
 use App\Http\Controllers\UserStudyPlanController;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +50,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/languages', [UserLanguageController::class, 'store'])->name('profile.languages.store');
     Route::patch('/profile/languages/{userLanguage}', [UserLanguageController::class, 'update'])->name('profile.languages.update');
     Route::delete('/profile/languages/{userLanguage}', [UserLanguageController::class, 'destroy'])->name('profile.languages.destroy');
+    Route::post('/profile/experiences', [UserExperienceController::class, 'store'])->name('profile.experiences.store');
+    Route::patch('/profile/experiences/{userExperience}', [UserExperienceController::class, 'update'])->name('profile.experiences.update');
+    Route::delete('/profile/experiences/{userExperience}', [UserExperienceController::class, 'destroy'])->name('profile.experiences.destroy');
 });
 
 require __DIR__.'/auth.php';
