@@ -2,16 +2,33 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Fillable([
+    'experience_type',
+    'experience_name',
+    'position',
+    'organization_name',
+    'description',
+    'start_date',
+    'end_date',
+])]
 class UserExperience extends Model
 {
-    protected $table = 'user_experiences';
-    protected $primaryKey = 'user_experiences_id';
-    public $timestamps = false;
+    use HasUuids;
 
-    protected $guarded = [];
+    protected $table = 'user_experiences';
+
+    protected $primaryKey = 'user_experiences_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
 
     protected function casts(): array
     {
@@ -23,7 +40,6 @@ class UserExperience extends Model
 
     public function profile(): BelongsTo
     {
-        return $this->belongsTo(Profile::class, 'profile_id');
+        return $this->belongsTo(Profile::class);
     }
 }
-

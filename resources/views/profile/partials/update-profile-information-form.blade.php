@@ -65,6 +65,12 @@
                 </div>
 
                 <div>
+                    <x-input-label for="faculty" :value="__('Faculty')" />
+                    <x-text-input id="faculty" name="faculty" type="text" class="mt-1 block w-full" :value="old('faculty', $profile?->faculty)" />
+                    <x-input-error class="mt-2" :messages="$errors->get('faculty')" />
+                </div>
+
+                <div>
                     <x-input-label for="semester" :value="__('Current Semester')" />
                     <x-text-input id="semester" name="semester" type="number" min="1" max="255" class="mt-1 block w-full" :value="old('semester', $profile?->semester)" />
                     <x-input-error class="mt-2" :messages="$errors->get('semester')" />
@@ -100,62 +106,41 @@
                 </div>
 
                 <div>
-                    <x-input-label for="english_test_type" :value="__('English Test')" />
-                    <x-text-input id="english_test_type" name="english_test_type" type="text" class="mt-1 block w-full" :value="old('english_test_type', $profile?->english_test_type)" placeholder="IELTS, TOEFL, etc." maxlength="255" />
-                    <x-input-error class="mt-2" :messages="$errors->get('english_test_type')" />
+                    <x-input-label for="gender" :value="__('Gender')" />
+                    <x-text-input id="gender" name="gender" type="text" class="mt-1 block w-full" :value="old('gender', $profile?->gender)" />
+                    <x-input-error class="mt-2" :messages="$errors->get('gender')" />
                 </div>
 
                 <div>
-                    <x-input-label for="english_score" :value="__('English Test Score')" />
-                    <x-text-input id="english_score" name="english_score" type="number" min="0" max="9999.9" step="0.1" class="mt-1 block w-full" :value="old('english_score', $profile?->english_score)" />
-                    <x-input-error class="mt-2" :messages="$errors->get('english_score')" />
+                    <x-input-label for="city_of_residence" :value="__('City of Residence')" />
+                    <x-text-input id="city_of_residence" name="city_of_residence" type="text" class="mt-1 block w-full" :value="old('city_of_residence', $profile?->city_of_residence)" />
+                    <x-input-error class="mt-2" :messages="$errors->get('city_of_residence')" />
                 </div>
 
                 <div>
-                    <x-input-label for="preferred_scholarship_type" :value="__('Preferred Scholarship Type')" />
-                    @php($preferredType = old('preferred_scholarship_type', $profile?->preferred_scholarship_type))
-                    <select id="preferred_scholarship_type" name="preferred_scholarship_type" class="mt-1 block w-full rounded-xl border-cream-dark bg-white shadow-sm focus:border-brand-500 focus:ring-brand-500">
-                        <option value="" @selected($preferredType === '')>{{ __('No preference') }}</option>
-                        <option value="full" @selected($preferredType === 'full')>{{ __('Full') }}</option>
-                        <option value="partial" @selected($preferredType === 'partial')>{{ __('Partial') }}</option>
-                    </select>
-                    <x-input-error class="mt-2" :messages="$errors->get('preferred_scholarship_type')" />
+                    <x-input-label for="phone_number" :value="__('Phone Number')" />
+                    <x-text-input id="phone_number" name="phone_number" type="tel" class="mt-1 block w-full" :value="old('phone_number', $profile?->phone_number)" />
+                    <x-input-error class="mt-2" :messages="$errors->get('phone_number')" />
                 </div>
 
                 <div>
-                    <x-input-label for="open_to_abroad" :value="__('Open to studying abroad?')" />
-                    @php($openToAbroad = (string) old('open_to_abroad', $profile?->open_to_abroad === null ? '' : (int) $profile->open_to_abroad))
-                    <select id="open_to_abroad" name="open_to_abroad" class="mt-1 block w-full rounded-xl border-cream-dark bg-white shadow-sm focus:border-brand-500 focus:ring-brand-500">
-                        <option value="" @selected($openToAbroad === '')>{{ __('No preference') }}</option>
-                        <option value="1" @selected($openToAbroad === '1')>{{ __('Yes') }}</option>
-                        <option value="0" @selected($openToAbroad === '0')>{{ __('No') }}</option>
-                    </select>
-                    <x-input-error class="mt-2" :messages="$errors->get('open_to_abroad')" />
+                    <x-input-label for="graduation_year" :value="__('Graduation Year')" />
+                    <x-text-input id="graduation_year" name="graduation_year" type="number" class="mt-1 block w-full" :value="old('graduation_year', $profile?->graduation_year)" />
+                    <x-input-error class="mt-2" :messages="$errors->get('graduation_year')" />
                 </div>
 
-                <div class="sm:col-span-2">
-                    <x-input-label for="achievements" :value="__('Achievements')" />
-                    <textarea id="achievements" name="achievements" rows="3" class="mt-1 block w-full rounded-xl border-cream-dark shadow-sm focus:border-brand-500 focus:ring-brand-500">{{ old('achievements', $profile?->achievements) }}</textarea>
-                    <x-input-error class="mt-2" :messages="$errors->get('achievements')" />
+                <div>
+                    <x-input-label for="graduation_status" :value="__('Graduation Status')" />
+                    <x-text-input id="graduation_status" name="graduation_status" type="text" class="mt-1 block w-full" :value="old('graduation_status', $profile?->graduation_status)" />
+                    <x-input-error class="mt-2" :messages="$errors->get('graduation_status')" />
                 </div>
 
-                <div class="sm:col-span-2">
-                    <x-input-label for="organizations" :value="__('Organizations and Activities')" />
-                    <textarea id="organizations" name="organizations" rows="3" class="mt-1 block w-full rounded-xl border-cream-dark shadow-sm focus:border-brand-500 focus:ring-brand-500">{{ old('organizations', $profile?->organizations) }}</textarea>
-                    <x-input-error class="mt-2" :messages="$errors->get('organizations')" />
+                <div>
+                    <x-input-label for="university_accreditation" :value="__('University Accreditation')" />
+                    <x-text-input id="university_accreditation" name="university_accreditation" type="text" class="mt-1 block w-full" :value="old('university_accreditation', $profile?->university_accreditation)" />
+                    <x-input-error class="mt-2" :messages="$errors->get('university_accreditation')" />
                 </div>
 
-                <div class="sm:col-span-2">
-                    <x-input-label for="goals" :value="__('Study or Career Goals')" />
-                    <textarea id="goals" name="goals" rows="3" class="mt-1 block w-full rounded-xl border-cream-dark shadow-sm focus:border-brand-500 focus:ring-brand-500">{{ old('goals', $profile?->goals) }}</textarea>
-                    <x-input-error class="mt-2" :messages="$errors->get('goals')" />
-                </div>
-
-                <div class="sm:col-span-2">
-                    <x-input-label for="circumstances" :value="__('Additional Circumstances (Optional)')" />
-                    <textarea id="circumstances" name="circumstances" rows="3" class="mt-1 block w-full rounded-xl border-cream-dark shadow-sm focus:border-brand-500 focus:ring-brand-500">{{ old('circumstances', $profile?->circumstances) }}</textarea>
-                    <x-input-error class="mt-2" :messages="$errors->get('circumstances')" />
-                </div>
             </div>
         </div>
 

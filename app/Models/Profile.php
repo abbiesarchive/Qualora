@@ -5,7 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
+// user_id is deliberately not fillable: it is always set through $user->profile().
+#[Fillable([
+    'campus', 'major', 'semester', 'gpa', 'age', 'nationality', 'has_financial_need',
+    'faculty', 'gender', 'city_of_residence', 'phone_number',
+    'graduation_year', 'graduation_status', 'university_accreditation',
+])]
 class Profile extends Model
 {
     protected $guarded = ['id', 'user_id'];
@@ -26,9 +33,9 @@ class Profile extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function studyPlans(): HasMany
+    public function studyPlan(): HasOne
     {
-        return $this->hasMany(UserStudyPlan::class, 'profile_id');
+        return $this->hasOne(UserStudyPlan::class, 'profile_id');
     }
 
     public function languages(): HasMany
