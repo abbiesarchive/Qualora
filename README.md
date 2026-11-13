@@ -17,7 +17,7 @@ ALP Cloud Computing, Team 9.
 | Feature | Status | Notes |
 |---|---|---|
 | Registration, login, email verification (Laravel Breeze) | Completed | Dashboard and scholarship pages require a verified email. |
-| Student profile | Completed | Eligibility fields (GPA, semester, major, age, campus, nationality, financial need, English test) and context fields (achievements, organizations, goals, scholarship preferences, circumstances). Users can delete their own account and data. |
+| Student profile | Completed | Eligibility fields (GPA, semester, major, age, campus, nationality, financial need) plus faculty, gender, city, phone number, graduation year and status, and university accreditation. Separate sections for study plans, languages and experiences. Users can delete their own account and data. The earlier context columns (achievements, goals, English test, etc.) were removed from `profiles` and are being reviewed by the team. |
 | Scholarship browsing | Completed | Search by name or provider, filter by status and type (full/partial), pagination. |
 | Scholarship detail page | Completed | |
 | Save / unsave scholarships | Completed | Saved list is a filter on the scholarship list. |
@@ -26,19 +26,21 @@ ALP Cloud Computing, Team 9.
 | Results page, match summary on the detail page | Not started | Depends on the eligibility engine. |
 | AI features (Gemini): profile extraction, explanation and checklist, admin extraction | Not started | |
 | Deadline countdown and tracker | Not started | |
+| Continuous integration (GitHub Actions) | Completed | Runs Pint and the test suite on every push and pull request to `main`. See [Continuous integration](#continuous-integration). Automatic deployment is not set up yet. |
 
 ## Tech Stack
 
 - **Frontend:** Laravel Blade, Tailwind CSS, Alpine.js (built with Vite)
-- **Backend:** PHP 8.3+ and Laravel 13, MVC, single repository
+- **Backend:** PHP 8.4+ and Laravel 13, MVC, single repository
 - **Auth:** Laravel Breeze
 - **Database:** Supabase (managed PostgreSQL), accessed through Laravel's `pgsql` driver and Eloquent
-- **Tests:** PHPUnit
+- **Tests:** PHPUnit, with code style checked by Laravel Pint
+- **CI:** GitHub Actions
 - **Planned:** Google Gemini API (called from the server only), hosting on Domainesia
 
 ## Getting Started
 
-You need PHP 8.3+ (with `pdo_pgsql`), Composer, and Node.js.
+You need PHP 8.4+ (with `pdo_pgsql`), Composer, and Node.js.
 
 ```bash
 git clone <repo-url>
@@ -102,7 +104,19 @@ $u->save();
 
 ```bash
 php artisan test
+vendor/bin/pint --test   # code style check; run `vendor/bin/pint` to fix
 ```
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every push to `main` and on every pull request into `main`:
+
+1. Installs PHP 8.4 and Composer dependencies, then Node dependencies.
+2. Builds the assets (`npm run build`).
+3. Checks code style with Laravel Pint.
+4. Runs `php artisan test` (in-memory SQLite, no Supabase and no secrets).
+
+It only checks code. It does not deploy anything and never touches the Supabase database. Before opening a pull request, run Pint and the tests locally so the check passes. Branch protection on `main` should require this check.
 
 ## Notes
 
