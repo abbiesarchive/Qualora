@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -83,7 +82,7 @@ class Scholarship extends Model
 
     public function getDaysUntilDeadlineAttribute(): ?int
     {
-        if (!$this->deadline) {
+        if (! $this->deadline) {
             return null;
         }
 
@@ -92,7 +91,7 @@ class Scholarship extends Model
 
     public function getDaysUntilAnnouncementAttribute(): ?int
     {
-        if (!$this->announcement_date) {
+        if (! $this->announcement_date) {
             return null;
         }
 

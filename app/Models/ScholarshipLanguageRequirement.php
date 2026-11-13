@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ScholarshipLanguageRequirement extends Model
 {
     protected $table = 'scholarship_language_requirements';
+
     protected $guarded = [];
 
     protected function casts(): array
@@ -23,4 +24,3 @@ class ScholarshipLanguageRequirement extends Model
         return $this->belongsTo(Scholarship::class);
     }
 }
-

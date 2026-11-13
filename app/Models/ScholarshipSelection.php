@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ScholarshipSelection extends Model
 {
     protected $table = 'scholarship_selections';
+
     protected $guarded = [];
 
     protected function casts(): array
@@ -24,4 +25,3 @@ class ScholarshipSelection extends Model
         return $this->belongsTo(Scholarship::class);
     }
 }
-
