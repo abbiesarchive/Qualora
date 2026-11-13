@@ -41,6 +41,20 @@ Route::middleware('auth')->group(function () {
         ->middleware('verified')
         ->name('scholarships.show');
 
+    // User Application Tracking & Announcement Monitoring
+    Route::get('/my-applications', [\App\Http\Controllers\UserApplicationController::class, 'index'])
+        ->middleware('verified')
+        ->name('applications.index');
+    Route::post('/scholarships/{scholarship}/apply-track', [\App\Http\Controllers\UserApplicationController::class, 'store'])
+        ->middleware('verified')
+        ->name('applications.store');
+    Route::patch('/my-applications/{application}', [\App\Http\Controllers\UserApplicationController::class, 'update'])
+        ->middleware('verified')
+        ->name('applications.update');
+    Route::delete('/my-applications/{application}', [\App\Http\Controllers\UserApplicationController::class, 'destroy'])
+        ->middleware('verified')
+        ->name('applications.destroy');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

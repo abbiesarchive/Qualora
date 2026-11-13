@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 ])]
 class Profile extends Model
 {
+    protected $guarded = ['id', 'user_id'];
+
     protected function casts(): array
     {
         return [

@@ -65,6 +65,56 @@
         </section>
 
         <div class="lg:col-span-2 grid gap-6">
+            {{-- Tracked Applications / Announcement Monitoring --}}
+            <section class="rounded-2xl bg-white ring-1 ring-cream-dark p-6" aria-labelledby="tracker-heading">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <h2 id="tracker-heading" class="font-display text-xl font-semibold">Pemantauan Lamaran</h2>
+                        <p class="text-xs text-ink-soft mt-0.5">Pantau status & countdown pengumuman beasiswa yang telah kamu daftarkan.</p>
+                    </div>
+                    <a href="{{ route('applications.index') }}" class="shrink-0 text-sm font-semibold text-brand-700 hover:text-brand-900">
+                        Lihat semua &rarr;
+                    </a>
+                </div>
+
+                @forelse ($trackedApplications as $app)
+                    @if ($loop->first)
+                        <ul class="mt-4 divide-y divide-cream-dark">
+                    @endif
+                    @php $s = $app->scholarship; @endphp
+                    <li class="py-3 flex flex-wrap items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <a href="{{ route('scholarships.show', $s) }}" class="font-semibold text-ink hover:text-brand-700 truncate block">
+                                {{ $s->name }}
+                            </a>
+                            <p class="text-xs text-ink-soft">
+                                {{ $s->provider }} · Submit: {{ $app->applied_at->format('j M Y') }}
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="rounded-full bg-brand-50 text-brand-800 text-xs font-semibold px-2.5 py-0.5 border border-brand-200">
+                                {{ $app->status_label }}
+                            </span>
+                            @if ($s->announcement_date && $s->days_until_announcement !== null && $s->days_until_announcement >= 0)
+                                <span class="rounded-full bg-aura-100 text-aura-800 text-xs font-semibold px-2.5 py-0.5">
+                                    Pengumuman {{ $s->days_until_announcement }} hari lagi
+                                </span>
+                            @endif
+                        </div>
+                    </li>
+                    @if ($loop->last)
+                        </ul>
+                    @endif
+                @empty
+                    <div class="mt-4 rounded-xl bg-cream/30 p-4 text-center">
+                        <p class="text-sm text-ink-soft">Kamu belum mencatat lamaran beasiswa.</p>
+                        <a href="{{ route('scholarships.index') }}" class="mt-2 inline-block text-xs font-semibold text-brand-700 hover:underline">
+                            Cari beasiswa & catat pendaftaranmu &rarr;
+                        </a>
+                    </div>
+                @endforelse
+            </section>
+
             {{-- Saved --}}
             <section class="rounded-2xl bg-white ring-1 ring-cream-dark p-6" aria-labelledby="saved-heading">
                 <div class="flex items-center justify-between gap-4">
