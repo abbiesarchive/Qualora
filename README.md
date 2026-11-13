@@ -10,7 +10,7 @@ ALP Cloud Computing, Team 9.
 |---|---|
 | Graciella Chelsea Lu | Frontend Developer |
 | Chrisensia Abigail Gani | Backend Developer |
-| Michelle Mercy Phe | Database Developer |
+| Michelle Mercy Phe | Frontend Developer |
 
 ## Feature Progress
 
