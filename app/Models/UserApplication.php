@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserApplication extends Model
 {
     protected $table = 'user_applications';
+
     protected $guarded = [];
 
     protected function casts(): array
@@ -40,4 +41,3 @@ class UserApplication extends Model
         };
     }
 }
-

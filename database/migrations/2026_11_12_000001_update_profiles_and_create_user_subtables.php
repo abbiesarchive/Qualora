@@ -10,34 +10,34 @@ return new class extends Migration
     {
         // 1. Ensure any missing profile columns exist
         Schema::table('profiles', function (Blueprint $table) {
-            if (!Schema::hasColumn('profiles', 'faculty')) {
+            if (! Schema::hasColumn('profiles', 'faculty')) {
                 $table->string('faculty')->nullable()->after('major');
             }
-            if (!Schema::hasColumn('profiles', 'gender')) {
+            if (! Schema::hasColumn('profiles', 'gender')) {
                 $table->string('gender')->nullable()->after('has_financial_need');
             }
-            if (!Schema::hasColumn('profiles', 'country_of_residence')) {
+            if (! Schema::hasColumn('profiles', 'country_of_residence')) {
                 $table->string('country_of_residence')->nullable()->after('nationality');
             }
-            if (!Schema::hasColumn('profiles', 'city_of_residence')) {
+            if (! Schema::hasColumn('profiles', 'city_of_residence')) {
                 $table->string('city_of_residence')->nullable()->after('country_of_residence');
             }
-            if (!Schema::hasColumn('profiles', 'phone_number')) {
+            if (! Schema::hasColumn('profiles', 'phone_number')) {
                 $table->string('phone_number')->nullable()->after('city_of_residence');
             }
-            if (!Schema::hasColumn('profiles', 'graduation_year')) {
+            if (! Schema::hasColumn('profiles', 'graduation_year')) {
                 $table->unsignedSmallInteger('graduation_year')->nullable()->after('phone_number');
             }
-            if (!Schema::hasColumn('profiles', 'graduation_status')) {
+            if (! Schema::hasColumn('profiles', 'graduation_status')) {
                 $table->string('graduation_status')->nullable()->after('graduation_year');
             }
-            if (!Schema::hasColumn('profiles', 'university_accreditation')) {
+            if (! Schema::hasColumn('profiles', 'university_accreditation')) {
                 $table->string('university_accreditation')->nullable()->after('graduation_status');
             }
         });
 
         // 2. user_study_plans (if not already created)
-        if (!Schema::hasTable('user_study_plans')) {
+        if (! Schema::hasTable('user_study_plans')) {
             Schema::create('user_study_plans', function (Blueprint $table) {
                 $table->id('user_study_plans_id');
                 $table->foreignId('profile_id')->constrained('profiles')->cascadeOnDelete();
@@ -53,7 +53,7 @@ return new class extends Migration
         }
 
         // 3. user_language (if not already created)
-        if (!Schema::hasTable('user_language')) {
+        if (! Schema::hasTable('user_language')) {
             Schema::create('user_language', function (Blueprint $table) {
                 $table->id('user_language_id');
                 $table->foreignId('profile_id')->constrained('profiles')->cascadeOnDelete();
@@ -67,7 +67,7 @@ return new class extends Migration
         }
 
         // 4. user_experiences (if not already created)
-        if (!Schema::hasTable('user_experiences')) {
+        if (! Schema::hasTable('user_experiences')) {
             Schema::create('user_experiences', function (Blueprint $table) {
                 $table->id('user_experiences_id');
                 $table->foreignId('profile_id')->constrained('profiles')->cascadeOnDelete();

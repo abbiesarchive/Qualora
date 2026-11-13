@@ -23,7 +23,9 @@ class UserApplicationController extends Controller
         // Find upcoming announcements
         $upcomingAnnouncements = $applications->filter(function (UserApplication $app) {
             $scholarship = $app->scholarship;
-            if (!$scholarship) return false;
+            if (! $scholarship) {
+                return false;
+            }
 
             return $scholarship->announcement_date && $scholarship->announcement_date->isFuture();
         })->sortBy(fn (UserApplication $app) => $app->scholarship->announcement_date);
@@ -88,4 +90,3 @@ class UserApplicationController extends Controller
         return back()->with('status', 'Beasiswa dihapus dari pemantauan lamaran.');
     }
 }
-
