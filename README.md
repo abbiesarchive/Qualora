@@ -120,6 +120,7 @@ Qualora runs automated tests on an in-memory SQLite database to ensure the Supab
 
 ```bash
 php artisan test
+vendor/bin/pint --test   # code style check; run `vendor/bin/pint` to fix
 ```
 
 Currently, **52/52 tests are passing**, covering Authentication, Profile Management, Scholarship Catalog & Details, Admin Controls, and the Application Tracker.
