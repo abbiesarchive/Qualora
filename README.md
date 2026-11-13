@@ -1,6 +1,6 @@
 # Qualora
 
-Qualora is a scholarship matching website for enrolled S1 students. Students enter their profile and browse scholarships, with the goal of seeing which ones they may be eligible for, with a clear reason for every requirement. Results are never a guarantee: always verify on the scholarship's official site.
+Qualora is a scholarship discovery and application tracking platform for enrolled S1 students. Students can explore verified scholarships, evaluate their eligibility against criteria, prepare required documents, and track their applications after applying on the official publisher website with deadline & announcement countdowns.
 
 ALP Cloud Computing, Team 9.
 
@@ -16,31 +16,57 @@ ALP Cloud Computing, Team 9.
 
 | Feature | Status | Notes |
 |---|---|---|
-| Registration, login, email verification (Laravel Breeze) | Completed | Dashboard and scholarship pages require a verified email. |
-| Student profile | Completed | Eligibility fields (GPA, semester, major, age, campus, nationality, financial need) plus faculty, gender, city, phone number, graduation year and status, and university accreditation. Separate sections for study plans, languages and experiences. Users can delete their own account and data. The earlier context columns (achievements, goals, English test, etc.) were removed from `profiles` and are being reviewed by the team. |
-| Scholarship browsing | Completed | Search by name or provider, filter by status and type (full/partial), pagination. |
-| Scholarship detail page | Completed | |
-| Save / unsave scholarships | Completed | Saved list is a filter on the scholarship list. |
-| Admin scholarship management | Completed | Create, edit, view and delete scholarships. Admin-only, enforced by middleware. |
-| Eligibility engine (`eligible` / `almost` / `not_eligible`, with reasons) | Not started | Planned as `EligibilityService`, with unit tests. |
-| Results page, match summary on the detail page | Not started | Depends on the eligibility engine. |
-| AI features (Gemini): profile extraction, explanation and checklist, admin extraction | Not started | |
-| Deadline countdown and tracker | Not started | |
-| Continuous integration (GitHub Actions) | Completed | Runs Pint and the test suite on every push and pull request to `main`. See [Continuous integration](#continuous-integration). Automatic deployment is not set up yet. |
+| Registration, login, email verification (Laravel Breeze) | Completed | Dashboard, scholarship exploration, and application tracking require a verified email. |
+| Student Profile & Sub-tables | Completed | Core personal & academic data in `profiles` (GPA, semester, major, faculty, age, campus, accreditation, financial need), plus dedicated sub-tables for `user_study_plans`, `user_language`, and `user_experiences`. Users can delete their own account. |
+| Scholarship Catalog & Browsing | Completed | Search by name or provider, filter by status and type (full/partial), pagination. Redesigned with consistent bottom-aligned dual buttons, status pills, and countdowns. |
+| Scholarship Detail Page & Hero Card | Completed | Redesigned according to team design layout: top status pills, bookmark ribbon, big countdown highlight, two-column dates (Deadline & Announcement), and direct external portal link. Includes interactive document checklist and selection stepper timeline. |
+| Bookmark / Saved Scholarships | Completed | Quick save/unsave toggle, with saved filter available on the scholarship catalog and dashboard. |
+| External Application Tracker & Monitoring | Completed | Dedicated tracker (`/my-applications`) and dashboard widget. Users can log external submissions, update stages (`preparing`, `submitted`, `interview`, `accepted`, `rejected`), track announcement dates, and add registration numbers & personal notes. |
+| Eligibility Check & Rule Evaluation | Completed (Initial Engine) | Dynamic comparison on scholarship detail page: compares user profile (GPA, semester, age, financial need, accreditation) against scholarship requirements with visual pass/fail/unknown status badges. |
+| Admin Scholarship Management | Completed | Admin dashboard to create, view, edit, and archive scholarships, protected by admin middleware. |
+| AI Integration (Google Gemini) | Planned | Free-text / CV profile parsing, AI scholarship explanation & checklist generator, and admin automated link ingestion. |
+| Advanced Standalone Scoring Engine | Planned | Extended scoring and match percentage breakdown (`EligibilityService`). |
+
+## Architecture & Database Schema (Supabase PostgreSQL)
+
+Qualora utilizes a normalized, relational domain model on Supabase PostgreSQL:
+
+```
+├── 1. USER DOMAIN
+│   ├── users (Authentication, role is_admin)
+│   ├── profiles (Personal & academic info: GPA, semester, faculty, accreditation, etc.)
+│   ├── user_study_plans (Desired major, study field, preferred destination)
+│   ├── user_language (Language proficiency, certificate type & score)
+│   └── user_experiences (Organizational & work experience history)
+│
+├── 2. SCHOLARSHIP DOMAIN
+│   ├── scholarships (Core info, provider, official_url, application_link, deadline, announcement_date)
+│   ├── scholarship_eligibilities (GPA, semester range, age limits, financial need, accreditation requirements)
+│   ├── scholarship_study_requirements (Eligible majors, study field categories, study modes)
+│   ├── scholarship_language_requirements (Required language, certificate type & minimum score)
+│   ├── scholarship_benefits (Tuition, living allowance, mentorship, book allowance)
+│   ├── scholarship_documents (Required documents, descriptions, and template URLs)
+│   └── scholarship_selections (Stage names, order, and estimated dates for selection timeline)
+│
+└── 3. INTERACTION & TRACKING DOMAIN
+    ├── saved_scholarships (User wishlists/bookmarks)
+    └── user_applications (Application status tracker, submission date, registration number, notes)
+```
 
 ## Tech Stack
 
-- **Frontend:** Laravel Blade, Tailwind CSS, Alpine.js (built with Vite)
-- **Backend:** PHP 8.4+ and Laravel 13, MVC, single repository
-- **Auth:** Laravel Breeze
-- **Database:** Supabase (managed PostgreSQL), accessed through Laravel's `pgsql` driver and Eloquent
-- **Tests:** PHPUnit, with code style checked by Laravel Pint
-- **CI:** GitHub Actions
-- **Planned:** Google Gemini API (called from the server only), hosting on Domainesia
+- **Frontend:** Laravel Blade Templates, Tailwind CSS, Alpine.js (Vite asset pipeline)
+- **Backend:** PHP 8.4+ and Laravel 11/13 (MVC Architecture)
+- **Authentication:** Laravel Breeze
+- **Database:** Supabase (Managed PostgreSQL) connected via Laravel Eloquent ORM
+- **Testing:** PHPUnit (52/52 automated unit & feature tests passing)
+- **Planned Deployment:** Google Gemini API (gemini-2.5-flash via server-side HTTP Client), Domainesia Hosting
 
 ## Getting Started
 
-You need PHP 8.4+ (with `pdo_pgsql`), Composer, and Node.js.
+### Prerequisites
+
+You need PHP 8.3+ (with `pdo_pgsql`), Composer, and Node.js.
 
 ```bash
 git clone <repo-url>
@@ -51,83 +77,58 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Then edit `.env`. `.env.example` defaults to SQLite, so for the shared Supabase database replace the `DB_*` lines with the values the team shares privately (never commit them):
+### Database Configuration
 
-```
+Edit your `.env` file to connect to the team's Supabase PostgreSQL instance:
+
+```env
 DB_CONNECTION=pgsql
-DB_HOST=<supabase pooler host>
-DB_PORT=<pooler port>
+DB_HOST=<supabase-pooler-host>
+DB_PORT=5432
 DB_DATABASE=postgres
-DB_USERNAME=<postgres.project-ref>
-DB_PASSWORD=<database password>
+DB_USERNAME=<supabase-user>
+DB_PASSWORD=<supabase-password>
 DB_SSLMODE=require
 ```
 
-Run the app in two terminals:
+### Running the Application
+
+Run the application in two terminal tabs:
 
 ```bash
 php artisan serve   # http://127.0.0.1:8000
-npm run dev         # Tailwind and Alpine assets (pages look unstyled without it)
+npm run dev         # Compiles Tailwind CSS & Alpine.js
 ```
 
-For production assets use `npm run build`.
+### Seeders & Sample Data
 
-### Shared database: read this first
+To populate sample scholarships with complete eligibility, benefits, documents, and selection stages:
 
-The whole team uses **one** Supabase database.
+```bash
+php artisan db:seed --class=ScholarshipSeeder
+```
 
-- Run `php artisan migrate` after pulling new migrations. It only applies missing ones.
-- **Never** run `migrate:fresh`, `migrate:refresh`, `migrate:rollback` or `db:wipe` against it. They delete everyone's data.
-- Do not run a plain `php artisan db:seed` on a database that already has data. `DatabaseSeeder` creates `test@example.com` (it fails if that user exists), and `ScholarshipSeeder` can create duplicates. To run one seeder, use `php artisan db:seed --class=AdminUserSeeder`.
-- `php artisan test` is safe: `phpunit.xml` forces tests onto in-memory SQLite. Do not run `php artisan config:cache` while developing, because a cached config can bypass that setting.
-- Need to experiment freely? Use a local Postgres or a second Supabase project.
-
-### Admin account
-
-`database/seeders/AdminUserSeeder.php` creates an admin (`admin01@gmail.com`, password in that file). Run it once with:
+To create the default admin account (`admin01@gmail.com`):
 
 ```bash
 php artisan db:seed --class=AdminUserSeeder
 ```
 
-Change this password before any deployment. To promote another account, use `php artisan tinker`:
+### Running Automated Tests
 
-```php
-$u = App\Models\User::where('email', 'you@example.com')->first();
-$u->is_admin = true;
-$u->save();
-```
-
-`is_admin` is intentionally not mass-assignable, so users cannot make themselves admin.
-
-### Tests
+Qualora runs automated tests on an in-memory SQLite database to ensure the Supabase production database is never touched during testing:
 
 ```bash
 php artisan test
 vendor/bin/pint --test   # code style check; run `vendor/bin/pint` to fix
 ```
 
-## Continuous integration
+Currently, **52/52 tests are passing**, covering Authentication, Profile Management, Scholarship Catalog & Details, Admin Controls, and the Application Tracker.
 
-`.github/workflows/ci.yml` runs on every push to `main` and on every pull request into `main`:
+## Important Notes for the Team
 
-1. Installs PHP 8.4 and Composer dependencies, then Node dependencies.
-2. Builds the assets (`npm run build`).
-3. Checks code style with Laravel Pint.
-4. Runs `php artisan test` (in-memory SQLite, no Supabase and no secrets).
-
-It only checks code. It does not deploy anything and never touches the Supabase database. Before opening a pull request, run Pint and the tests locally so the check passes. Branch protection on `main` should require this check.
-
-## Notes
-
-- GPA is on a 4.0 scale. App timezone is `Asia/Jakarta`.
-- Every scholarship shows its `last_verified` date and `official_url`. Always verify requirements on the official site.
-- No scraping and no external scholarship API: all scholarship data lives in our own `scholarships` table.
-- Row Level Security is enabled on the tables, so the Supabase public API (anon key) cannot read them. Laravel connects with its own database role.
-- The scholarships currently seeded are sample data. Real data will be added and re-verified before the demo.
-
-## Known Challenges
-
-- Keeping scholarship data accurate and up to date (each row needs a verification date).
-- Building transparent, deterministic eligibility logic that explains every rule, including near misses.
-- Keeping a shared database safe across three developers.
+- **Shared Database:** The whole team shares one Supabase instance.
+  - Run `php artisan migrate` after pulling new commits.
+  - **Never** run `migrate:fresh`, `migrate:refresh`, or `db:wipe` against the shared database.
+- **External Application Flow:** Qualora acts as an informational aggregator and personal tracking platform. Users apply through the official publisher portal (`Web resmi`), then log their submission on Qualora (`Catat Pendaftaran`) to monitor countdowns and results.
+- **Timezone:** All timestamps and countdown calculations use `Asia/Jakarta`.
