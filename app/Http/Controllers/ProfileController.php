@@ -26,7 +26,7 @@ class ProfileController extends Controller
         return view('profile.edit', [
             'user' => $request->user(),
             'profile' => $profile,
-            'studyPlan' => $profile?->studyPlan,
+            'studyPlan' => $profile?->studyPlan()->first(),
             'languages' => $profile?->languages()->orderBy('language_name')->get() ?? collect(),
             'experiences' => $profile?->experiences()->orderByDesc('start_date')->orderBy('experience_name')->get() ?? collect(),
         ]);
