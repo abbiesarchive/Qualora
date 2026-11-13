@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SavedScholarshipController;
 use App\Http\Controllers\ScholarshipController;
+use App\Http\Controllers\UserApplicationController;
 use App\Http\Controllers\UserExperienceController;
 use App\Http\Controllers\UserLanguageController;
 use App\Http\Controllers\UserStudyPlanController;
@@ -42,16 +43,16 @@ Route::middleware('auth')->group(function () {
         ->name('scholarships.show');
 
     // User Application Tracking & Announcement Monitoring
-    Route::get('/my-applications', [\App\Http\Controllers\UserApplicationController::class, 'index'])
+    Route::get('/my-applications', [UserApplicationController::class, 'index'])
         ->middleware('verified')
         ->name('applications.index');
-    Route::post('/scholarships/{scholarship}/apply-track', [\App\Http\Controllers\UserApplicationController::class, 'store'])
+    Route::post('/scholarships/{scholarship}/apply-track', [UserApplicationController::class, 'store'])
         ->middleware('verified')
         ->name('applications.store');
-    Route::patch('/my-applications/{application}', [\App\Http\Controllers\UserApplicationController::class, 'update'])
+    Route::patch('/my-applications/{application}', [UserApplicationController::class, 'update'])
         ->middleware('verified')
         ->name('applications.update');
-    Route::delete('/my-applications/{application}', [\App\Http\Controllers\UserApplicationController::class, 'destroy'])
+    Route::delete('/my-applications/{application}', [UserApplicationController::class, 'destroy'])
         ->middleware('verified')
         ->name('applications.destroy');
 

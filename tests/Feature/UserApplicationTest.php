@@ -112,4 +112,3 @@ class UserApplicationTest extends TestCase
         ]);
     }
 }
-

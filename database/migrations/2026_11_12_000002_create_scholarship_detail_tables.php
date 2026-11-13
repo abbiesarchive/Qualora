@@ -10,37 +10,37 @@ return new class extends Migration
     {
         // 1. Enrich scholarships table with details, links, and dates
         Schema::table('scholarships', function (Blueprint $table) {
-            if (!Schema::hasColumn('scholarships', 'provider_logo')) {
+            if (! Schema::hasColumn('scholarships', 'provider_logo')) {
                 $table->string('provider_logo')->nullable()->after('provider');
             }
-            if (!Schema::hasColumn('scholarships', 'application_link')) {
+            if (! Schema::hasColumn('scholarships', 'application_link')) {
                 $table->string('application_link')->nullable()->after('official_url');
             }
-            if (!Schema::hasColumn('scholarships', 'contact_email')) {
+            if (! Schema::hasColumn('scholarships', 'contact_email')) {
                 $table->string('contact_email')->nullable()->after('application_link');
             }
-            if (!Schema::hasColumn('scholarships', 'scholarship_category')) {
+            if (! Schema::hasColumn('scholarships', 'scholarship_category')) {
                 $table->string('scholarship_category')->nullable()->default('Fully Funded')->after('scholarship_type'); // Fully Funded, Partial, etc.
             }
-            if (!Schema::hasColumn('scholarships', 'application_cycle')) {
+            if (! Schema::hasColumn('scholarships', 'application_cycle')) {
                 $table->string('application_cycle')->nullable()->after('year'); // e.g. "2026/2027"
             }
-            if (!Schema::hasColumn('scholarships', 'interview_date')) {
+            if (! Schema::hasColumn('scholarships', 'interview_date')) {
                 $table->date('interview_date')->nullable()->after('deadline');
             }
-            if (!Schema::hasColumn('scholarships', 'announcement_date')) {
+            if (! Schema::hasColumn('scholarships', 'announcement_date')) {
                 $table->date('announcement_date')->nullable()->after('interview_date');
             }
-            if (!Schema::hasColumn('scholarships', 'program_start_date')) {
+            if (! Schema::hasColumn('scholarships', 'program_start_date')) {
                 $table->date('program_start_date')->nullable()->after('announcement_date');
             }
-            if (!Schema::hasColumn('scholarships', 'description')) {
+            if (! Schema::hasColumn('scholarships', 'description')) {
                 $table->text('description')->nullable()->after('benefits');
             }
         });
 
         // 2. scholarship_eligibilities
-        if (!Schema::hasTable('scholarship_eligibilities')) {
+        if (! Schema::hasTable('scholarship_eligibilities')) {
             Schema::create('scholarship_eligibilities', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('scholarship_id')->constrained()->cascadeOnDelete();
@@ -62,7 +62,7 @@ return new class extends Migration
         }
 
         // 3. scholarship_study_requirements
-        if (!Schema::hasTable('scholarship_study_requirements')) {
+        if (! Schema::hasTable('scholarship_study_requirements')) {
             Schema::create('scholarship_study_requirements', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('scholarship_id')->constrained()->cascadeOnDelete();
@@ -79,7 +79,7 @@ return new class extends Migration
         }
 
         // 4. scholarship_language_requirements
-        if (!Schema::hasTable('scholarship_language_requirements')) {
+        if (! Schema::hasTable('scholarship_language_requirements')) {
             Schema::create('scholarship_language_requirements', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('scholarship_id')->constrained()->cascadeOnDelete();
@@ -95,7 +95,7 @@ return new class extends Migration
         }
 
         // 5. scholarship_benefits
-        if (!Schema::hasTable('scholarship_benefits')) {
+        if (! Schema::hasTable('scholarship_benefits')) {
             Schema::create('scholarship_benefits', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('scholarship_id')->constrained()->cascadeOnDelete();
@@ -110,7 +110,7 @@ return new class extends Migration
         }
 
         // 6. scholarship_documents
-        if (!Schema::hasTable('scholarship_documents')) {
+        if (! Schema::hasTable('scholarship_documents')) {
             Schema::create('scholarship_documents', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('scholarship_id')->constrained()->cascadeOnDelete();
@@ -124,7 +124,7 @@ return new class extends Migration
         }
 
         // 7. scholarship_selections
-        if (!Schema::hasTable('scholarship_selections')) {
+        if (! Schema::hasTable('scholarship_selections')) {
             Schema::create('scholarship_selections', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('scholarship_id')->constrained()->cascadeOnDelete();

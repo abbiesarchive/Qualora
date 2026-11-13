@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ScholarshipStudyRequirement extends Model
 {
     protected $table = 'scholarship_study_requirements';
+
     protected $guarded = [];
 
     public function scholarship(): BelongsTo
@@ -15,4 +16,3 @@ class ScholarshipStudyRequirement extends Model
         return $this->belongsTo(Scholarship::class);
     }
 }
-
