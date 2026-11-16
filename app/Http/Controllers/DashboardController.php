@@ -2,65 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Scholarship;
+use App\Models\UserApplication;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    /** Eligibility fields that count toward profile completeness (label => column). */
-    private const PROFILE_FIELDS = [
-        'GPA' => 'gpa',
-        'Semester' => 'semester',
-        'Major' => 'major',
-        'Age' => 'age',
-        'Campus' => 'campus',
-        'Nationality' => 'nationality',
-        'Financial need' => 'has_financial_need',
-    ];
-
     public function __invoke(Request $request): View
     {
         $user = $request->user();
-        $profile = $user->profile;
 
-        // Missing values mean "unknown", so null (not false) is what counts as unfilled.
-        $missing = collect(self::PROFILE_FIELDS)
-            ->filter(fn (string $column) => $profile === null || $profile->{$column} === null || $profile->{$column} === '')
-            ->keys()
-            ->values();
-
-        $total = count(self::PROFILE_FIELDS);
-
-        $saved = $user->savedScholarships()
+        $applications = $user->applications()
             ->with('scholarship')
-            ->get()
-            ->pluck('scholarship')
-            ->filter()
-            ->sortBy(fn (Scholarship $s) => $s->deadline?->timestamp ?? PHP_INT_MAX)
-            ->values();
-
-        $closingSoon = Scholarship::query()
-            ->where('is_active', true)
-            ->whereDate('deadline', '>=', today())
-            ->orderBy('deadline')
-            ->limit(4)
-            ->get();
-
-        $trackedApplications = $user->applications()
-            ->with('scholarship')
+            ->whereHas('scholarship')
             ->orderByDesc('applied_at')
-            ->limit(3)
             ->get();
+
+        $upcomingAnnouncements = $applications
+            ->filter(fn (UserApplication $app) => $app->scholarship->announcement_date?->isFuture())
+            ->sortBy(fn (UserApplication $app) => $app->scholarship->announcement_date);
 
         return view('dashboard', [
             'user' => $user,
-            'hasProfile' => $profile !== null,
-            'missing' => $missing,
-            'completePercent' => (int) round(($total - $missing->count()) / $total * 100),
-            'saved' => $saved,
-            'closingSoon' => $closingSoon,
-            'trackedApplications' => $trackedApplications,
+            'applications' => $applications,
+            'upcomingAnnouncements' => $upcomingAnnouncements,
+            'stats' => [
+                'tracked' => $applications->count(),
+                'submitted' => $applications->whereNotIn('status', ['preparing', 'withdrawn'])->count(),
+                'accepted' => $applications->where('status', 'accepted')->count(),
+                'saved' => $user->savedScholarships()->count(),
+            ],
         ]);
     }
 }

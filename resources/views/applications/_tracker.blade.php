@@ -1,20 +1,3 @@
-<x-app-layout>
-    <x-slot name="title">Pemantauan Lamaran Beasiswa</x-slot>
-
-    <div class="relative overflow-hidden">
-        <div class="absolute inset-0 bg-aura-glow pointer-events-none" aria-hidden="true"></div>
-        <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6">
-            <p class="text-sm font-semibold text-aura-700">Application Tracker & Announcement Countdown</p>
-            <h1 class="mt-1 font-display text-3xl sm:text-4xl font-semibold tracking-tight text-ink">
-                Pemantauan Lamaran
-            </h1>
-            <p class="mt-2 text-ink-soft max-w-2xl">
-                Pantau sisa hari menuju pengumuman dan kelola status beasiswa yang telah kamu daftarkan di website resmi penyelenggara.
-            </p>
-        </div>
-    </div>
-
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         {{-- Flash message --}}
         @if (session('status'))
             <div class="mb-6 rounded-2xl bg-sage-50 border border-sage-200 p-4 text-sm font-medium text-sage-900 flex items-center gap-2">
@@ -249,6 +232,3 @@
                 </div>
             </div>
         @endif
-    </div>
-</x-app-layout>
-

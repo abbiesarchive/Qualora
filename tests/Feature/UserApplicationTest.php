@@ -12,14 +12,13 @@ class UserApplicationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_view_applications_tracker_page(): void
+    public function test_old_applications_url_redirects_to_dashboard(): void
     {
         $user = User::factory()->create();
 
         $this->actingAs($user)
             ->get(route('applications.index'))
-            ->assertOk()
-            ->assertSee('Pemantauan Lamaran');
+            ->assertRedirect(route('dashboard'));
     }
 
     public function test_user_can_track_a_scholarship_application(): void

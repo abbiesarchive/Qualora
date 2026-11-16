@@ -11,7 +11,7 @@
                     </svg>
                     <span>{{ session('status') }}</span>
                 </div>
-                <a href="{{ route('applications.index') }}" class="text-xs font-semibold text-brand-700 hover:underline">Lihat Pemantauan &rarr;</a>
+                <a href="{{ route('dashboard') }}" class="text-xs font-semibold text-brand-700 hover:underline">Lihat Pemantauan &rarr;</a>
             </div>
         @endif
 

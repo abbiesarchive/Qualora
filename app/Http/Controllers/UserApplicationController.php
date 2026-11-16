@@ -6,36 +6,9 @@ use App\Models\Scholarship;
 use App\Models\UserApplication;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class UserApplicationController extends Controller
 {
-    /**
-     * Display all tracked applications with announcement countdowns.
-     */
-    public function index(Request $request): View
-    {
-        $applications = $request->user()->applications()
-            ->with(['scholarship.selections', 'scholarship.eligibility'])
-            ->orderByDesc('applied_at')
-            ->get();
-
-        // Find upcoming announcements
-        $upcomingAnnouncements = $applications->filter(function (UserApplication $app) {
-            $scholarship = $app->scholarship;
-            if (! $scholarship) {
-                return false;
-            }
-
-            return $scholarship->announcement_date && $scholarship->announcement_date->isFuture();
-        })->sortBy(fn (UserApplication $app) => $app->scholarship->announcement_date);
-
-        return view('applications.index', [
-            'applications' => $applications,
-            'upcomingAnnouncements' => $upcomingAnnouncements,
-        ]);
-    }
-
     /**
      * Log a scholarship application tracked by the user.
      */

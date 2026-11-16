@@ -16,33 +16,33 @@ class DashboardTest extends TestCase
         $this->get('/dashboard')->assertRedirect('/login');
     }
 
-    public function test_user_without_profile_sees_empty_states(): void
+    public function test_dashboard_shows_stats_and_empty_tracker(): void
     {
         $user = User::factory()->create(['name' => 'Bee Tan']);
 
         $this->actingAs($user)->get('/dashboard')
             ->assertOk()
             ->assertSee('Welcome, Bee.')
-            ->assertSee('0% filled in')
-            ->assertSee('Add my details')
-            ->assertSee('Nothing saved yet');
+            ->assertSee('Tracked')
+            ->assertSee('Find scholarships')
+            ->assertSee('Belum ada lamaran yang dipantau')
+            ->assertDontSee('Closing soon');
     }
 
-    public function test_closing_soon_lists_open_scholarships_with_official_link(): void
+    public function test_dashboard_lists_tracked_applications(): void
     {
         $user = User::factory()->create();
-        $row = [
-            'provider' => 'Test Foundation', 'level' => 'S1', 'scholarship_type' => 'full',
-            'is_abroad' => false, 'official_url' => 'https://example.org/apply',
-            'last_verified' => today(), 'year' => 2026, 'is_active' => true,
-        ];
-        Scholarship::forceCreate($row + ['name' => 'Open One', 'deadline' => today()->addDays(5)]);
-        Scholarship::forceCreate($row + ['name' => 'Past One', 'deadline' => today()->subDay()]);
+        $scholarship = Scholarship::forceCreate([
+            'name' => 'Tracked One', 'provider' => 'Test Foundation', 'level' => 'S1',
+            'official_url' => 'https://example.org', 'last_verified' => today(),
+            'year' => 2026, 'is_active' => true,
+        ]);
+        $user->applications()->create([
+            'scholarship_id' => $scholarship->id, 'status' => 'accepted', 'applied_at' => today(),
+        ]);
 
         $this->actingAs($user)->get('/dashboard')
             ->assertOk()
-            ->assertSee('Open One')
-            ->assertSee('https://example.org/apply', false)
-            ->assertDontSee('Past One');
+            ->assertSee('Tracked One');
     }
 }

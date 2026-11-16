@@ -23,9 +23,6 @@
                         <x-nav-link :href="route('scholarships.index')" :active="request()->routeIs('scholarships.index', 'scholarships.show')">
                             {{ __('Scholarships') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('applications.index')" :active="request()->routeIs('applications.*')">
-                            {{ __('My Applications') }}
-                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -89,9 +86,6 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('scholarships.index')" :active="request()->routeIs('scholarships.index', 'scholarships.show')">
                     {{ __('Scholarships') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('applications.index')" :active="request()->routeIs('applications.*')">
-                    {{ __('My Applications') }}
                 </x-responsive-nav-link>
             @endif
         </div>
