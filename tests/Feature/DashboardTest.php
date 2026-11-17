@@ -24,9 +24,10 @@ class DashboardTest extends TestCase
         $this->actingAs($user)->get('/dashboard')
             ->assertOk()
             ->assertSee('Welcome, Bee.')
-            ->assertSee('0% filled in')
-            ->assertSee('Add my details')
-            ->assertSee('Nothing saved yet');
+            ->assertSee('0%')
+            ->assertSee('filled in')
+            ->assertSee('Add my skills')
+            ->assertDontSee('Saved scholarships');
     }
 
     public function test_closing_soon_lists_open_scholarships_with_official_link(): void

@@ -33,14 +33,6 @@ class DashboardController extends Controller
 
         $total = count(self::PROFILE_FIELDS);
 
-        $saved = $user->savedScholarships()
-            ->with('scholarship')
-            ->get()
-            ->pluck('scholarship')
-            ->filter()
-            ->sortBy(fn (Scholarship $s) => $s->deadline?->timestamp ?? PHP_INT_MAX)
-            ->values();
-
         $closingSoon = Scholarship::query()
             ->where('is_active', true)
             ->whereDate('deadline', '>=', today())
@@ -68,7 +60,6 @@ class DashboardController extends Controller
             'hasProfile' => $profile !== null,
             'missing' => $missing,
             'completePercent' => (int) round(($total - $missing->count()) / $total * 100),
-            'saved' => $saved,
             'closingSoon' => $closingSoon,
             'applications' => $applications,
             'applicationCounts' => $applicationCounts,
