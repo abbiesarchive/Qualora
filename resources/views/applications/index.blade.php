@@ -15,8 +15,6 @@
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        @include('components.scholarship-tabs', ['filters' => []])
-
         {{-- Flash message --}}
         @if (session('status'))
             <div class="mb-6 rounded-2xl bg-sage-50 border border-sage-200 p-4 text-sm font-medium text-sage-900 flex items-center gap-2">

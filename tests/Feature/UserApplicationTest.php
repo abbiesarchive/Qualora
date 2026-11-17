@@ -19,11 +19,7 @@ class UserApplicationTest extends TestCase
         $this->actingAs($user)
             ->get(route('applications.index'))
             ->assertOk()
-            ->assertSee('Pemantauan Lamaran')
-            ->assertSee('All scholarships')
-            ->assertSee('Saved')
-            ->assertSee('My applications')
-            ->assertSee('aria-current="page"', false);
+            ->assertSee('Pemantauan Lamaran');
     }
 
     public function test_user_can_track_a_scholarship_application(): void
