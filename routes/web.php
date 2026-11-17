@@ -59,6 +59,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/account', [ProfileController::class, 'editAccount'])->name('account.edit');
+    Route::patch('/account', [ProfileController::class, 'updateAccount'])->name('account.update');
+    Route::delete('/account', [ProfileController::class, 'destroy'])->name('account.destroy');
     Route::post('/profile/study-plan', [UserStudyPlanController::class, 'store'])->name('profile.study-plan.store');
     Route::patch('/profile/study-plan/{userStudyPlan}', [UserStudyPlanController::class, 'update'])->name('profile.study-plan.update');
     Route::delete('/profile/study-plan/{userStudyPlan}', [UserStudyPlanController::class, 'destroy'])->name('profile.study-plan.destroy');
