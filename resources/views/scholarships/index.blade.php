@@ -11,26 +11,7 @@
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div class="mb-5 inline-flex rounded-full bg-white p-1 ring-1 ring-cream-dark" aria-label="Scholarship list">
-            <a
-                href="{{ route('scholarships.index') }}"
-                @class([
-                    'rounded-full px-4 py-2 text-sm font-semibold transition',
-                    'bg-aura-gradient text-white shadow-sm' => ($filters['view'] ?? 'all') === 'all',
-                    'text-ink-soft hover:text-brand-700' => ($filters['view'] ?? 'all') !== 'all',
-                ])
-                @if (($filters['view'] ?? 'all') === 'all') aria-current="page" @endif
-            >All scholarships</a>
-            <a
-                href="{{ route('scholarships.index', ['view' => 'saved']) }}"
-                @class([
-                    'rounded-full px-4 py-2 text-sm font-semibold transition',
-                    'bg-aura-gradient text-white shadow-sm' => ($filters['view'] ?? 'all') === 'saved',
-                    'text-ink-soft hover:text-brand-700' => ($filters['view'] ?? 'all') !== 'saved',
-                ])
-                @if (($filters['view'] ?? 'all') === 'saved') aria-current="page" @endif
-            >Saved</a>
-        </div>
+        @include('components.scholarship-tabs', ['filters' => $filters])
 
         <form method="GET" action="{{ route('scholarships.index') }}" class="rounded-2xl bg-white ring-1 ring-cream-dark p-4 sm:p-5">
             <input type="hidden" name="view" value="{{ $filters['view'] ?? 'all' }}">
