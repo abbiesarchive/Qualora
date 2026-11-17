@@ -43,9 +43,6 @@ Route::middleware('auth')->group(function () {
         ->name('scholarships.show');
 
     // User Application Tracking & Announcement Monitoring
-    Route::get('/my-applications', [UserApplicationController::class, 'index'])
-        ->middleware('verified')
-        ->name('applications.index');
     Route::post('/scholarships/{scholarship}/apply-track', [UserApplicationController::class, 'store'])
         ->middleware('verified')
         ->name('applications.store');

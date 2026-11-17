@@ -12,14 +12,50 @@ class UserApplicationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_view_applications_tracker_page(): void
+    public function test_applications_tracker_is_part_of_the_dashboard_and_old_page_is_removed(): void
     {
         $user = User::factory()->create();
 
         $this->actingAs($user)
-            ->get(route('applications.index'))
+            ->get('/my-applications')
+            ->assertNotFound();
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Pemantauan Lamaran');
+            ->assertSee('Pemantauan Lamaran')
+            ->assertDontSee('My Applications');
+    }
+
+    public function test_dashboard_lists_all_tracked_applications(): void
+    {
+        $user = User::factory()->create();
+
+        for ($i = 1; $i <= 5; $i++) {
+            $scholarship = Scholarship::forceCreate([
+                'name' => "Tracked Scholarship {$i}",
+                'provider' => 'Test Provider',
+                'level' => 'S1',
+                'official_url' => 'https://example.org',
+                'year' => 2026,
+                'is_active' => true,
+                'last_verified' => today(),
+            ]);
+
+            UserApplication::create([
+                'user_id' => $user->id,
+                'scholarship_id' => $scholarship->id,
+                'status' => 'submitted',
+                'applied_at' => today(),
+            ]);
+        }
+
+        $response = $this->actingAs($user)->get(route('dashboard'))
+            ->assertOk();
+
+        for ($i = 1; $i <= 5; $i++) {
+            $response->assertSee("Tracked Scholarship {$i}");
+        }
     }
 
     public function test_user_can_track_a_scholarship_application(): void

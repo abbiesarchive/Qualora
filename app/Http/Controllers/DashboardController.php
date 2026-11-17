@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Scholarship;
+use App\Models\UserApplication;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -47,11 +48,15 @@ class DashboardController extends Controller
             ->limit(4)
             ->get();
 
-        $trackedApplications = $user->applications()
+        $applications = $user->applications()
             ->with('scholarship')
             ->orderByDesc('applied_at')
-            ->limit(3)
             ->get();
+        $upcomingAnnouncements = $applications->filter(function (UserApplication $application) {
+            $scholarship = $application->scholarship;
+
+            return $scholarship?->announcement_date && $scholarship->announcement_date->isFuture();
+        })->sortBy(fn (UserApplication $application) => $application->scholarship->announcement_date);
 
         return view('dashboard', [
             'user' => $user,
@@ -60,7 +65,8 @@ class DashboardController extends Controller
             'completePercent' => (int) round(($total - $missing->count()) / $total * 100),
             'saved' => $saved,
             'closingSoon' => $closingSoon,
-            'trackedApplications' => $trackedApplications,
+            'applications' => $applications,
+            'upcomingAnnouncements' => $upcomingAnnouncements,
         ]);
     }
 }
