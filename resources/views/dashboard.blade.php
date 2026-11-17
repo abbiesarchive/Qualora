@@ -45,14 +45,20 @@
                     </ul>
                     <p class="mt-2 text-xs text-ink-soft">Rules we can't check yet stay "unknown", never failed.</p>
                 </div>
-            @else
-                <p class="mt-3 text-sm text-sage-800">All set. Nothing is missing.</p>
             @endif
 
-            <a href="{{ route('profile.edit') }}"
-                class="mt-4 inline-flex items-center justify-center px-5 py-2.5 bg-aura-gradient rounded-full font-semibold text-sm text-white shadow-sm shadow-brand-500/30 hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-white">
-                {{ $hasProfile ? 'Update my skills' : 'Add my skills' }}
-            </a>
+            <div @class([
+                'mt-4 flex justify-end' => $missing->isNotEmpty(),
+                'mt-3 flex flex-wrap items-center justify-between gap-3' => $missing->isEmpty(),
+            ])>
+                @if ($missing->isEmpty())
+                    <p class="text-sm text-sage-800">All set. Nothing is missing.</p>
+                @endif
+                <a href="{{ route('profile.edit') }}"
+                    class="inline-flex items-center justify-center px-5 py-2.5 bg-aura-gradient rounded-full font-semibold text-sm text-white shadow-sm shadow-brand-500/30 hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-white">
+                    {{ $hasProfile ? 'Update my skills' : 'Add my skills' }}
+                </a>
+            </div>
         </section>
 
         <div class="mt-4 grid gap-4 sm:grid-cols-3">
