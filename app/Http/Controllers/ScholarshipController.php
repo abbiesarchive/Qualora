@@ -12,13 +12,21 @@ class ScholarshipController extends Controller
     {
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', 'in:active,inactive'],
             'type' => ['nullable', 'in:full,partial'],
             'category' => ['nullable', 'string', 'max:50'],
             'view' => ['nullable', 'in:all,saved'],
         ]);
 
         $scholarships = Scholarship::query()
+            ->where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('open_date')
+                    ->orWhereDate('open_date', '<=', today());
+            })
+            ->where(function ($query) {
+                $query->whereNull('deadline')
+                    ->orWhereDate('deadline', '>=', today());
+            })
             ->with(['eligibility', 'benefitsList'])
             ->when(($filters['view'] ?? 'all') === 'saved', function ($query) use ($request) {
                 $query->whereHas('savedBy', fn ($query) => $query->where('user_id', $request->user()->getKey()));
@@ -28,9 +36,6 @@ class ScholarshipController extends Controller
                     $query->where('name', 'like', "%{$search}%")
                         ->orWhere('provider', 'like', "%{$search}%");
                 });
-            })
-            ->when($filters['status'] ?? null, function ($query, string $status) {
-                $query->where('is_active', $status === 'active');
             })
             ->when($filters['type'] ?? null, function ($query, string $type) {
                 $query->where('scholarship_type', $type);
@@ -42,7 +47,6 @@ class ScholarshipController extends Controller
                 'savedBy as is_saved' => fn ($query) => $query->where('user_id', $request->user()->getKey()),
                 'applications as is_applied' => fn ($query) => $query->where('user_id', $request->user()->getKey()),
             ])
-            ->orderByDesc('is_active')
             ->orderBy('deadline')
             ->paginate(9)
             ->withQueryString();

@@ -24,23 +24,48 @@ class ScholarshipListTest extends TestCase
             'provider' => 'North Foundation',
             'scholarship_type' => 'full',
             'is_active' => true,
+            'open_date' => today()->subDay(),
+            'deadline' => today(),
         ]);
-        $this->createScholarship([
-            'name' => 'Arts Support Grant',
-            'provider' => 'South Foundation',
-            'scholarship_type' => 'partial',
-            'is_active' => false,
-        ]);
-
         $this->actingAs($user)
-            ->get(route('scholarships.index', ['search' => 'Tech', 'type' => 'full', 'status' => 'active']))
+            ->get(route('scholarships.index', ['search' => 'Tech', 'type' => 'full']))
             ->assertOk()
             ->assertSee($active->name)
             ->assertSee($active->provider)
             ->assertSee('Minimum GPA')
             ->assertSee('Open date')
             ->assertSee('View detail')
-            ->assertDontSee('Arts Support Grant');
+            ->assertDontSee('Inactive');
+    }
+
+    public function test_user_only_sees_scholarships_that_are_active_and_open(): void
+    {
+        $user = User::factory()->create();
+        $this->createScholarship([
+            'name' => 'Currently Open',
+            'open_date' => today(),
+            'deadline' => today(),
+        ]);
+        $this->createScholarship([
+            'name' => 'Inactive Grant',
+            'is_active' => false,
+        ]);
+        $this->createScholarship([
+            'name' => 'Closed Grant',
+            'deadline' => today()->subDay(),
+        ]);
+        $this->createScholarship([
+            'name' => 'Not Yet Open Grant',
+            'open_date' => today()->addDay(),
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('scholarships.index'))
+            ->assertOk()
+            ->assertSee('Currently Open')
+            ->assertDontSee('Inactive Grant')
+            ->assertDontSee('Closed Grant')
+            ->assertDontSee('Not Yet Open Grant');
     }
 
     public function test_user_can_view_scholarship_detail(): void

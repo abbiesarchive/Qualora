@@ -34,7 +34,7 @@
 
         <form method="GET" action="{{ route('scholarships.index') }}" class="rounded-2xl bg-white ring-1 ring-cream-dark p-4 sm:p-5">
             <input type="hidden" name="view" value="{{ $filters['view'] ?? 'all' }}">
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <label class="sm:col-span-2">
                     <span class="block text-sm font-medium text-ink mb-1">Search scholarships</span>
                     <input
@@ -55,21 +55,13 @@
                     </select>
                 </label>
 
-                <label>
-                    <span class="block text-sm font-medium text-ink mb-1">Status</span>
-                    <select name="status" class="w-full rounded-xl border-cream-dark bg-white text-ink focus:border-brand-500 focus:ring-brand-500">
-                        <option value="">All statuses</option>
-                        <option value="active" @selected(($filters['status'] ?? '') === 'active')>Active</option>
-                        <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Inactive</option>
-                    </select>
-                </label>
             </div>
 
             <div class="mt-4 flex flex-wrap items-center gap-3">
                 <button type="submit" class="inline-flex items-center justify-center rounded-full bg-aura-gradient px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
                     Search
                 </button>
-                @if (! empty($filters['search']) || ! empty($filters['status']) || ! empty($filters['type']))
+                @if (! empty($filters['search']) || ! empty($filters['type']))
                     <a href="{{ route('scholarships.index', ($filters['view'] ?? 'all') === 'saved' ? ['view' => 'saved'] : []) }}" class="text-sm font-semibold text-brand-700 hover:text-brand-900">Clear filters</a>
                 @endif
                 <p class="text-sm text-ink-soft sm:ms-auto">
@@ -93,11 +85,7 @@
                                         {{ $scholarship->scholarship_category }}
                                     </span>
                                 @endif
-                                <span @class([
-                                    'rounded-full px-2.5 py-0.5 text-[11px] font-semibold',
-                                    'bg-sage-100 text-sage-800' => $scholarship->is_active,
-                                    'bg-clay-100 text-clay-800' => ! $scholarship->is_active,
-                                ])>{{ $scholarship->is_active ? 'Active' : 'Closed' }}</span>
+                                <span class="rounded-full bg-sage-100 px-2.5 py-0.5 text-[11px] font-semibold text-sage-800">Active</span>
                             </div>
                             <div class="shrink-0 flex items-center">
                                 <x-scholarship-bookmark :scholarship="$scholarship" :is-saved="$scholarship->is_saved" />
