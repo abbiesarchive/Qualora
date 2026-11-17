@@ -52,6 +52,11 @@ class DashboardController extends Controller
             ->with('scholarship')
             ->orderByDesc('applied_at')
             ->get();
+        $applicationCounts = [
+            'total' => $applications->count(),
+            'accepted' => $applications->where('status', 'accepted')->count(),
+            'rejected' => $applications->where('status', 'rejected')->count(),
+        ];
         $upcomingAnnouncements = $applications->filter(function (UserApplication $application) {
             $scholarship = $application->scholarship;
 
@@ -66,6 +71,7 @@ class DashboardController extends Controller
             'saved' => $saved,
             'closingSoon' => $closingSoon,
             'applications' => $applications,
+            'applicationCounts' => $applicationCounts,
             'upcomingAnnouncements' => $upcomingAnnouncements,
         ]);
     }

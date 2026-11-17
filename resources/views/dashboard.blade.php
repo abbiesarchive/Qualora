@@ -31,6 +31,23 @@
         </div>
     </div>
 
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+        <div class="grid gap-4 sm:grid-cols-3">
+            <section class="rounded-2xl bg-white ring-1 ring-cream-dark p-5" aria-labelledby="applications-total-heading">
+                <h2 id="applications-total-heading" class="text-sm font-semibold text-ink-soft">Total Lamaran</h2>
+                <p class="mt-2 font-display text-3xl font-semibold text-brand-700">{{ $applicationCounts['total'] }}</p>
+            </section>
+            <section class="rounded-2xl bg-white ring-1 ring-cream-dark p-5" aria-labelledby="applications-accepted-heading">
+                <h2 id="applications-accepted-heading" class="text-sm font-semibold text-ink-soft">Diterima</h2>
+                <p class="mt-2 font-display text-3xl font-semibold text-sage-800">{{ $applicationCounts['accepted'] }}</p>
+            </section>
+            <section class="rounded-2xl bg-white ring-1 ring-cream-dark p-5" aria-labelledby="applications-rejected-heading">
+                <h2 id="applications-rejected-heading" class="text-sm font-semibold text-ink-soft">Ditolak</h2>
+                <p class="mt-2 font-display text-3xl font-semibold text-clay-700">{{ $applicationCounts['rejected'] }}</p>
+            </section>
+        </div>
+    </div>
+
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         @include('applications.tracker')
 

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Scholarship;
 use App\Models\User;
+use App\Models\UserApplication;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,5 +45,39 @@ class DashboardTest extends TestCase
             ->assertSee('Open One')
             ->assertSee('https://example.org/apply', false)
             ->assertDontSee('Past One');
+    }
+
+    public function test_dashboard_shows_total_accepted_and_rejected_application_counts(): void
+    {
+        $user = User::factory()->create();
+        $base = [
+            'provider' => 'Test Foundation',
+            'level' => 'S1',
+            'official_url' => 'https://example.org/apply',
+            'year' => 2026,
+            'is_active' => true,
+            'last_verified' => today(),
+        ];
+
+        foreach (['submitted', 'accepted', 'rejected', 'rejected'] as $index => $status) {
+            $scholarship = Scholarship::forceCreate($base + ['name' => "Application {$index}"]);
+            UserApplication::create([
+                'user_id' => $user->id,
+                'scholarship_id' => $scholarship->id,
+                'status' => $status,
+                'applied_at' => today(),
+            ]);
+        }
+
+        $this->actingAs($user)->get('/dashboard')
+            ->assertOk()
+            ->assertSee('Total Lamaran')
+            ->assertSee('Diterima')
+            ->assertSee('Ditolak')
+            ->assertViewHas('applicationCounts', [
+                'total' => 4,
+                'accepted' => 1,
+                'rejected' => 2,
+            ]);
     }
 }
