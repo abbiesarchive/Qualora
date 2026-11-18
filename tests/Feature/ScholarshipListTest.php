@@ -32,6 +32,9 @@ class ScholarshipListTest extends TestCase
             ->assertOk()
             ->assertSee($active->name)
             ->assertSee($active->provider)
+            ->assertSee('Search scholarships')
+            ->assertSee('Location')
+            ->assertSee('Apply')
             ->assertSee('Minimum GPA')
             ->assertSee('Open date')
             ->assertSee('View detail')
@@ -123,6 +126,11 @@ class ScholarshipListTest extends TestCase
             ->get(route('scholarships.show', $scholarship))
             ->assertOk()
             ->assertSee('Merit Award')
+            ->assertSee('Back to scholarship list')
+            ->assertSee('Eligibility Check')
+            ->assertSee('Application Document Checklist')
+            ->assertSee('Track My Application')
+            ->assertSee('Save to tracker')
             ->assertSee('Visit official website')
             ->assertSee('https://example.org/apply', false);
     }

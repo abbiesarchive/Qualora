@@ -141,44 +141,44 @@
 
                         {{-- 3. Description / Subtitle (Fixed height) --}}
                         <p class="mt-1 text-xs text-ink-soft leading-relaxed line-clamp-2 min-h-[2.25rem]">
-                            {{ $scholarship->description ?? $scholarship->benefits ?? 'Program beasiswa pendidikan tinggi untuk mahasiswa S1 aktif berprestasi.' }}
+                            {{ $scholarship->description ?? $scholarship->benefits ?? 'A higher education scholarship program for outstanding undergraduate students.' }}
                         </p>
 
                         {{-- 4. Full-width divider line --}}
                         <hr class="my-4 border-cream-dark">
 
-                        {{-- 5. Countdown text ("25 hari lagi") --}}
+                        {{-- 5. Countdown text ("25 days remaining") --}}
                         <div class="min-h-[1.75rem] flex items-center">
                             <span class="font-display text-lg font-bold {{ ($scholarship->days_until_deadline !== null && $scholarship->days_until_deadline <= 7) ? 'text-clay-600' : 'text-brand-700' }}">
                                 @if ($scholarship->days_until_deadline !== null)
                                     @if ($scholarship->days_until_deadline > 0)
-                                        {{ $scholarship->days_until_deadline }} hari lagi
+                                        {{ $scholarship->days_until_deadline }} days remaining
                                     @elseif ($scholarship->days_until_deadline === 0)
-                                        Hari ini batas akhir pendaftaran!
+                                        Application deadline is today!
                                     @else
-                                        Pendaftaran telah ditutup
+                                        Applications are closed
                                     @endif
                                 @else
-                                    Pendaftaran Aktif
+                                    Applications are open
                                 @endif
                             </span>
                         </div>
 
-                        {{-- 6. Two columns: Batas (Left) & Announcement (Right) --}}
+                        {{-- 6. Two columns: Deadline (Left) & Announcement (Right) --}}
                         <div class="mt-3 grid grid-cols-2 gap-3 min-h-[3.25rem]">
                             <div>
-                                <p class="text-[11px] font-bold text-ink-soft uppercase tracking-wider">Batas</p>
+                                <p class="text-[11px] font-bold text-ink-soft uppercase tracking-wider">Deadline</p>
                                 <p class="mt-0.5 text-xs font-bold text-ink truncate">
-                                    {{ $scholarship->deadline?->format('d M Y') ?? 'Tidak ditentukan' }}
+                                    {{ $scholarship->deadline?->format('d M Y') ?? 'Not specified' }}
                                 </p>
                             </div>
                             <div>
                                 <p class="text-[11px] font-bold text-ink-soft uppercase tracking-wider">Announcement</p>
                                 <p class="mt-0.5 text-xs font-bold text-ink truncate">
-                                    {{ $scholarship->announcement_date?->format('d M Y') ?? 'Akan diumumkan' }}
+                                    {{ $scholarship->announcement_date?->format('d M Y') ?? 'To be announced' }}
                                 </p>
                                 @if ($scholarship->days_until_announcement !== null && $scholarship->days_until_announcement > 0)
-                                    <span class="text-[10px] font-medium text-aura-700">({{ $scholarship->days_until_announcement }} hari lagi)</span>
+                                    <span class="text-[10px] font-medium text-aura-700">({{ $scholarship->days_until_announcement }} days remaining)</span>
                                 @endif
                             </div>
                         </div>
@@ -189,7 +189,7 @@
                             Open date: {{ $scholarship->open_date?->format('j M Y') ?? 'N/A' }}
                         </div>
 
-                        {{-- 7. Two pill buttons side-by-side locked to the bottom: Web resmi & Daftar --}}
+                        {{-- 7. Two pill buttons side-by-side locked to the bottom: Official website & Apply --}}
                         <div class="mt-auto pt-5 grid grid-cols-2 gap-3">
                             <a
                                 href="{{ $scholarship->apply_url }}"
@@ -197,7 +197,7 @@
                                 rel="noopener noreferrer"
                                 class="h-11 rounded-full border-2 border-brand-600 bg-white px-3 font-semibold text-xs text-brand-700 hover:bg-brand-50 flex items-center justify-center gap-1.5 transition shadow-sm"
                             >
-                                <span>Web resmi</span>
+                                <span>Official website</span>
                                 <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                 </svg>
@@ -207,7 +207,7 @@
                                 href="{{ route('scholarships.show', $scholarship) }}"
                                 class="h-11 rounded-full bg-aura-gradient px-3 font-semibold text-xs text-white hover:brightness-105 flex items-center justify-center transition shadow"
                             >
-                                <span>Daftar</span>
+                                <span>Apply</span>
                                 <span class="sr-only">View detail</span>
                             </a>
                         </div>

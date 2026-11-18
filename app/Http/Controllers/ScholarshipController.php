@@ -94,9 +94,9 @@ class ScholarshipController extends Controller
             if ($eligibility->min_gpa !== null) {
                 $meets = $profile?->gpa !== null && $profile->gpa >= $eligibility->min_gpa;
                 $evaluations[] = [
-                    'label' => 'Indeks Prestasi Kumulatif (IPK)',
-                    'requirement' => "Minimal {$eligibility->min_gpa}",
-                    'user_value' => $profile?->gpa ? number_format($profile->gpa, 2) : 'Belum diisi',
+                    'label' => 'Cumulative GPA',
+                    'requirement' => "Minimum {$eligibility->min_gpa}",
+                    'user_value' => $profile?->gpa ? number_format($profile->gpa, 2) : 'Not provided',
                     'status' => $profile?->gpa === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
                 ];
             }
@@ -106,9 +106,9 @@ class ScholarshipController extends Controller
                 $max = $eligibility->max_semester ?? 14;
                 $meets = $profile?->semester !== null && $profile->semester >= $min && $profile->semester <= $max;
                 $evaluations[] = [
-                    'label' => 'Semester Aktif',
-                    'requirement' => "Semester {$min} s/d {$max}",
-                    'user_value' => $profile?->semester ? "Semester {$profile->semester}" : 'Belum diisi',
+                    'label' => 'Current semester',
+                    'requirement' => "Semester {$min} to {$max}",
+                    'user_value' => $profile?->semester ? "Semester {$profile->semester}" : 'Not provided',
                     'status' => $profile?->semester === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
                 ];
             }
@@ -116,9 +116,9 @@ class ScholarshipController extends Controller
             if ($eligibility->max_age !== null) {
                 $meets = $profile?->age !== null && $profile->age <= $eligibility->max_age;
                 $evaluations[] = [
-                    'label' => 'Batas Usia Maksimal',
-                    'requirement' => "Maksimal {$eligibility->max_age} tahun",
-                    'user_value' => $profile?->age ? "{$profile->age} tahun" : 'Belum diisi',
+                    'label' => 'Maximum age',
+                    'requirement' => "Up to {$eligibility->max_age} years",
+                    'user_value' => $profile?->age ? "{$profile->age} years" : 'Not provided',
                     'status' => $profile?->age === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
                 ];
             }
@@ -126,9 +126,9 @@ class ScholarshipController extends Controller
             if ($eligibility->requires_financial_need) {
                 $meets = $profile?->has_financial_need === true;
                 $evaluations[] = [
-                    'label' => 'Bantuan Ekonomi / Finansial',
-                    'requirement' => 'Memerlukan bantuan finansial (Need-based)',
-                    'user_value' => $profile?->has_financial_need ? 'Ya (Membutuhkan)' : ($profile?->has_financial_need === false ? 'Tidak' : 'Belum diisi'),
+                    'label' => 'Financial need',
+                    'requirement' => 'Requires financial assistance',
+                    'user_value' => $profile?->has_financial_need ? 'Yes (Needs assistance)' : ($profile?->has_financial_need === false ? 'No' : 'Not provided'),
                     'status' => $profile?->has_financial_need === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
                 ];
             }
@@ -136,9 +136,9 @@ class ScholarshipController extends Controller
             if ($eligibility->min_university_accreditation) {
                 $meets = $profile?->university_accreditation !== null && strcasecmp($profile->university_accreditation, $eligibility->min_university_accreditation) <= 0;
                 $evaluations[] = [
-                    'label' => 'Akreditasi Kampus',
-                    'requirement' => "Minimal akreditasi {$eligibility->min_university_accreditation}",
-                    'user_value' => $profile?->university_accreditation ? "Akreditasi {$profile->university_accreditation}" : 'Belum diisi',
+                    'label' => 'University accreditation',
+                    'requirement' => "Minimum accreditation: {$eligibility->min_university_accreditation}",
+                    'user_value' => $profile?->university_accreditation ? "Accreditation {$profile->university_accreditation}" : 'Not provided',
                     'status' => $profile?->university_accreditation === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
                 ];
             }
