@@ -23,7 +23,7 @@ class UserApplicationTest extends TestCase
         $this->actingAs($user)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Pemantauan Lamaran')
+            ->assertSee('Application Tracker')
             ->assertDontSee('My Applications');
     }
 

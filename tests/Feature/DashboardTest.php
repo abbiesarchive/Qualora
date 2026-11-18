@@ -72,9 +72,9 @@ class DashboardTest extends TestCase
 
         $this->actingAs($user)->get('/dashboard')
             ->assertOk()
-            ->assertSee('Total Lamaran')
-            ->assertSee('Diterima')
-            ->assertSee('Ditolak')
+            ->assertSee('Total applications')
+            ->assertSee('Accepted')
+            ->assertSee('Not selected')
             ->assertViewHas('applicationCounts', [
                 'total' => 4,
                 'accepted' => 1,

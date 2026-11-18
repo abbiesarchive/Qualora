@@ -64,17 +64,17 @@
         <div class="mt-4 grid gap-4 sm:grid-cols-3">
             <section class="flex min-h-[8rem] flex-col justify-between rounded-2xl border-t-4 border-brand-500 bg-white p-5 ring-1 ring-cream-dark shadow-sm"
                 aria-labelledby="applications-total-heading">
-                <h2 id="applications-total-heading" class="text-sm font-semibold text-ink-soft">Total Lamaran</h2>
+                <h2 id="applications-total-heading" class="text-sm font-semibold text-ink-soft">Total applications</h2>
                 <p class="font-display text-4xl font-semibold text-brand-700">{{ $applicationCounts['total'] }}</p>
             </section>
             <section class="flex min-h-[8rem] flex-col justify-between rounded-2xl border-t-4 border-sage-500 bg-white p-5 ring-1 ring-cream-dark shadow-sm"
                 aria-labelledby="applications-accepted-heading">
-                <h2 id="applications-accepted-heading" class="text-sm font-semibold text-ink-soft">Diterima</h2>
+                <h2 id="applications-accepted-heading" class="text-sm font-semibold text-ink-soft">Accepted</h2>
                 <p class="font-display text-4xl font-semibold text-sage-800">{{ $applicationCounts['accepted'] }}</p>
             </section>
             <section class="flex min-h-[8rem] flex-col justify-between rounded-2xl border-t-4 border-clay-500 bg-white p-5 ring-1 ring-cream-dark shadow-sm"
                 aria-labelledby="applications-rejected-heading">
-                <h2 id="applications-rejected-heading" class="text-sm font-semibold text-ink-soft">Ditolak</h2>
+                <h2 id="applications-rejected-heading" class="text-sm font-semibold text-ink-soft">Not selected</h2>
                 <p class="font-display text-4xl font-semibold text-clay-700">{{ $applicationCounts['rejected'] }}</p>
             </section>
         </div>
