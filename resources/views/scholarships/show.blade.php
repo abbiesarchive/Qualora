@@ -11,7 +11,7 @@
                     </svg>
                     <span>{{ session('status') }}</span>
                 </div>
-                <a href="{{ route('applications.index') }}" class="text-xs font-semibold text-brand-700 hover:underline">Lihat Pemantauan &rarr;</a>
+                <a href="{{ route('dashboard') }}" class="text-xs font-semibold text-brand-700 hover:underline">View application tracker &rarr;</a>
             </div>
         @endif
 
@@ -21,7 +21,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                <span>Kembali ke daftar beasiswa</span>
+                <span>Back to scholarship list</span>
             </a>
         </div>
 
@@ -62,65 +62,65 @@
 
             {{-- 3. Short description / subtitle --}}
             <p class="mt-2 text-sm text-ink-soft leading-relaxed">
-                {{ $scholarship->description ?? $scholarship->benefits ?? 'Program beasiswa pendidikan tinggi untuk mahasiswa S1 berprestasi.' }}
+                {{ $scholarship->description ?? $scholarship->benefits ?? 'A higher education scholarship program for outstanding undergraduate students.' }}
             </p>
 
             {{-- 4. Full-width divider line --}}
             <hr class="my-6 border-cream-dark">
 
-            {{-- 5. Countdown text ("25 hari lagi") --}}
+            {{-- 5. Countdown text ("25 days remaining") --}}
             <div>
                 <p class="font-display text-2xl sm:text-3xl font-bold {{ ($scholarship->days_until_deadline !== null && $scholarship->days_until_deadline <= 7) ? 'text-clay-600' : 'text-brand-700' }}">
                     @if ($scholarship->days_until_deadline !== null)
                         @if ($scholarship->days_until_deadline > 0)
-                            {{ $scholarship->days_until_deadline }} hari lagi
+                            {{ $scholarship->days_until_deadline }} days remaining
                         @elseif ($scholarship->days_until_deadline === 0)
-                            Hari ini batas akhir pendaftaran!
+                            Application deadline is today!
                         @else
-                            Pendaftaran telah ditutup
+                            Applications are closed
                         @endif
                     @else
-                        Pendaftaran Aktif
+                        Applications are open
                     @endif
                 </p>
             </div>
 
-            {{-- 6. Two columns: Batas (Left) & Announcement (Right) --}}
+            {{-- 6. Two columns: Deadline (Left) & Announcement (Right) --}}
             <div class="mt-4 grid grid-cols-2 gap-6">
                 <div>
-                    <p class="text-xs font-bold text-ink-soft uppercase tracking-wider">Batas</p>
+                    <p class="text-xs font-bold text-ink-soft uppercase tracking-wider">Deadline</p>
                     <p class="mt-1 font-bold text-base sm:text-lg text-ink">
-                        {{ $scholarship->deadline?->format('d M Y') ?? 'Tidak ditentukan' }}
+                        {{ $scholarship->deadline?->format('d M Y') ?? 'Not specified' }}
                     </p>
                 </div>
                 <div>
                     <p class="text-xs font-bold text-ink-soft uppercase tracking-wider">Announcement</p>
                     <p class="mt-1 font-bold text-base sm:text-lg text-ink">
-                        {{ $scholarship->announcement_date?->format('d M Y') ?? 'Akan diumumkan' }}
+                        {{ $scholarship->announcement_date?->format('d M Y') ?? 'To be announced' }}
                     </p>
                     @if ($scholarship->days_until_announcement !== null && $scholarship->days_until_announcement > 0)
-                        <span class="text-xs font-medium text-aura-700">({{ $scholarship->days_until_announcement }} hari lagi)</span>
+                        <span class="text-xs font-medium text-aura-700">({{ $scholarship->days_until_announcement }} days remaining)</span>
                     @endif
                 </div>
             </div>
 
-            {{-- 7. Two pill buttons side-by-side at the bottom: Web resmi & Daftar --}}
+            {{-- 7. Two pill buttons side-by-side at the bottom: Official website & Apply --}}
             <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {{-- Button 1: Web resmi --}}
+                {{-- Button 1: Official website --}}
                 <a
                     href="{{ $scholarship->apply_url }}"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="h-12 rounded-full border-2 border-brand-600 bg-white px-6 font-semibold text-sm sm:text-base text-brand-700 hover:bg-brand-50 flex items-center justify-center gap-2 transition shadow-sm"
                 >
-                    <span>Web resmi</span>
+                    <span>Official website</span>
                     <span class="sr-only">Visit official website</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                 </a>
 
-                {{-- Button 2: Daftar --}}
+                {{-- Button 2: Apply --}}
                 @if ($userApplication)
                     <button
                         type="button"
@@ -128,7 +128,7 @@
                         class="h-12 rounded-full bg-brand-50 border-2 border-brand-500 px-6 font-semibold text-sm sm:text-base text-brand-800 hover:bg-brand-100 flex items-center justify-center gap-2 transition shadow-sm"
                     >
                         <span>Status: {{ $userApplication->status_label }}</span>
-                        <span class="text-xs underline text-brand-600">(Ubah)</span>
+                        <span class="text-xs underline text-brand-600">(Update)</span>
                     </button>
                 @else
                     <button
@@ -136,7 +136,7 @@
                         @click="openTrackModal = true"
                         class="h-12 rounded-full bg-aura-gradient px-6 font-semibold text-sm sm:text-base text-white hover:brightness-105 flex items-center justify-center gap-2 transition shadow-md"
                     >
-                        <span>Daftar</span>
+                        <span>Apply</span>
                     </button>
                 @endif
             </div>
@@ -192,10 +192,10 @@
             </ul>
         </section>
 
-        {{-- 2. FASILITAS & BENEFIT --}}
+        {{-- 2. SCHOLARSHIP BENEFITS --}}
         @if ($scholarship->benefitsList->isNotEmpty() || $scholarship->benefits)
             <section class="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm">
-                <h2 class="font-display text-xl font-bold text-ink mb-4">Manfaat & Cakupan Beasiswa</h2>
+                <h2 class="font-display text-xl font-bold text-ink mb-4">Scholarship Benefits & Coverage</h2>
                 @if ($scholarship->benefitsList->isNotEmpty())
                     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($scholarship->benefitsList as $benefit)
@@ -221,12 +221,12 @@
             </section>
         @endif
 
-        {{-- 3. CHECKLIST DOKUMEN PERSYARATAN --}}
+        {{-- 3. REQUIRED DOCUMENT CHECKLIST --}}
         <section class="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm" x-data="{ checkedDocs: {} }">
             <div class="flex items-center justify-between mb-2">
                 <div>
-                    <h2 class="font-display text-xl font-bold text-ink">Checklist Dokumen Pendaftaran</h2>
-                    <p class="text-xs text-ink-soft">Centang dokumen yang sudah siap di perangkat kamu sebelum apply ke website resmi.</p>
+                    <h2 class="font-display text-xl font-bold text-ink">Application Document Checklist</h2>
+                    <p class="text-xs text-ink-soft">Check off documents you have ready before applying on the official website.</p>
                 </div>
             </div>
 
@@ -245,7 +245,7 @@
                                         {{ $doc->document_name }}
                                     </span>
                                     @if ($doc->is_required)
-                                        <span class="rounded bg-clay-50 px-1.5 py-0.5 text-[10px] font-bold text-clay-700">Wajib</span>
+                                        <span class="rounded bg-clay-50 px-1.5 py-0.5 text-[10px] font-bold text-clay-700">Required</span>
                                     @endif
                                 </div>
                                 @if ($doc->document_description)
@@ -270,15 +270,15 @@
                     @endforeach
                 </ul>
             @else
-                <p class="text-sm text-ink-soft mt-3">Silakan periksa daftar dokumen lengkap pada website resmi penyelenggara.</p>
+                <p class="text-sm text-ink-soft mt-3">Please check the organizer's official website for the complete list of required documents.</p>
             @endif
         </section>
 
-        {{-- 4. TAHAPAN SELEKSI & TIMELINE --}}
+        {{-- 4. SELECTION PROCESS & TIMELINE --}}
         @if ($scholarship->selections->isNotEmpty())
             <section class="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm">
-                <h2 class="font-display text-xl font-bold text-ink mb-1">Tahapan Seleksi & Pengumuman</h2>
-                <p class="text-xs text-ink-soft mb-6">Alur tahapan pendaftaran hingga penetapan penerima beasiswa.</p>
+                <h2 class="font-display text-xl font-bold text-ink mb-1">Selection Process & Timeline</h2>
+                <p class="text-xs text-ink-soft mb-6">The application process through the announcement of scholarship recipients.</p>
 
                 <div class="relative pl-6 border-l-2 border-brand-200 space-y-6">
                     @foreach ($scholarship->selections as $stage)
@@ -303,7 +303,7 @@
             </section>
         @endif
 
-        {{-- MODAL: CATAT PENDAFTARAN SAYA --}}
+        {{-- MODAL: TRACK MY APPLICATION --}}
         <div
             x-show="openTrackModal"
             x-cloak
@@ -324,7 +324,7 @@
                     class="relative transform overflow-hidden rounded-3xl bg-white p-6 text-left shadow-xl transition-all sm:w-full sm:max-w-lg"
                 >
                     <div class="flex items-center justify-between pb-3 border-b border-cream-dark">
-                        <h3 class="font-display text-lg font-bold text-ink">Catat Pendaftaran Saya</h3>
+                        <h3 class="font-display text-lg font-bold text-ink">Track My Application</h3>
                         <button type="button" @click="openTrackModal = false" class="text-ink-soft hover:text-ink">
                             &times;
                         </button>
@@ -334,18 +334,18 @@
                         @csrf
 
                         <div>
-                            <label class="block text-xs font-semibold text-ink mb-1">Status Lamaran Saat Ini</label>
+                            <label class="block text-xs font-semibold text-ink mb-1">Current Application Status</label>
                             <select name="status" class="w-full rounded-xl border-cream-dark text-sm focus:border-brand-500 focus:ring-brand-500">
-                                <option value="submitted" @selected(($userApplication->status ?? '') === 'submitted')>Sudah Submit di Web Resmi</option>
-                                <option value="preparing" @selected(($userApplication->status ?? '') === 'preparing')>Sedang Menyiapkan Berkas</option>
-                                <option value="interview" @selected(($userApplication->status ?? '') === 'interview')>Lolos ke Tahap Wawancara</option>
-                                <option value="accepted" @selected(($userApplication->status ?? '') === 'accepted')>Lolos / Diterima Beasiswa</option>
-                                <option value="rejected" @selected(($userApplication->status ?? '') === 'rejected')>Belum Berhasil</option>
+                                <option value="submitted" @selected(($userApplication->status ?? '') === 'submitted')>Submitted on the official website</option>
+                                <option value="preparing" @selected(($userApplication->status ?? '') === 'preparing')>Preparing documents</option>
+                                <option value="interview" @selected(($userApplication->status ?? '') === 'interview')>Advanced to interview</option>
+                                <option value="accepted" @selected(($userApplication->status ?? '') === 'accepted')>Accepted for the scholarship</option>
+                                <option value="rejected" @selected(($userApplication->status ?? '') === 'rejected')>Not selected</option>
                             </select>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-ink mb-1">Tanggal Submit di Web Resmi</label>
+                            <label class="block text-xs font-semibold text-ink mb-1">Date submitted on the official website</label>
                             <input
                                 type="date"
                                 name="applied_at"
@@ -356,22 +356,22 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-ink mb-1">Nomor Registrasi / ID Pendaftaran (Opsional)</label>
+                            <label class="block text-xs font-semibold text-ink mb-1">Registration number / Application ID (Optional)</label>
                             <input
                                 type="text"
                                 name="registration_number"
-                                placeholder="Cth: BU-2026-98124"
+                                placeholder="e.g. BU-2026-98124"
                                 value="{{ old('registration_number', $userApplication?->registration_number ?? '') }}"
                                 class="w-full rounded-xl border-cream-dark text-sm focus:border-brand-500 focus:ring-brand-500"
                             >
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-ink mb-1">Catatan Pribadi (Opsional)</label>
+                            <label class="block text-xs font-semibold text-ink mb-1">Personal notes (Optional)</label>
                             <textarea
                                 name="notes"
                                 rows="3"
-                                placeholder="Cth: Akun terdaftar dengan email kampus, interview dijadwalkan tanggal 15 Des jam 10 via Zoom."
+                                placeholder="e.g. Registered with my university email; interview scheduled for Dec 15 at 10 AM via Zoom."
                                 class="w-full rounded-xl border-cream-dark text-sm focus:border-brand-500 focus:ring-brand-500"
                             >{{ old('notes', $userApplication?->notes ?? '') }}</textarea>
                         </div>
@@ -382,13 +382,13 @@
                                 @click="openTrackModal = false"
                                 class="rounded-full px-4 py-2 text-xs font-semibold text-ink-soft hover:bg-cream"
                             >
-                                Batal
+                                Cancel
                             </button>
                             <button
                                 type="submit"
                                 class="rounded-full bg-aura-gradient px-5 py-2 text-xs font-semibold text-white shadow hover:brightness-105"
                             >
-                                Simpan ke Pemantauan
+                                Save to tracker
                             </button>
                         </div>
                     </form>

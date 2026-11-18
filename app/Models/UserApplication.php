@@ -31,12 +31,12 @@ class UserApplication extends Model
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'preparing' => 'Persiapan Berkas',
-            'submitted' => 'Sudah Submit di Web Resmi',
-            'interview' => 'Tahap Wawancara',
-            'accepted' => 'Lolos / Diterima',
-            'rejected' => 'Belum Berhasil',
-            'withdrawn' => 'Mengundurkan Diri',
+            'preparing' => 'Preparing documents',
+            'submitted' => 'Submitted on the official website',
+            'interview' => 'Interview stage',
+            'accepted' => 'Accepted',
+            'rejected' => 'Not selected',
+            'withdrawn' => 'Withdrawn',
             default => ucfirst($this->status),
         };
     }

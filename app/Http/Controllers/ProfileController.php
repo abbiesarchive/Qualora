@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AccountUpdateRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Profile;
 use Illuminate\Http\RedirectResponse;
@@ -30,6 +31,27 @@ class ProfileController extends Controller
             'languages' => $profile?->languages()->orderBy('language_name')->get() ?? collect(),
             'experiences' => $profile?->experiences()->orderByDesc('start_date')->orderBy('experience_name')->get() ?? collect(),
         ]);
+    }
+
+    public function editAccount(Request $request): View
+    {
+        return view('account.edit', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    public function updateAccount(AccountUpdateRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+        $user->fill($request->validated());
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        return Redirect::route('account.edit')->with('status', 'account-updated');
     }
 
     /**

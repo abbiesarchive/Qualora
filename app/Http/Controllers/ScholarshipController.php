@@ -13,13 +13,29 @@ class ScholarshipController extends Controller
     {
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', 'in:active,inactive'],
             'type' => ['nullable', 'in:full,partial'],
             'category' => ['nullable', 'string', 'max:50'],
+            'location' => ['nullable', 'in:domestic,abroad'],
             'view' => ['nullable', 'in:all,saved'],
         ]);
 
+        $closingSoon = Scholarship::query()
+            ->where('is_active', true)
+            ->whereDate('deadline', '>=', today())
+            ->orderBy('deadline')
+            ->limit(4)
+            ->get();
+
         $scholarships = Scholarship::query()
+            ->where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('open_date')
+                    ->orWhereDate('open_date', '<=', today());
+            })
+            ->where(function ($query) {
+                $query->whereNull('deadline')
+                    ->orWhereDate('deadline', '>=', today());
+            })
             ->with(['eligibility', 'benefitsList'])
             ->when(($filters['view'] ?? 'all') === 'saved', function ($query) use ($request) {
                 $query->whereHas('savedBy', fn ($query) => $query->where('user_id', $request->user()->getKey()));
@@ -30,20 +46,19 @@ class ScholarshipController extends Controller
                         ->orWhere('provider', 'like', "%{$search}%");
                 });
             })
-            ->when($filters['status'] ?? null, function ($query, string $status) {
-                $query->where('is_active', $status === 'active');
-            })
             ->when($filters['type'] ?? null, function ($query, string $type) {
                 $query->where('scholarship_type', $type);
             })
             ->when($filters['category'] ?? null, function ($query, string $category) {
                 $query->where('scholarship_category', $category);
             })
+            ->when($filters['location'] ?? null, function ($query, string $location) {
+                $query->where('is_abroad', $location === 'abroad');
+            })
             ->withExists([
                 'savedBy as is_saved' => fn ($query) => $query->where('user_id', $request->user()->getKey()),
                 'applications as is_applied' => fn ($query) => $query->where('user_id', $request->user()->getKey()),
             ])
-            ->orderByDesc('is_active')
             ->orderBy('deadline')
             ->paginate(9)
             ->withQueryString();
@@ -51,6 +66,7 @@ class ScholarshipController extends Controller
         return view('scholarships.index', [
             'scholarships' => $scholarships,
             'filters' => $filters,
+            'closingSoon' => $closingSoon,
         ]);
     }
 

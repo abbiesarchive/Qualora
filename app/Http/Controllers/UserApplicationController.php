@@ -6,36 +6,9 @@ use App\Models\Scholarship;
 use App\Models\UserApplication;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class UserApplicationController extends Controller
 {
-    /**
-     * Display all tracked applications with announcement countdowns.
-     */
-    public function index(Request $request): View
-    {
-        $applications = $request->user()->applications()
-            ->with(['scholarship.selections', 'scholarship.eligibility'])
-            ->orderByDesc('applied_at')
-            ->get();
-
-        // Find upcoming announcements
-        $upcomingAnnouncements = $applications->filter(function (UserApplication $app) {
-            $scholarship = $app->scholarship;
-            if (! $scholarship) {
-                return false;
-            }
-
-            return $scholarship->announcement_date && $scholarship->announcement_date->isFuture();
-        })->sortBy(fn (UserApplication $app) => $app->scholarship->announcement_date);
-
-        return view('applications.index', [
-            'applications' => $applications,
-            'upcomingAnnouncements' => $upcomingAnnouncements,
-        ]);
-    }
-
     /**
      * Log a scholarship application tracked by the user.
      */
@@ -53,7 +26,7 @@ class UserApplicationController extends Controller
             $validated
         );
 
-        return back()->with('status', 'Pendaftaran beasiswa berhasil dicatat! Kamu sekarang dapat memantau jadwal pengumuman.');
+        return back()->with('status', 'Your scholarship application has been saved. You can now track announcement dates.');
     }
 
     /**
@@ -73,7 +46,7 @@ class UserApplicationController extends Controller
 
         $application->update($validated);
 
-        return back()->with('status', 'Status lamaran berhasil diperbarui.');
+        return back()->with('status', 'Your application status has been updated.');
     }
 
     /**
@@ -87,6 +60,6 @@ class UserApplicationController extends Controller
 
         $application->delete();
 
-        return back()->with('status', 'Beasiswa dihapus dari pemantauan lamaran.');
+        return back()->with('status', 'The scholarship has been removed from your application tracker.');
     }
 }

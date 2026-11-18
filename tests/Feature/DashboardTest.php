@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Scholarship;
 use App\Models\User;
+use App\Models\UserApplication;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,12 +24,13 @@ class DashboardTest extends TestCase
         $this->actingAs($user)->get('/dashboard')
             ->assertOk()
             ->assertSee('Welcome, Bee.')
-            ->assertSee('0% filled in')
-            ->assertSee('Add my details')
-            ->assertSee('Nothing saved yet');
+            ->assertSee('0%')
+            ->assertSee('filled in')
+            ->assertSee('Add my skills')
+            ->assertDontSee('Saved scholarships');
     }
 
-    public function test_closing_soon_lists_open_scholarships_with_official_link(): void
+    public function test_dashboard_does_not_show_closing_soon_scholarships(): void
     {
         $user = User::factory()->create();
         $row = [
@@ -41,8 +43,42 @@ class DashboardTest extends TestCase
 
         $this->actingAs($user)->get('/dashboard')
             ->assertOk()
-            ->assertSee('Open One')
-            ->assertSee('https://example.org/apply', false)
+            ->assertDontSee('Closing soon')
+            ->assertDontSee('Open One')
             ->assertDontSee('Past One');
+    }
+
+    public function test_dashboard_shows_total_accepted_and_rejected_application_counts(): void
+    {
+        $user = User::factory()->create();
+        $base = [
+            'provider' => 'Test Foundation',
+            'level' => 'S1',
+            'official_url' => 'https://example.org/apply',
+            'year' => 2026,
+            'is_active' => true,
+            'last_verified' => today(),
+        ];
+
+        foreach (['submitted', 'accepted', 'rejected', 'rejected'] as $index => $status) {
+            $scholarship = Scholarship::forceCreate($base + ['name' => "Application {$index}"]);
+            UserApplication::create([
+                'user_id' => $user->id,
+                'scholarship_id' => $scholarship->id,
+                'status' => $status,
+                'applied_at' => today(),
+            ]);
+        }
+
+        $this->actingAs($user)->get('/dashboard')
+            ->assertOk()
+            ->assertSee('Total applications')
+            ->assertSee('Accepted')
+            ->assertSee('Not selected')
+            ->assertViewHas('applicationCounts', [
+                'total' => 4,
+                'accepted' => 1,
+                'rejected' => 2,
+            ]);
     }
 }

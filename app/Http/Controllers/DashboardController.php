@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Scholarship;
+use App\Models\UserApplication;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -32,35 +32,29 @@ class DashboardController extends Controller
 
         $total = count(self::PROFILE_FIELDS);
 
-        $saved = $user->savedScholarships()
-            ->with('scholarship')
-            ->get()
-            ->pluck('scholarship')
-            ->filter()
-            ->sortBy(fn (Scholarship $s) => $s->deadline?->timestamp ?? PHP_INT_MAX)
-            ->values();
-
-        $closingSoon = Scholarship::query()
-            ->where('is_active', true)
-            ->whereDate('deadline', '>=', today())
-            ->orderBy('deadline')
-            ->limit(4)
-            ->get();
-
-        $trackedApplications = $user->applications()
+        $applications = $user->applications()
             ->with('scholarship')
             ->orderByDesc('applied_at')
-            ->limit(3)
             ->get();
+        $applicationCounts = [
+            'total' => $applications->count(),
+            'accepted' => $applications->where('status', 'accepted')->count(),
+            'rejected' => $applications->where('status', 'rejected')->count(),
+        ];
+        $upcomingAnnouncements = $applications->filter(function (UserApplication $application) {
+            $scholarship = $application->scholarship;
+
+            return $scholarship?->announcement_date && $scholarship->announcement_date->isFuture();
+        })->sortBy(fn (UserApplication $application) => $application->scholarship->announcement_date);
 
         return view('dashboard', [
             'user' => $user,
             'hasProfile' => $profile !== null,
             'missing' => $missing,
             'completePercent' => (int) round(($total - $missing->count()) / $total * 100),
-            'saved' => $saved,
-            'closingSoon' => $closingSoon,
-            'trackedApplications' => $trackedApplications,
+            'applications' => $applications,
+            'applicationCounts' => $applicationCounts,
+            'upcomingAnnouncements' => $upcomingAnnouncements,
         ]);
     }
 }

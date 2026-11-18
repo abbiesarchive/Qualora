@@ -19,7 +19,52 @@ class ProfileTest extends TestCase
             ->actingAs($user)
             ->get('/profile');
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertSee('Student Information')
+            ->assertSee('What are you looking for?')
+            ->assertSee('Language')
+            ->assertSee('Experience')
+            ->assertDontSee('Update Password')
+            ->assertDontSee('Delete Account')
+            ->assertDontSee('id="email"');
+    }
+
+    public function test_account_page_contains_account_settings_and_dropdown_links(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get('/account')
+            ->assertOk()
+            ->assertSee('Account Information')
+            ->assertSee('id="account_name"', false)
+            ->assertSee('id="account_email"', false)
+            ->assertSee('Update Password')
+            ->assertSee('Delete Account')
+            ->assertSee('href="'.route('profile.edit').'"', false)
+            ->assertSee('href="'.route('account.edit').'"', false)
+            ->assertDontSee('Student Information')
+            ->assertDontSee('Study Plan')
+            ->assertDontSee('Language')
+            ->assertDontSee('Experience');
+    }
+
+    public function test_account_information_can_be_updated_from_account_page(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->patch('/account', [
+                'name' => 'Updated Account Name',
+                'email' => 'updated-account@example.com',
+            ])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/account');
+
+        $this->assertSame('Updated Account Name', $user->refresh()->name);
+        $this->assertSame('updated-account@example.com', $user->email);
+        $this->assertNull($user->email_verified_at);
     }
 
     public function test_profile_information_can_be_updated(): void
@@ -60,7 +105,6 @@ class ProfileTest extends TestCase
         $this->actingAs($user)
             ->patch('/profile', [
                 'name' => $user->name,
-                'email' => $user->email,
                 ...$profileData,
             ])
             ->assertSessionHasNoErrors()
@@ -79,7 +123,6 @@ class ProfileTest extends TestCase
 
         $this->patch('/profile', [
             'name' => $user->name,
-            'email' => $user->email,
             ...$profileData,
             'campus' => 'Bandung Institute of Technology',
             'has_financial_need' => '0',
@@ -220,7 +263,7 @@ class ProfileTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->delete('/profile', [
+            ->delete('/account', [
                 'password' => 'password',
             ]);
 
@@ -238,14 +281,14 @@ class ProfileTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->from('/profile')
-            ->delete('/profile', [
+            ->from('/account')
+            ->delete('/account', [
                 'password' => 'wrong-password',
             ]);
 
         $response
             ->assertSessionHasErrorsIn('userDeletion', 'password')
-            ->assertRedirect('/profile');
+            ->assertRedirect('/account');
 
         $this->assertNotNull($user->fresh());
     }
