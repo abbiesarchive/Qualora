@@ -127,7 +127,7 @@ class ScholarshipListTest extends TestCase
             ->assertOk()
             ->assertSee('Merit Award')
             ->assertSee('Back to scholarship list')
-            ->assertSee('Eligibility Check')
+            ->assertSee('How your profile matches')
             ->assertSee('Application Document Checklist')
             ->assertSee('Track My Application')
             ->assertSee('Save to tracker')

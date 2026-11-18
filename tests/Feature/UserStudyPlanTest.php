@@ -17,8 +17,8 @@ class UserStudyPlanTest extends TestCase
 
         $this->actingAs($user)
             ->post('/profile/study-plan', [
-                'desired_major' => 'Computer Science',
-                'preferred_country' => 'Canada',
+                'study_field_category' => 'Engineering',
+                'preferred_country' => 'Europe',
             ])
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
@@ -28,20 +28,20 @@ class UserStudyPlanTest extends TestCase
         $this->assertDatabaseHas('user_study_plans', [
             'user_study_plans_id' => $studyPlanId,
             'profile_id' => $profile->id,
-            'desired_major' => 'Computer Science',
-            'preferred_country' => 'Canada',
+            'study_field_category' => 'Engineering',
+            'preferred_country' => 'Europe',
         ]);
 
         $this->get('/profile')
             ->assertOk()
-            ->assertSee('Study Plan')
-            ->assertSee('Computer Science')
-            ->assertSee('Canada')
+            ->assertSee('What are you looking for?')
+            ->assertSee('Engineering')
+            ->assertSee('Europe')
             ->assertDontSee('Delete Study Plan');
 
         $this->patch("/profile/study-plan/{$studyPlanId}", [
-            'desired_major' => 'Data Science',
-            'preferred_country' => 'Japan',
+            'study_field_category' => 'Technology & Computing',
+            'preferred_country' => 'Asia (outside Indonesia)',
             'profile_id' => $profile->id + 1,
         ])
             ->assertSessionHasNoErrors()
@@ -51,12 +51,12 @@ class UserStudyPlanTest extends TestCase
         $this->assertDatabaseHas('user_study_plans', [
             'user_study_plans_id' => $studyPlanId,
             'profile_id' => $profile->id,
-            'desired_major' => 'Data Science',
-            'preferred_country' => 'Japan',
+            'study_field_category' => 'Technology & Computing',
+            'preferred_country' => 'Asia (outside Indonesia)',
         ]);
 
         $this->post('/profile/study-plan', [
-            'desired_major' => 'A second plan',
+            'study_field_category' => 'Education',
         ])
             ->assertRedirect('/profile')
             ->assertSessionHas('status', 'study-plan-already-exists');
@@ -64,7 +64,7 @@ class UserStudyPlanTest extends TestCase
         $this->assertDatabaseCount('user_study_plans', 1);
         $this->assertDatabaseHas('user_study_plans', [
             'user_study_plans_id' => $studyPlanId,
-            'desired_major' => 'Data Science',
+            'study_field_category' => 'Technology & Computing',
         ]);
 
         $this->delete("/profile/study-plan/{$studyPlanId}")
@@ -80,7 +80,7 @@ class UserStudyPlanTest extends TestCase
         $owner = User::factory()->create();
         $ownerProfile = $owner->profile()->create([]);
         $ownerPlan = $ownerProfile->studyPlan()->create([
-            'desired_major' => 'Private Major',
+            'study_field_category' => 'Business & Economics',
         ]);
 
         $otherUser = User::factory()->create();
@@ -89,28 +89,28 @@ class UserStudyPlanTest extends TestCase
         $this->actingAs($otherUser)
             ->get('/profile')
             ->assertOk()
-            ->assertDontSee('Private Major');
+            ->assertViewHas('studyPlan', fn ($plan) => $plan === null);
 
         $this->post('/profile/study-plan', [
-            'desired_major' => 'Other user plan',
+            'study_field_category' => 'Health & Medicine',
             'profile_id' => $ownerProfile->id,
         ])
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
 
         $this->patch("/profile/study-plan/{$ownerPlan->getKey()}", [
-            'desired_major' => 'Changed by another user',
+            'study_field_category' => 'Other',
         ])->assertNotFound();
 
         $this->delete("/profile/study-plan/{$ownerPlan->getKey()}")->assertNotFound();
 
         $this->assertDatabaseHas('user_study_plans', [
             'profile_id' => $ownerProfile->id,
-            'desired_major' => 'Private Major',
+            'study_field_category' => 'Business & Economics',
         ]);
         $this->assertDatabaseHas('user_study_plans', [
             'profile_id' => $otherProfile->id,
-            'desired_major' => 'Other user plan',
+            'study_field_category' => 'Health & Medicine',
         ]);
     }
 
@@ -137,5 +137,17 @@ class UserStudyPlanTest extends TestCase
         $this->assertDatabaseHas('user_study_plans', [
             'profile_id' => $user->profile()->value('id'),
         ]);
+    }
+
+    public function test_study_plan_rejects_values_outside_the_dropdown_options(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post('/profile/study-plan', [
+                'study_field_category' => 'Underwater Basket Weaving',
+                'preferred_country' => 'Atlantis',
+            ])
+            ->assertSessionHasErrors(['study_field_category', 'preferred_country']);
     }
 }

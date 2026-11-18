@@ -29,18 +29,11 @@ class ProfileUpdateRequest extends FormRequest
             ],
             'campus' => ['nullable', 'string', 'max:255'],
             'major' => ['nullable', 'string', 'max:255'],
-            'semester' => ['nullable', 'integer', 'min:1', 'max:255'],
+            'semester' => ['nullable', 'integer', 'min:1', 'max:14'],
             'gpa' => ['nullable', 'numeric', 'min:0', 'max:4'],
-            'age' => ['nullable', 'integer', 'min:1', 'max:255'],
+            'age' => ['nullable', 'integer', 'min:15', 'max:60'],
             'nationality' => ['nullable', 'string', 'max:255'],
             'has_financial_need' => ['nullable', 'boolean'],
-            'faculty' => ['nullable', 'string'],
-            'gender' => ['nullable', 'string'],
-            'city_of_residence' => ['nullable', 'string'],
-            'phone_number' => ['nullable', 'string'],
-            'graduation_year' => ['nullable', 'integer'],
-            'graduation_status' => ['nullable', 'string'],
-            'university_accreditation' => ['nullable', 'string'],
         ];
     }
 }

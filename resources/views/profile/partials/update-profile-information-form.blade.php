@@ -37,14 +37,13 @@
                 </div>
 
                 <div>
-                    <x-input-label for="faculty" :value="__('Faculty')" />
-                    <x-text-input id="faculty" name="faculty" type="text" class="mt-1 block w-full" :value="old('faculty', $profile?->faculty)" />
-                    <x-input-error class="mt-2" :messages="$errors->get('faculty')" />
-                </div>
-
-                <div>
                     <x-input-label for="semester" :value="__('Current Semester')" />
-                    <x-text-input id="semester" name="semester" type="number" min="1" max="255" class="mt-1 block w-full" :value="old('semester', $profile?->semester)" />
+                    <select id="semester" name="semester" class="mt-1 block w-full rounded-xl border-cream-dark bg-white shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                        <option value="">{{ __('Select semester') }}</option>
+                        @foreach (range(1, 14) as $sem)
+                            <option value="{{ $sem }}" @selected((int) old('semester', $profile?->semester) === $sem)>{{ $sem }}</option>
+                        @endforeach
+                    </select>
                     <x-input-error class="mt-2" :messages="$errors->get('semester')" />
                 </div>
 
@@ -56,7 +55,7 @@
 
                 <div>
                     <x-input-label for="age" :value="__('Age')" />
-                    <x-text-input id="age" name="age" type="number" min="1" max="255" class="mt-1 block w-full" :value="old('age', $profile?->age)" />
+                    <x-text-input id="age" name="age" type="number" min="15" max="60" class="mt-1 block w-full" :value="old('age', $profile?->age)" />
                     <x-input-error class="mt-2" :messages="$errors->get('age')" />
                 </div>
 
@@ -75,42 +74,6 @@
                         <option value="0" @selected($financialNeed === '0')>{{ __('No') }}</option>
                     </select>
                     <x-input-error class="mt-2" :messages="$errors->get('has_financial_need')" />
-                </div>
-
-                <div>
-                    <x-input-label for="gender" :value="__('Gender')" />
-                    <x-text-input id="gender" name="gender" type="text" class="mt-1 block w-full" :value="old('gender', $profile?->gender)" />
-                    <x-input-error class="mt-2" :messages="$errors->get('gender')" />
-                </div>
-
-                <div>
-                    <x-input-label for="city_of_residence" :value="__('City of Residence')" />
-                    <x-text-input id="city_of_residence" name="city_of_residence" type="text" class="mt-1 block w-full" :value="old('city_of_residence', $profile?->city_of_residence)" />
-                    <x-input-error class="mt-2" :messages="$errors->get('city_of_residence')" />
-                </div>
-
-                <div>
-                    <x-input-label for="phone_number" :value="__('Phone Number')" />
-                    <x-text-input id="phone_number" name="phone_number" type="tel" class="mt-1 block w-full" :value="old('phone_number', $profile?->phone_number)" />
-                    <x-input-error class="mt-2" :messages="$errors->get('phone_number')" />
-                </div>
-
-                <div>
-                    <x-input-label for="graduation_year" :value="__('Graduation Year')" />
-                    <x-text-input id="graduation_year" name="graduation_year" type="number" class="mt-1 block w-full" :value="old('graduation_year', $profile?->graduation_year)" />
-                    <x-input-error class="mt-2" :messages="$errors->get('graduation_year')" />
-                </div>
-
-                <div>
-                    <x-input-label for="graduation_status" :value="__('Graduation Status')" />
-                    <x-text-input id="graduation_status" name="graduation_status" type="text" class="mt-1 block w-full" :value="old('graduation_status', $profile?->graduation_status)" />
-                    <x-input-error class="mt-2" :messages="$errors->get('graduation_status')" />
-                </div>
-
-                <div>
-                    <x-input-label for="university_accreditation" :value="__('University Accreditation')" />
-                    <x-text-input id="university_accreditation" name="university_accreditation" type="text" class="mt-1 block w-full" :value="old('university_accreditation', $profile?->university_accreditation)" />
-                    <x-input-error class="mt-2" :messages="$errors->get('university_accreditation')" />
                 </div>
 
             </div>

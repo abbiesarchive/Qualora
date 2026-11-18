@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Scholarship;
+use App\Services\EligibilityService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -69,7 +70,7 @@ class ScholarshipController extends Controller
         ]);
     }
 
-    public function show(Request $request, Scholarship $scholarship): View
+    public function show(Request $request, Scholarship $scholarship, EligibilityService $eligibilityService): View
     {
         $scholarship->load([
             'eligibility',
@@ -81,74 +82,18 @@ class ScholarshipController extends Controller
         ]);
 
         $user = $request->user();
-        $profile = $user->profile;
+        $profile = $user->profile?->loadMissing('languages', 'studyPlan');
 
         $isSaved = $user->savedScholarships()->where('scholarship_id', $scholarship->id)->exists();
         $userApplication = $user->applications()->where('scholarship_id', $scholarship->id)->first();
 
-        // Calculate eligibility comparison
-        $eligibility = $scholarship->eligibility;
-        $evaluations = [];
-
-        if ($eligibility) {
-            if ($eligibility->min_gpa !== null) {
-                $meets = $profile?->gpa !== null && $profile->gpa >= $eligibility->min_gpa;
-                $evaluations[] = [
-                    'label' => 'Cumulative GPA',
-                    'requirement' => "Minimum {$eligibility->min_gpa}",
-                    'user_value' => $profile?->gpa ? number_format($profile->gpa, 2) : 'Not provided',
-                    'status' => $profile?->gpa === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
-                ];
-            }
-
-            if ($eligibility->min_semester !== null || $eligibility->max_semester !== null) {
-                $min = $eligibility->min_semester ?? 1;
-                $max = $eligibility->max_semester ?? 14;
-                $meets = $profile?->semester !== null && $profile->semester >= $min && $profile->semester <= $max;
-                $evaluations[] = [
-                    'label' => 'Current semester',
-                    'requirement' => "Semester {$min} to {$max}",
-                    'user_value' => $profile?->semester ? "Semester {$profile->semester}" : 'Not provided',
-                    'status' => $profile?->semester === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
-                ];
-            }
-
-            if ($eligibility->max_age !== null) {
-                $meets = $profile?->age !== null && $profile->age <= $eligibility->max_age;
-                $evaluations[] = [
-                    'label' => 'Maximum age',
-                    'requirement' => "Up to {$eligibility->max_age} years",
-                    'user_value' => $profile?->age ? "{$profile->age} years" : 'Not provided',
-                    'status' => $profile?->age === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
-                ];
-            }
-
-            if ($eligibility->requires_financial_need) {
-                $meets = $profile?->has_financial_need === true;
-                $evaluations[] = [
-                    'label' => 'Financial need',
-                    'requirement' => 'Requires financial assistance',
-                    'user_value' => $profile?->has_financial_need ? 'Yes (Needs assistance)' : ($profile?->has_financial_need === false ? 'No' : 'Not provided'),
-                    'status' => $profile?->has_financial_need === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
-                ];
-            }
-
-            if ($eligibility->min_university_accreditation) {
-                $meets = $profile?->university_accreditation !== null && strcasecmp($profile->university_accreditation, $eligibility->min_university_accreditation) <= 0;
-                $evaluations[] = [
-                    'label' => 'University accreditation',
-                    'requirement' => "Minimum accreditation: {$eligibility->min_university_accreditation}",
-                    'user_value' => $profile?->university_accreditation ? "Accreditation {$profile->university_accreditation}" : 'Not provided',
-                    'status' => $profile?->university_accreditation === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
-                ];
-            }
-        }
+        $match = $eligibilityService->check($profile, $scholarship);
 
         return view('scholarships.show', [
             'scholarship' => $scholarship,
             'isSaved' => $isSaved,
             'userApplication' => $userApplication,
-            'evaluations' => $evaluations,
+            'match' => $match,
             'hasProfile' => $profile !== null,
         ]);
     }

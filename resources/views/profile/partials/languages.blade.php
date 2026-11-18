@@ -4,18 +4,14 @@
         updateUrl: '',
         form: {
             language_name: @js(old('language_name', '')),
-            proficiency_level: @js(old('proficiency_level', '')),
             certificate_type: @js(old('certificate_type', '')),
             certificate_score: @js(old('certificate_score', '')),
-            certificate_expiry: @js(old('certificate_expiry', '')),
         },
         startEdit(data) {
             this.form = {
                 language_name: data.languageName || '',
-                proficiency_level: data.proficiencyLevel || '',
                 certificate_type: data.certificateType || '',
                 certificate_score: data.certificateScore || '',
-                certificate_expiry: data.certificateExpiry || '',
             };
             this.updateUrl = data.updateUrl;
             this.editing = true;
@@ -29,23 +25,21 @@
             this.updateUrl = '';
             this.form = {
                 language_name: '',
-                proficiency_level: '',
                 certificate_type: '',
                 certificate_score: '',
-                certificate_expiry: '',
             };
         },
     }"
 >
     <header>
         <h2 class="text-lg font-medium text-gray-900">{{ __('Language') }}</h2>
-        <p class="mt-1 text-sm text-gray-600">{{ __('Manage your languages and certificates.') }}</p>
+        <p class="mt-1 text-sm text-gray-600">{{ __('Add any language test you have taken, such as IELTS or TOEFL. Optional.') }}</p>
     </header>
 
-    @if ($errors->hasAny(['language_name', 'proficiency_level', 'certificate_type', 'certificate_score', 'certificate_expiry']))
+    @if ($errors->hasAny(['language_name', 'certificate_type', 'certificate_score']))
         <div class="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             <ul class="list-inside list-disc space-y-1">
-                @foreach (['language_name', 'proficiency_level', 'certificate_type', 'certificate_score', 'certificate_expiry'] as $field)
+                @foreach (['language_name', 'certificate_type', 'certificate_score'] as $field)
                     @foreach ($errors->get($field) as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -85,10 +79,8 @@
                 <thead class="bg-brand-700 text-white">
                     <tr>
                         <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Language') }}</th>
-                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Proficiency Level') }}</th>
-                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Certificate Type') }}</th>
-                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Certificate Score') }}</th>
-                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Certificate Expiry') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Test') }}</th>
+                        <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold">{{ __('Score') }}</th>
                         <th scope="col" class="whitespace-nowrap px-4 py-3 text-center font-semibold">{{ __('Action') }}</th>
                     </tr>
                 </thead>
@@ -96,10 +88,8 @@
             @foreach ($languages as $language)
                     <tr class="align-middle">
                         <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900">{{ $language->language_name }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $language->proficiency_level ?: __('Not provided') }}</td>
                         <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $language->certificate_type ?: __('Not provided') }}</td>
                         <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $language->certificate_score ?: __('Not provided') }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $language->certificate_expiry?->format('Y-m-d') ?: __('Not provided') }}</td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-center gap-2">
                                 <button
@@ -107,10 +97,8 @@
                                     class="inline-flex items-center rounded-lg border border-cream-dark px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-cream focus:outline-none focus:ring-2 focus:ring-brand-500"
                                     data-update-url="{{ route('profile.languages.update', $language->getKey()) }}"
                                     data-language-name="{{ $language->language_name }}"
-                                    data-proficiency-level="{{ $language->proficiency_level }}"
                                     data-certificate-type="{{ $language->certificate_type }}"
                                     data-certificate-score="{{ $language->certificate_score }}"
-                                    data-certificate-expiry="{{ $language->certificate_expiry?->format('Y-m-d') }}"
                                     x-on:click="startEdit($event.currentTarget.dataset)"
                                 >
                                     {{ __('Edit') }}
