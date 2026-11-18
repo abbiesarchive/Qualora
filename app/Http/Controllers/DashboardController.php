@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Scholarship;
 use App\Models\UserApplication;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -33,13 +32,6 @@ class DashboardController extends Controller
 
         $total = count(self::PROFILE_FIELDS);
 
-        $closingSoon = Scholarship::query()
-            ->where('is_active', true)
-            ->whereDate('deadline', '>=', today())
-            ->orderBy('deadline')
-            ->limit(4)
-            ->get();
-
         $applications = $user->applications()
             ->with('scholarship')
             ->orderByDesc('applied_at')
@@ -60,7 +52,6 @@ class DashboardController extends Controller
             'hasProfile' => $profile !== null,
             'missing' => $missing,
             'completePercent' => (int) round(($total - $missing->count()) / $total * 100),
-            'closingSoon' => $closingSoon,
             'applications' => $applications,
             'applicationCounts' => $applicationCounts,
             'upcomingAnnouncements' => $upcomingAnnouncements,

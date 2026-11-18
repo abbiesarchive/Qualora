@@ -82,41 +82,5 @@
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         @include('applications.tracker')
-
-        <div class="mt-6">
-            {{-- Closing soon --}}
-            <section class="rounded-2xl bg-white ring-1 ring-cream-dark p-6" aria-labelledby="soon-heading">
-                <h2 id="soon-heading" class="font-display text-xl font-semibold">Closing soon</h2>
-                <p class="mt-1 text-xs text-ink-soft">Open scholarships by deadline. Always verify on the official site.
-                </p>
-
-                @forelse ($closingSoon as $s)
-                    @if ($loop->first)
-                        <ul class="mt-4 divide-y divide-cream-dark">
-                    @endif
-                    <li class="py-3 flex items-center justify-between gap-4">
-                        <div class="min-w-0">
-                            <p class="font-medium truncate">{{ $s->name }}</p>
-                            <p class="text-sm text-ink-soft truncate">
-                                {{ $s->provider }} · Closes {{ $s->deadline->format('j M Y') }}
-                                @if ($s->last_verified)
-                                    · Verified {{ $s->last_verified->format('j M Y') }}
-                                @endif
-                            </p>
-                        </div>
-                        <a href="{{ $s->official_url }}" target="_blank" rel="noopener noreferrer"
-                            class="shrink-0 text-sm font-semibold text-brand-700 hover:text-brand-900">
-                            Official site<span class="sr-only"> for {{ $s->name }}</span> &rarr;
-                        </a>
-                    </li>
-                    @if ($loop->last)
-                        </ul>
-                    @endif
-                @empty
-                    <p class="mt-3 text-sm text-ink-soft">No open scholarships are listed right now. Check back soon.
-                    </p>
-                @endforelse
-            </section>
-        </div>
     </div>
 </x-app-layout>

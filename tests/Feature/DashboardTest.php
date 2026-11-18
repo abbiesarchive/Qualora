@@ -30,7 +30,7 @@ class DashboardTest extends TestCase
             ->assertDontSee('Saved scholarships');
     }
 
-    public function test_closing_soon_lists_open_scholarships_with_official_link(): void
+    public function test_dashboard_does_not_show_closing_soon_scholarships(): void
     {
         $user = User::factory()->create();
         $row = [
@@ -43,8 +43,8 @@ class DashboardTest extends TestCase
 
         $this->actingAs($user)->get('/dashboard')
             ->assertOk()
-            ->assertSee('Open One')
-            ->assertSee('https://example.org/apply', false)
+            ->assertDontSee('Closing soon')
+            ->assertDontSee('Open One')
             ->assertDontSee('Past One');
     }
 

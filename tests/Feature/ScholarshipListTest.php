@@ -38,6 +38,30 @@ class ScholarshipListTest extends TestCase
             ->assertDontSee('Inactive');
     }
 
+    public function test_closing_soon_scholarships_are_shown_at_the_top_of_the_list(): void
+    {
+        $user = User::factory()->create();
+        $row = [
+            'provider' => 'Test Foundation',
+            'level' => 'S1',
+            'scholarship_type' => 'full',
+            'is_abroad' => false,
+            'official_url' => 'https://example.org/apply',
+            'last_verified' => today(),
+            'year' => 2026,
+            'is_active' => true,
+        ];
+        Scholarship::forceCreate($row + ['name' => 'Closing Soon Award', 'deadline' => today()->addDays(5)]);
+        Scholarship::forceCreate($row + ['name' => 'Past Award', 'deadline' => today()->subDay()]);
+
+        $this->actingAs($user)
+            ->get(route('scholarships.index'))
+            ->assertOk()
+            ->assertSeeInOrder(['Closing soon', 'Closing Soon Award', 'All scholarships'])
+            ->assertSee('https://example.org/apply', false)
+            ->assertDontSee('Past Award');
+    }
+
     public function test_user_only_sees_scholarships_that_are_active_and_open(): void
     {
         $user = User::factory()->create();

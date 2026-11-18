@@ -17,6 +17,13 @@ class ScholarshipController extends Controller
             'view' => ['nullable', 'in:all,saved'],
         ]);
 
+        $closingSoon = Scholarship::query()
+            ->where('is_active', true)
+            ->whereDate('deadline', '>=', today())
+            ->orderBy('deadline')
+            ->limit(4)
+            ->get();
+
         $scholarships = Scholarship::query()
             ->where('is_active', true)
             ->where(function ($query) {
@@ -54,6 +61,7 @@ class ScholarshipController extends Controller
         return view('scholarships.index', [
             'scholarships' => $scholarships,
             'filters' => $filters,
+            'closingSoon' => $closingSoon,
         ]);
     }
 
