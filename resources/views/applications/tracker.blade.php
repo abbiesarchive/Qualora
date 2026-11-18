@@ -1,11 +1,11 @@
 <section class="rounded-2xl bg-white ring-1 ring-cream-dark p-6" aria-labelledby="tracker-heading">
     <div class="mb-6">
-        <p class="text-xs font-semibold text-aura-700">Application Tracker & Announcement Countdown</p>
+        <p class="text-xs font-semibold text-aura-700">{{ __('Application Tracker & Announcement Countdown') }}</p>
         <h2 id="tracker-heading" class="mt-1 font-display text-xl font-semibold text-ink">
-            Application Tracker
+            {{ __('Application Tracker') }}
         </h2>
         <p class="mt-1 text-sm text-ink-soft">
-            Track the days left until announcements and manage the status of scholarships you have applied for on the provider's official website.
+            {{ __("Track the days left until announcements and manage the status of scholarships you have applied for on the provider's official website.") }}
         </p>
     </div>
 
@@ -23,7 +23,7 @@
         @if ($upcomingAnnouncements->isNotEmpty())
             <div class="mb-8">
                 <h2 class="text-sm font-bold text-ink uppercase tracking-wider mb-3">
-                    Upcoming Announcements
+                    {{ __('Upcoming Announcements') }}
                 </h2>
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($upcomingAnnouncements as $app)
@@ -43,10 +43,10 @@
                                     <span class="text-2xl font-bold font-display {{ $days <= 5 ? 'text-clay-600' : 'text-brand-700' }}">
                                         {{ $days }}
                                     </span>
-                                    <span class="text-xs font-semibold text-ink-soft">days left</span>
+                                    <span class="text-xs font-semibold text-ink-soft">{{ __('days left') }}</span>
                                 </div>
                                 <span class="text-xs font-semibold text-ink-soft">
-                                    {{ $s->announcement_date->format('d M Y') }}
+                                    {{ $s->announcement_date->translatedFormat('d M Y') }}
                                 </span>
                             </div>
                         </div>
@@ -71,7 +71,7 @@
                                     </span>
                                     @if ($scholarship->scholarship_category)
                                         <span class="rounded-full bg-cream-dark px-2.5 py-0.5 text-xs font-semibold text-ink-soft">
-                                            {{ $scholarship->scholarship_category }}
+                                            {{ __($scholarship->scholarship_category) }}
                                         </span>
                                     @endif
                                     <span @class([
@@ -93,22 +93,22 @@
 
                                 <div class="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink-soft">
                                     <div>
-                                        <span>Date submitted:</span>
-                                        <span class="font-semibold text-ink">{{ $app->applied_at->format('d M Y') }}</span>
+                                        <span>{{ __('Date submitted:') }}</span>
+                                        <span class="font-semibold text-ink">{{ $app->applied_at->translatedFormat('d M Y') }}</span>
                                     </div>
                                     @if ($app->registration_number)
                                         <div>
-                                            <span>Registration no.:</span>
+                                            <span>{{ __('Registration no.:') }}</span>
                                             <span class="font-semibold font-mono text-ink">{{ $app->registration_number }}</span>
                                         </div>
                                     @endif
                                     @if ($scholarship->announcement_date)
                                         <div>
-                                            <span>Estimated announcement:</span>
+                                            <span>{{ __('Estimated announcement:') }}</span>
                                             <span class="font-semibold text-brand-700">
-                                                {{ $scholarship->announcement_date->format('d M Y') }}
+                                                {{ $scholarship->announcement_date->translatedFormat('d M Y') }}
                                                 @if ($scholarship->days_until_announcement !== null && $scholarship->days_until_announcement > 0)
-                                                    ({{ $scholarship->days_until_announcement }} days left)
+                                                    ({{ __(':count days left', ['count' => $scholarship->days_until_announcement]) }})
                                                 @endif
                                             </span>
                                         </div>
@@ -117,7 +117,7 @@
 
                                 @if ($app->notes)
                                     <div class="mt-3 rounded-2xl bg-cream/40 p-3 text-xs text-ink-soft leading-relaxed">
-                                        <span class="font-semibold text-ink">Personal notes:</span> {{ $app->notes }}
+                                        <span class="font-semibold text-ink">{{ __('Personal notes:') }}</span> {{ $app->notes }}
                                     </div>
                                 @endif
                             </div>
@@ -130,7 +130,7 @@
                                     rel="noopener noreferrer"
                                     class="inline-flex items-center gap-1.5 rounded-full bg-aura-gradient px-4 py-2 text-xs font-semibold text-white shadow hover:brightness-105 transition"
                                 >
-                                    <span>Open official portal</span>
+                                    <span>{{ __('Open official portal') }}</span>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                     </svg>
@@ -141,8 +141,8 @@
                                     @click="editing = !editing"
                                     class="rounded-full border border-cream-dark px-3.5 py-1.5 text-xs font-semibold text-ink-soft hover:bg-cream transition"
                                 >
-                                    <span x-show="!editing">Update status</span>
-                                    <span x-show="editing">Close</span>
+                                    <span x-show="!editing">{{ __('Update status') }}</span>
+                                    <span x-show="editing">{{ __('Close') }}</span>
                                 </button>
                             </div>
                         </div>
@@ -155,45 +155,45 @@
 
                                 <div class="grid gap-3 sm:grid-cols-2">
                                     <div>
-                                        <label class="block text-xs font-semibold text-ink mb-1">Change status</label>
+                                        <label class="block text-xs font-semibold text-ink mb-1">{{ __('Change status') }}</label>
                                         <select name="status" class="w-full rounded-xl border-cream-dark text-xs focus:border-brand-500 focus:ring-brand-500">
-                                            <option value="preparing" @selected($app->status === 'preparing')>Preparing documents</option>
-                                            <option value="submitted" @selected($app->status === 'submitted')>Submitted on the official website</option>
-                                            <option value="interview" @selected($app->status === 'interview')>Interview stage</option>
-                                            <option value="accepted" @selected($app->status === 'accepted')>Accepted</option>
-                                            <option value="rejected" @selected($app->status === 'rejected')>Not selected</option>
-                                            <option value="withdrawn" @selected($app->status === 'withdrawn')>Withdrawn</option>
+                                            <option value="preparing" @selected($app->status === 'preparing')>{{ __('Preparing documents') }}</option>
+                                            <option value="submitted" @selected($app->status === 'submitted')>{{ __('Submitted on the official website') }}</option>
+                                            <option value="interview" @selected($app->status === 'interview')>{{ __('Interview stage') }}</option>
+                                            <option value="accepted" @selected($app->status === 'accepted')>{{ __('Accepted') }}</option>
+                                            <option value="rejected" @selected($app->status === 'rejected')>{{ __('Not selected') }}</option>
+                                            <option value="withdrawn" @selected($app->status === 'withdrawn')>{{ __('Withdrawn') }}</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-semibold text-ink mb-1">Registration number</label>
+                                        <label class="block text-xs font-semibold text-ink mb-1">{{ __('Registration number') }}</label>
                                         <input
                                             type="text"
                                             name="registration_number"
                                             value="{{ old('registration_number', $app->registration_number) }}"
                                             class="w-full rounded-xl border-cream-dark text-xs focus:border-brand-500 focus:ring-brand-500"
-                                            placeholder="Registration number from the provider's website"
+                                            placeholder="{{ __("Registration number from the provider's website") }}"
                                         >
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="block text-xs font-semibold text-ink mb-1">Additional notes</label>
+                                    <label class="block text-xs font-semibold text-ink mb-1">{{ __('Additional notes') }}</label>
                                     <textarea
                                         name="notes"
                                         rows="2"
                                         class="w-full rounded-xl border-cream-dark text-xs focus:border-brand-500 focus:ring-brand-500"
-                                        placeholder="Test schedule, interview link, login account..."
+                                        placeholder="{{ __('Test schedule, interview link, login account...') }}"
                                     >{{ old('notes', $app->notes) }}</textarea>
                                 </div>
 
                                 <div class="flex items-center justify-between pt-2">
                                     <button
                                         type="button"
-                                        @click="if (confirm('Remove this application from your tracker?')) $refs.deleteForm.submit();"
+                                        @click="if (confirm(@js(__('Remove this application from your tracker?')))) $refs.deleteForm.submit();"
                                         class="text-xs text-clay-700 hover:underline"
                                     >
-                                        Remove from tracker
+                                        {{ __('Remove from tracker') }}
                                     </button>
 
                                     <div class="flex items-center gap-2">
@@ -202,13 +202,13 @@
                                             @click="editing = false"
                                             class="rounded-full px-3 py-1 text-xs text-ink-soft hover:bg-cream"
                                         >
-                                            Cancel
+                                            {{ __('Cancel') }}
                                         </button>
                                         <button
                                             type="submit"
                                             class="rounded-full bg-brand-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"
                                         >
-                                            Save changes
+                                            {{ __('Save changes') }}
                                         </button>
                                     </div>
                                 </div>
@@ -229,16 +229,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                 </div>
-                <h3 class="font-display text-xl font-bold text-ink">No applications tracked yet</h3>
+                <h3 class="font-display text-xl font-bold text-ink">{{ __('No applications tracked yet') }}</h3>
                 <p class="mt-2 text-sm text-ink-soft max-w-md mx-auto">
-                    After you apply on a scholarship's official website, open the scholarship and choose <span class="font-semibold text-ink">"Apply"</span> to track it here and follow its announcement date.
+                    {{ __("After you apply on a scholarship's official website, open the scholarship and choose \"Apply\" to track it here and follow its announcement date.") }}
                 </p>
                 <div class="mt-6">
                     <a
                         href="{{ route('scholarships.index') }}"
                         class="inline-flex items-center justify-center rounded-full bg-aura-gradient px-5 py-2.5 text-sm font-semibold text-white shadow hover:brightness-105"
                     >
-                        Browse scholarships
+                        {{ __('Browse scholarships') }}
                     </a>
                 </div>
             </div>

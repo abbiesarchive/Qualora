@@ -7,7 +7,7 @@
     <select id="{{ $formId }}-language_name" name="language_name" class="{{ $selectClass }}" x-model="form.language_name" required>
         <option value="">{{ __('Select a language') }}</option>
         @foreach (\App\Http\Controllers\UserLanguageController::LANGUAGES as $name)
-            <option value="{{ $name }}" @selected(old('language_name', $language?->language_name) === $name)>{{ $name }}</option>
+            <option value="{{ $name }}" @selected(old('language_name', $language?->language_name) === $name)>{{ __($name) }}</option>
         @endforeach
     </select>
     <x-input-error class="mt-2" :messages="$errors->get('language_name')" />
@@ -18,7 +18,7 @@
     <select id="{{ $formId }}-certificate_type" name="certificate_type" class="{{ $selectClass }}" x-model="form.certificate_type">
         <option value="">{{ __('No test yet') }}</option>
         @foreach (\App\Http\Controllers\UserLanguageController::TESTS as $test)
-            <option value="{{ $test }}" @selected(old('certificate_type', $language?->certificate_type) === $test)>{{ $test }}</option>
+            <option value="{{ $test }}" @selected(old('certificate_type', $language?->certificate_type) === $test)>{{ __($test) }}</option>
         @endforeach
     </select>
     <x-input-error class="mt-2" :messages="$errors->get('certificate_type')" />

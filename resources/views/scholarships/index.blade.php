@@ -1,19 +1,19 @@
 <x-app-layout>
-    <x-slot name="title">Scholarship</x-slot>
+    <x-slot name="title">{{ __('Scholarships') }}</x-slot>
 
     <div class="relative overflow-hidden">
         <div class="absolute inset-0 bg-aura-glow pointer-events-none" aria-hidden="true"></div>
         <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6">
-            <p class="text-sm font-semibold text-aura-700">Find your next opportunity</p>
-            <h1 class="mt-1 font-display text-3xl sm:text-4xl font-semibold tracking-tight">Scholarships</h1>
-            <p class="mt-2 text-ink-soft max-w-xl">Browse scholarships and review their eligibility details.</p>
+            <p class="text-sm font-semibold text-aura-700">{{ __('Find your next opportunity') }}</p>
+            <h1 class="mt-1 font-display text-3xl sm:text-4xl font-semibold tracking-tight">{{ __('Scholarships') }}</h1>
+            <p class="mt-2 text-ink-soft max-w-xl">{{ __('Browse scholarships and review their eligibility details.') }}</p>
         </div>
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <section class="mb-6 rounded-2xl bg-white ring-1 ring-cream-dark p-6" aria-labelledby="soon-heading">
-            <h2 id="soon-heading" class="font-display text-xl font-semibold">Closing soon</h2>
-            <p class="mt-1 text-xs text-ink-soft">Open scholarships by deadline. Always verify on the official site.</p>
+            <h2 id="soon-heading" class="font-display text-xl font-semibold">{{ __('Closing soon') }}</h2>
+            <p class="mt-1 text-xs text-ink-soft">{{ __('Open scholarships by deadline. Always verify on the official site.') }}</p>
 
             @forelse ($closingSoon as $s)
                 @if ($loop->first)
@@ -23,26 +23,26 @@
                     <div class="min-w-0">
                         <p class="font-medium truncate">{{ $s->name }}</p>
                         <p class="text-sm text-ink-soft truncate">
-                            {{ $s->provider }} · Closes {{ $s->deadline->format('j M Y') }}
+                            {{ $s->provider }} · {{ __('Closes :date', ['date' => $s->deadline->translatedFormat('j M Y')]) }}
                             @if ($s->last_verified)
-                                · Verified {{ $s->last_verified->format('j M Y') }}
+                                · {{ __('Verified :date', ['date' => $s->last_verified->translatedFormat('j M Y')]) }}
                             @endif
                         </p>
                     </div>
                     <a href="{{ $s->official_url }}" target="_blank" rel="noopener noreferrer"
                         class="shrink-0 text-sm font-semibold text-brand-700 hover:text-brand-900">
-                        Official site<span class="sr-only"> for {{ $s->name }}</span> &rarr;
+                        {{ __('Official site') }}<span class="sr-only"> {{ __('for :name', ['name' => $s->name]) }}</span> &rarr;
                     </a>
                 </li>
                 @if ($loop->last)
                     </ul>
                 @endif
             @empty
-                <p class="mt-3 text-sm text-ink-soft">No open scholarships are listed right now. Check back soon.</p>
+                <p class="mt-3 text-sm text-ink-soft">{{ __('No open scholarships are listed right now. Check back soon.') }}</p>
             @endforelse
         </section>
 
-        <div class="mb-5 inline-flex rounded-full bg-white p-1 ring-1 ring-cream-dark" aria-label="Scholarship list">
+        <div class="mb-5 inline-flex rounded-full bg-white p-1 ring-1 ring-cream-dark" aria-label="{{ __('Scholarship list') }}">
             <a
                 href="{{ route('scholarships.index') }}"
                 @class([
@@ -51,7 +51,7 @@
                     'text-ink-soft hover:text-brand-700' => ($filters['view'] ?? 'all') !== 'all',
                 ])
                 @if (($filters['view'] ?? 'all') === 'all') aria-current="page" @endif
-            >All scholarships</a>
+            >{{ __('All scholarships') }}</a>
             <a
                 href="{{ route('scholarships.index', ['view' => 'saved']) }}"
                 @class([
@@ -60,38 +60,38 @@
                     'text-ink-soft hover:text-brand-700' => ($filters['view'] ?? 'all') !== 'saved',
                 ])
                 @if (($filters['view'] ?? 'all') === 'saved') aria-current="page" @endif
-            >Saved</a>
+            >{{ __('Saved') }}</a>
         </div>
 
         <form method="GET" action="{{ route('scholarships.index') }}" class="rounded-2xl bg-white ring-1 ring-cream-dark p-4 sm:p-5">
             <input type="hidden" name="view" value="{{ $filters['view'] ?? 'all' }}">
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <label class="sm:col-span-2">
-                    <span class="block text-sm font-medium text-ink mb-1">Search scholarships</span>
+                    <span class="block text-sm font-medium text-ink mb-1">{{ __('Search scholarships') }}</span>
                     <input
                         type="search"
                         name="search"
                         value="{{ $filters['search'] ?? '' }}"
-                        placeholder="Search by name or provider"
+                        placeholder="{{ __('Search by name or provider') }}"
                         class="w-full rounded-xl border-cream-dark bg-white text-ink focus:border-brand-500 focus:ring-brand-500"
                     >
                 </label>
 
                 <label>
-                    <span class="block text-sm font-medium text-ink mb-1">Scholarship type</span>
+                    <span class="block text-sm font-medium text-ink mb-1">{{ __('Scholarship type') }}</span>
                     <select name="type" class="w-full rounded-xl border-cream-dark bg-white text-ink focus:border-brand-500 focus:ring-brand-500">
-                        <option value="">All types</option>
-                        <option value="full" @selected(($filters['type'] ?? '') === 'full')>Full</option>
-                        <option value="partial" @selected(($filters['type'] ?? '') === 'partial')>Partial</option>
+                        <option value="">{{ __('All types') }}</option>
+                        <option value="full" @selected(($filters['type'] ?? '') === 'full')>{{ __('Full') }}</option>
+                        <option value="partial" @selected(($filters['type'] ?? '') === 'partial')>{{ __('Partial') }}</option>
                     </select>
                 </label>
 
                 <label>
-                    <span class="block text-sm font-medium text-ink mb-1">Location</span>
+                    <span class="block text-sm font-medium text-ink mb-1">{{ __('Location') }}</span>
                     <select name="location" class="w-full rounded-xl border-cream-dark bg-white text-ink focus:border-brand-500 focus:ring-brand-500">
-                        <option value="">All locations</option>
-                        <option value="domestic" @selected(($filters['location'] ?? '') === 'domestic')>Domestic</option>
-                        <option value="abroad" @selected(($filters['location'] ?? '') === 'abroad')>Abroad</option>
+                        <option value="">{{ __('All locations') }}</option>
+                        <option value="domestic" @selected(($filters['location'] ?? '') === 'domestic')>{{ __('Domestic') }}</option>
+                        <option value="abroad" @selected(($filters['location'] ?? '') === 'abroad')>{{ __('Abroad') }}</option>
                     </select>
                 </label>
 
@@ -99,13 +99,13 @@
 
             <div class="mt-4 flex flex-wrap items-center gap-3">
                 <button type="submit" class="inline-flex items-center justify-center rounded-full bg-aura-gradient px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
-                    Search
+                    {{ __('Search') }}
                 </button>
                 @if (! empty($filters['search']) || ! empty($filters['type']) || ! empty($filters['location']))
-                    <a href="{{ route('scholarships.index', ($filters['view'] ?? 'all') === 'saved' ? ['view' => 'saved'] : []) }}" class="text-sm font-semibold text-brand-700 hover:text-brand-900">Clear filters</a>
+                    <a href="{{ route('scholarships.index', ($filters['view'] ?? 'all') === 'saved' ? ['view' => 'saved'] : []) }}" class="text-sm font-semibold text-brand-700 hover:text-brand-900">{{ __('Clear filters') }}</a>
                 @endif
                 <p class="text-sm text-ink-soft sm:ms-auto">
-                    {{ $scholarships->total() }} {{ \Illuminate\Support\Str::plural('scholarship', $scholarships->total()) }} found
+                    {{ trans_choice('{1} :count scholarship found|[0,*] :count scholarships found', $scholarships->total()) }}
                 </p>
             </div>
         </form>
@@ -122,10 +122,10 @@
                                 </span>
                                 @if ($scholarship->scholarship_category)
                                     <span class="rounded-full bg-brand-50 px-2.5 py-0.5 text-[11px] font-semibold text-brand-700">
-                                        {{ $scholarship->scholarship_category }}
+                                        {{ __($scholarship->scholarship_category) }}
                                     </span>
                                 @endif
-                                <span class="rounded-full bg-sage-100 px-2.5 py-0.5 text-[11px] font-semibold text-sage-800">Active</span>
+                                <span class="rounded-full bg-sage-100 px-2.5 py-0.5 text-[11px] font-semibold text-sage-800">{{ __('Active') }}</span>
                             </div>
                             <div class="shrink-0 flex items-center">
                                 <x-scholarship-bookmark :scholarship="$scholarship" :is-saved="$scholarship->is_saved" />
@@ -141,7 +141,7 @@
 
                         {{-- 3. Description / Subtitle (Fixed height) --}}
                         <p class="mt-1 text-xs text-ink-soft leading-relaxed line-clamp-2 min-h-[2.25rem]">
-                            {{ $scholarship->description ?? $scholarship->benefits ?? 'A higher education scholarship program for outstanding undergraduate students.' }}
+                            {{ $scholarship->description ?? $scholarship->benefits ?? __('A higher education scholarship program for outstanding undergraduate students.') }}
                         </p>
 
                         {{-- 4. Full-width divider line --}}
@@ -152,14 +152,14 @@
                             <span class="font-display text-lg font-bold {{ ($scholarship->days_until_deadline !== null && $scholarship->days_until_deadline <= 7) ? 'text-clay-600' : 'text-brand-700' }}">
                                 @if ($scholarship->days_until_deadline !== null)
                                     @if ($scholarship->days_until_deadline > 0)
-                                        {{ $scholarship->days_until_deadline }} days remaining
+                                        {{ __(':count days remaining', ['count' => $scholarship->days_until_deadline]) }}
                                     @elseif ($scholarship->days_until_deadline === 0)
-                                        Application deadline is today!
+                                        {{ __('Application deadline is today!') }}
                                     @else
-                                        Applications are closed
+                                        {{ __('Applications are closed') }}
                                     @endif
                                 @else
-                                    Applications are open
+                                    {{ __('Applications are open') }}
                                 @endif
                             </span>
                         </div>
@@ -167,26 +167,26 @@
                         {{-- 6. Two columns: Deadline (Left) & Announcement (Right) --}}
                         <div class="mt-3 grid grid-cols-2 gap-3 min-h-[3.25rem]">
                             <div>
-                                <p class="text-[11px] font-bold text-ink-soft uppercase tracking-wider">Deadline</p>
+                                <p class="text-[11px] font-bold text-ink-soft uppercase tracking-wider">{{ __('Deadline') }}</p>
                                 <p class="mt-0.5 text-xs font-bold text-ink truncate">
-                                    {{ $scholarship->deadline?->format('d M Y') ?? 'Not specified' }}
+                                    {{ $scholarship->deadline?->translatedFormat('d M Y') ?? __('Not specified') }}
                                 </p>
                             </div>
                             <div>
-                                <p class="text-[11px] font-bold text-ink-soft uppercase tracking-wider">Announcement</p>
+                                <p class="text-[11px] font-bold text-ink-soft uppercase tracking-wider">{{ __('Announcement') }}</p>
                                 <p class="mt-0.5 text-xs font-bold text-ink truncate">
-                                    {{ $scholarship->announcement_date?->format('d M Y') ?? 'To be announced' }}
+                                    {{ $scholarship->announcement_date?->translatedFormat('d M Y') ?? __('To be announced') }}
                                 </p>
                                 @if ($scholarship->days_until_announcement !== null && $scholarship->days_until_announcement > 0)
-                                    <span class="text-[10px] font-medium text-aura-700">({{ $scholarship->days_until_announcement }} days remaining)</span>
+                                    <span class="text-[10px] font-medium text-aura-700">({{ __(':count days remaining', ['count' => $scholarship->days_until_announcement]) }})</span>
                                 @endif
                             </div>
                         </div>
 
                         {{-- Accessibility data for automated tests --}}
                         <div class="sr-only">
-                            Minimum GPA: {{ $scholarship->min_gpa ?? $scholarship->eligibility?->min_gpa ?? 'N/A' }}
-                            Open date: {{ $scholarship->open_date?->format('j M Y') ?? 'N/A' }}
+                            {{ __('Minimum GPA:') }} {{ $scholarship->min_gpa ?? $scholarship->eligibility?->min_gpa ?? __('N/A') }}
+                            {{ __('Open date:') }} {{ $scholarship->open_date?->translatedFormat('j M Y') ?? __('N/A') }}
                         </div>
 
                         {{-- 7. Two pill buttons side-by-side locked to the bottom: Official website & Apply --}}
@@ -197,7 +197,7 @@
                                 rel="noopener noreferrer"
                                 class="h-11 rounded-full border-2 border-brand-600 bg-white px-3 font-semibold text-xs text-brand-700 hover:bg-brand-50 flex items-center justify-center gap-1.5 transition shadow-sm"
                             >
-                                <span>Official website</span>
+                                <span>{{ __('Official website') }}</span>
                                 <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                 </svg>
@@ -207,8 +207,8 @@
                                 href="{{ route('scholarships.show', $scholarship) }}"
                                 class="h-11 rounded-full bg-aura-gradient px-3 font-semibold text-xs text-white hover:brightness-105 flex items-center justify-center transition shadow"
                             >
-                                <span>Apply</span>
-                                <span class="sr-only">View detail</span>
+                                <span>{{ __('Apply') }}</span>
+                                <span class="sr-only">{{ __('View detail') }}</span>
                             </a>
                         </div>
                     </article>
@@ -221,10 +221,10 @@
         @else
             <section class="mt-6 rounded-2xl bg-white p-10 text-center ring-1 ring-cream-dark">
                 <h2 class="font-display text-xl font-semibold">
-                    {{ ($filters['view'] ?? 'all') === 'saved' ? 'No saved scholarships yet' : 'No scholarships found' }}
+                    {{ ($filters['view'] ?? 'all') === 'saved' ? __('No saved scholarships yet') : __('No scholarships found') }}
                 </h2>
                 <p class="mt-2 text-sm text-ink-soft">
-                    {{ ($filters['view'] ?? 'all') === 'saved' ? 'Save scholarships with the bookmark icon and they will appear here.' : 'Try changing your search or filters.' }}
+                    {{ ($filters['view'] ?? 'all') === 'saved' ? __('Save scholarships with the bookmark icon and they will appear here.') : __('Try changing your search or filters.') }}
                 </p>
             </section>
         @endif

@@ -3,7 +3,7 @@
     <select id="{{ $formId }}-experience_type" name="experience_type" class="mt-1 block w-full rounded-xl border-cream-dark bg-white shadow-sm focus:border-brand-500 focus:ring-brand-500" x-model="form.experience_type">
         <option value="">{{ __('Select a type') }}</option>
         @foreach (\App\Http\Controllers\UserExperienceController::EXPERIENCE_TYPES as $type)
-            <option value="{{ $type }}" @selected(old('experience_type', $experience?->experience_type) === $type)>{{ $type }}</option>
+            <option value="{{ $type }}" @selected(old('experience_type', $experience?->experience_type) === $type)>{{ __($type) }}</option>
         @endforeach
     </select>
     <x-input-error class="mt-2" :messages="$errors->get('experience_type')" />

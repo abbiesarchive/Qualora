@@ -14,7 +14,7 @@ class SavedScholarshipController extends Controller
             'scholarship_id' => $scholarship->getKey(),
         ]);
 
-        return back()->with('status', 'Scholarship saved successfully.');
+        return back()->with('status', __('Scholarship saved successfully.'));
     }
 
     public function destroy(Request $request, Scholarship $scholarship): RedirectResponse
@@ -24,6 +24,6 @@ class SavedScholarshipController extends Controller
             ->where('scholarship_id', $scholarship->getKey())
             ->delete();
 
-        return back()->with('status', 'Scholarship removed from saved scholarships.');
+        return back()->with('status', __('Scholarship removed from saved scholarships.'));
     }
 }

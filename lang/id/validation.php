@@ -1,0 +1,67 @@
+<?php
+
+// A deliberately small set: the rules Qualora's forms actually use. Anything not listed
+// here falls back to the English message from the framework.
+return [
+    'after_or_equal' => ':attribute harus berupa tanggal yang sama dengan atau setelah :date.',
+    'between' => [
+        'numeric' => ':attribute harus di antara :min dan :max.',
+        'string' => ':attribute harus di antara :min dan :max karakter.',
+    ],
+    'boolean' => ':attribute harus bernilai benar atau salah.',
+    'confirmed' => 'Konfirmasi :attribute tidak cocok.',
+    'current_password' => 'Kata sandi salah.',
+    'date' => ':attribute harus berupa tanggal yang valid.',
+    'email' => ':attribute harus berupa alamat email yang valid.',
+    'in' => ':attribute yang dipilih tidak valid.',
+    'integer' => ':attribute harus berupa bilangan bulat.',
+    'lowercase' => ':attribute harus berupa huruf kecil.',
+    'max' => [
+        'numeric' => ':attribute tidak boleh lebih dari :max.',
+        'string' => ':attribute tidak boleh lebih dari :max karakter.',
+    ],
+    'min' => [
+        'numeric' => ':attribute minimal :min.',
+        'string' => ':attribute minimal :min karakter.',
+    ],
+    'numeric' => ':attribute harus berupa angka.',
+    'password' => [
+        'letters' => ':attribute harus mengandung setidaknya satu huruf.',
+        'mixed' => ':attribute harus mengandung setidaknya satu huruf besar dan satu huruf kecil.',
+        'numbers' => ':attribute harus mengandung setidaknya satu angka.',
+        'symbols' => ':attribute harus mengandung setidaknya satu simbol.',
+        'uncompromised' => ':attribute yang diberikan pernah muncul dalam kebocoran data. Pilih :attribute yang berbeda.',
+    ],
+    'required' => ':attribute wajib diisi.',
+    'string' => ':attribute harus berupa teks.',
+    'unique' => ':attribute sudah dipakai.',
+
+    'attributes' => [
+        'name' => 'nama',
+        'email' => 'email',
+        'password' => 'kata sandi',
+        'password_confirmation' => 'konfirmasi kata sandi',
+        'current_password' => 'kata sandi saat ini',
+        'campus' => 'kampus',
+        'major' => 'jurusan',
+        'semester' => 'semester',
+        'gpa' => 'IPK',
+        'age' => 'usia',
+        'nationality' => 'kewarganegaraan',
+        'has_financial_need' => 'kebutuhan finansial',
+        'language_name' => 'bahasa',
+        'certificate_type' => 'tes',
+        'certificate_score' => 'skor',
+        'experience_type' => 'jenis pengalaman',
+        'experience_name' => 'judul pengalaman',
+        'description' => 'deskripsi',
+        'study_field_category' => 'bidang peminatan',
+        'preferred_country' => 'lokasi kuliah',
+        'status' => 'status',
+        'applied_at' => 'tanggal dikirim',
+        'registration_number' => 'nomor registrasi',
+        'notes' => 'catatan',
+        'search' => 'pencarian',
+        'locale' => 'bahasa',
+    ],
+];

@@ -97,11 +97,16 @@ class EligibilityService
 
     private function activeCheck(Scholarship $s): array
     {
-        if ($s->is_active !== false) {
-            return $this->makeCheck(rule: 'is_active', label: 'Open for applications', requirement: 'Currently open', value: null, passed: true, detail: 'This scholarship is currently listed as open.');
-        }
+        $open = $s->is_active !== false;
 
-        return $this->makeCheck(rule: 'is_active', label: 'Open for applications', requirement: 'Currently open', value: null, passed: false, detail: 'This scholarship is no longer listed as open.');
+        return $this->makeCheck(
+            rule: 'is_active',
+            label: __('Open for applications'),
+            requirement: __('Currently open'),
+            value: null,
+            passed: $open,
+            detail: $open ? __('This scholarship is currently listed as open.') : __('This scholarship is no longer listed as open.'),
+        );
     }
 
     private function deadlineCheck(Scholarship $s): ?array
@@ -111,15 +116,15 @@ class EligibilityService
         }
 
         $open = ! $s->deadline->copy()->startOfDay()->lt(Carbon::today());
-        $date = $s->deadline->format('j M Y');
+        $date = $s->deadline->translatedFormat('j M Y');
 
         return $this->makeCheck(
             rule: 'deadline',
-            label: 'Deadline',
-            requirement: "Apply by {$date}",
+            label: __('Deadline'),
+            requirement: __('Apply by :date', ['date' => $date]),
             value: null,
             passed: $open,
-            detail: $open ? "The deadline is {$date}." : "The deadline passed on {$date}.",
+            detail: $open ? __('The deadline is :date.', ['date' => $date]) : __('The deadline passed on :date.', ['date' => $date]),
         );
     }
 
@@ -130,25 +135,26 @@ class EligibilityService
             return null;
         }
         $min = (float) $min;
-        $label = 'GPA';
-        $requirement = 'Minimum '.number_format($min, 2);
+        $minText = number_format($min, 2);
+        $label = __('GPA');
+        $requirement = __('Minimum :value', ['value' => $minText]);
 
         if ($p?->gpa === null) {
-            return $this->unknown('min_gpa', $label, $requirement, 'Add your GPA to check this rule.');
+            return $this->unknown('min_gpa', $label, $requirement, __('Add your GPA to check this rule.'));
         }
 
         $gpa = (float) $p->gpa;
         $value = number_format($gpa, 2);
 
         if ($gpa >= $min) {
-            return $this->makeCheck('min_gpa', $label, $requirement, $value, true, "GPA {$value} meets the minimum of ".number_format($min, 2).'.');
+            return $this->makeCheck('min_gpa', $label, $requirement, $value, true, __('GPA :value meets the minimum of :min.', ['value' => $value, 'min' => $minText]));
         }
 
         $gap = round($min - $gpa, 2);
         $near = $gap <= self::GPA_NEAR_MISS + 1e-9;
-        $detail = "GPA {$value}, required ".number_format($min, 2).'.';
+        $detail = __('GPA :value, required :min.', ['value' => $value, 'min' => $minText]);
         if ($near) {
-            $detail .= ' Only '.number_format($gap, 2).' away. A slightly higher GPA next term could change this.';
+            $detail .= ' '.__('Only :gap away. A slightly higher GPA next term could change this.', ['gap' => number_format($gap, 2)]);
         }
 
         return $this->makeCheck('min_gpa', $label, $requirement, $value, false, $detail, $near);
@@ -163,22 +169,22 @@ class EligibilityService
         }
 
         $requirement = match (true) {
-            $min !== null && $max !== null && (int) $min === (int) $max => "Semester {$min}",
-            $min !== null && $max !== null => "Semester {$min} to {$max}",
-            $min !== null => "Semester {$min} or later",
-            default => "Up to semester {$max}",
+            $min !== null && $max !== null && (int) $min === (int) $max => __('Semester :n', ['n' => $min]),
+            $min !== null && $max !== null => __('Semester :min to :max', ['min' => $min, 'max' => $max]),
+            $min !== null => __('Semester :min or later', ['min' => $min]),
+            default => __('Up to semester :max', ['max' => $max]),
         };
 
         if ($p?->semester === null) {
-            return $this->unknown('semester', 'Semester', $requirement, 'Add your semester to check this rule.');
+            return $this->unknown('semester', __('Semester'), $requirement, __('Add your semester to check this rule.'));
         }
 
         $sem = (int) $p->semester;
         $ok = ($min === null || $sem >= (int) $min) && ($max === null || $sem <= (int) $max);
 
-        return $this->makeCheck('semester', 'Semester', $requirement, "Semester {$sem}", $ok, $ok
-            ? "You are in semester {$sem}, within the range."
-            : "You are in semester {$sem}, the range is: {$requirement}.");
+        return $this->makeCheck('semester', __('Semester'), $requirement, __('Semester :n', ['n' => $sem]), $ok, $ok
+            ? __('You are in semester :n, within the range.', ['n' => $sem])
+            : __('You are in semester :n, the range is: :range.', ['n' => $sem, 'range' => $requirement]));
     }
 
     private function ageCheck(?Profile $p, Scholarship $s): ?array
@@ -190,21 +196,21 @@ class EligibilityService
         }
 
         $requirement = match (true) {
-            $min !== null && $max !== null => "Age {$min} to {$max}",
-            $min !== null => "At least {$min} years old",
-            default => "At most {$max} years old",
+            $min !== null && $max !== null => __('Age :min to :max', ['min' => $min, 'max' => $max]),
+            $min !== null => __('At least :min years old', ['min' => $min]),
+            default => __('At most :max years old', ['max' => $max]),
         };
 
         if ($p?->age === null) {
-            return $this->unknown('age', 'Age', $requirement, 'Add your age to check this rule.');
+            return $this->unknown('age', __('Age'), $requirement, __('Add your age to check this rule.'));
         }
 
         $age = (int) $p->age;
         $ok = ($min === null || $age >= (int) $min) && ($max === null || $age <= (int) $max);
 
-        return $this->makeCheck('age', 'Age', $requirement, "{$age} years", $ok, $ok
-            ? "Age {$age} is within the limit."
-            : "Age {$age}, the limit is: {$requirement}.");
+        return $this->makeCheck('age', __('Age'), $requirement, __(':n years', ['n' => $age]), $ok, $ok
+            ? __('Age :n is within the limit.', ['n' => $age])
+            : __('Age :n, the limit is: :limit.', ['n' => $age, 'limit' => $requirement]));
     }
 
     private function financialNeedCheck(?Profile $p, Scholarship $s): ?array
@@ -212,17 +218,18 @@ class EligibilityService
         if ($this->requirement($s, 'requires_financial_need') !== true) {
             return null;
         }
-        $requirement = 'For students with financial need';
+        $label = __('Financial need');
+        $requirement = __('For students with financial need');
 
         if ($p?->has_financial_need === null) {
-            return $this->unknown('financial_need', 'Financial need', $requirement, 'Add your financial situation to check this rule.');
+            return $this->unknown('financial_need', $label, $requirement, __('Add your financial situation to check this rule.'));
         }
 
         $ok = $p->has_financial_need === true;
 
-        return $this->makeCheck('financial_need', 'Financial need', $requirement, $ok ? 'Yes' : 'No', $ok, $ok
-            ? 'You indicated financial need, which this scholarship looks for.'
-            : 'This scholarship is for students with financial need.');
+        return $this->makeCheck('financial_need', $label, $requirement, $ok ? __('Yes') : __('No'), $ok, $ok
+            ? __('You indicated financial need, which this scholarship looks for.')
+            : __('This scholarship is for students with financial need.'));
     }
 
     private function majorCheck(?Profile $p, Scholarship $s): ?array
@@ -234,14 +241,14 @@ class EligibilityService
         $requirement = implode(', ', $majors);
 
         if ($this->blank($p?->major)) {
-            return $this->unknown('major', 'Major', $requirement, 'Add your major to check this rule.');
+            return $this->unknown('major', __('Major'), $requirement, __('Add your major to check this rule.'));
         }
 
         $ok = $this->inList($p->major, $majors);
 
-        return $this->makeCheck('major', 'Major', $requirement, $p->major, $ok, $ok
-            ? "{$p->major} is one of the accepted majors."
-            : "{$p->major}, accepted majors: {$requirement}.");
+        return $this->makeCheck('major', __('Major'), $requirement, $p->major, $ok, $ok
+            ? __(':major is one of the accepted majors.', ['major' => $p->major])
+            : __(':major, accepted majors: :list.', ['major' => $p->major, 'list' => $requirement]));
     }
 
     private function campusCheck(?Profile $p, Scholarship $s): ?array
@@ -251,14 +258,14 @@ class EligibilityService
         }
 
         if ($this->blank($p?->campus)) {
-            return $this->unknown('campus', 'Campus', $s->campus, 'Add your campus to check this rule.');
+            return $this->unknown('campus', __('Campus'), $s->campus, __('Add your campus to check this rule.'));
         }
 
         $ok = mb_strtolower(trim($p->campus)) === mb_strtolower(trim($s->campus));
 
-        return $this->makeCheck('campus', 'Campus', $s->campus, $p->campus, $ok, $ok
-            ? 'Your campus matches.'
-            : "{$p->campus}, this scholarship is for {$s->campus}.");
+        return $this->makeCheck('campus', __('Campus'), $s->campus, $p->campus, $ok, $ok
+            ? __('Your campus matches.')
+            : __(':campus, this scholarship is for :required.', ['campus' => $p->campus, 'required' => $s->campus]));
     }
 
     private function nationalityCheck(?Profile $p, Scholarship $s): ?array
@@ -270,14 +277,14 @@ class EligibilityService
         $requirement = implode(', ', $allowed);
 
         if ($this->blank($p?->nationality)) {
-            return $this->unknown('nationality', 'Nationality', $requirement, 'Add your nationality to check this rule.');
+            return $this->unknown('nationality', __('Nationality'), $requirement, __('Add your nationality to check this rule.'));
         }
 
         $ok = $this->inList($p->nationality, $allowed);
 
-        return $this->makeCheck('nationality', 'Nationality', $requirement, $p->nationality, $ok, $ok
-            ? "{$p->nationality} is accepted."
-            : "{$p->nationality}, accepted: {$requirement}.");
+        return $this->makeCheck('nationality', __('Nationality'), $requirement, $p->nationality, $ok, $ok
+            ? __(':nationality is accepted.', ['nationality' => $p->nationality])
+            : __(':nationality, accepted: :list.', ['nationality' => $p->nationality, 'list' => $requirement]));
     }
 
     private function englishCheck(?Profile $p, Scholarship $s): ?array
@@ -288,7 +295,8 @@ class EligibilityService
             return null;
         }
         $min = (float) $min;
-        $requirement = "{$type} ".rtrim(rtrim(number_format($min, 1), '0'), '.').' or higher';
+        $minText = rtrim(rtrim(number_format($min, 1), '0'), '.');
+        $requirement = __(':type :score or higher', ['type' => $type, 'score' => $minText]);
 
         // Only a score from the same test can be compared. Anything else is unknown.
         $match = $p?->languages
@@ -297,15 +305,16 @@ class EligibilityService
                 && is_numeric($lang->certificate_score));
 
         if ($match === null) {
-            return $this->unknown('english', 'English test', $requirement, "Add your {$type} score to check this rule.");
+            return $this->unknown('english', __('English test'), $requirement, __('Add your :type score to check this rule.', ['type' => $type]));
         }
 
         $score = (float) $match->certificate_score;
         $ok = $score >= $min;
+        $yours = "{$type} {$match->certificate_score}";
 
-        return $this->makeCheck('english', 'English test', $requirement, "{$type} {$match->certificate_score}", $ok, $ok
-            ? "{$type} {$match->certificate_score} meets the minimum."
-            : "{$type} {$match->certificate_score}, required ".rtrim(rtrim(number_format($min, 1), '0'), '.').'.');
+        return $this->makeCheck('english', __('English test'), $requirement, $yours, $ok, $ok
+            ? __(':yours meets the minimum.', ['yours' => $yours])
+            : __(':yours, required :min.', ['yours' => $yours, 'min' => $minText]));
     }
 
     /** Scholarship column first (what admins edit), then the detailed eligibility record. */

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ScholarshipController as AdminScholarshipController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SavedScholarshipController;
 use App\Http\Controllers\ScholarshipController;
@@ -10,6 +11,8 @@ use App\Http\Controllers\UserExperienceController;
 use App\Http\Controllers\UserLanguageController;
 use App\Http\Controllers\UserStudyPlanController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('/language', [LocaleController::class, 'update'])->name('language.switch');
 
 Route::get('/', function () {
     return view('welcome');

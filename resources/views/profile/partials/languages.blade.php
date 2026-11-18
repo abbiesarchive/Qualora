@@ -87,7 +87,7 @@
                 <tbody class="divide-y divide-cream-dark bg-white">
             @foreach ($languages as $language)
                     <tr class="align-middle">
-                        <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900">{{ $language->language_name }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900">{{ __($language->language_name) }}</td>
                         <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $language->certificate_type ?: __('Not provided') }}</td>
                         <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $language->certificate_score ?: __('Not provided') }}</td>
                         <td class="px-4 py-3">
