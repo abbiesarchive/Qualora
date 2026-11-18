@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Scholarship;
+use App\Services\EligibilityService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -53,7 +54,7 @@ class ScholarshipController extends Controller
         ]);
     }
 
-    public function show(Request $request, Scholarship $scholarship): View
+    public function show(Request $request, Scholarship $scholarship, EligibilityService $eligibilityService): View
     {
         $scholarship->load([
             'eligibility',
@@ -65,64 +66,18 @@ class ScholarshipController extends Controller
         ]);
 
         $user = $request->user();
-        $profile = $user->profile;
+        $profile = $user->profile?->loadMissing('languages', 'studyPlan');
 
         $isSaved = $user->savedScholarships()->where('scholarship_id', $scholarship->id)->exists();
         $userApplication = $user->applications()->where('scholarship_id', $scholarship->id)->first();
 
-        // Calculate eligibility comparison
-        $eligibility = $scholarship->eligibility;
-        $evaluations = [];
-
-        if ($eligibility) {
-            if ($eligibility->min_gpa !== null) {
-                $meets = $profile?->gpa !== null && $profile->gpa >= $eligibility->min_gpa;
-                $evaluations[] = [
-                    'label' => 'Indeks Prestasi Kumulatif (IPK)',
-                    'requirement' => "Minimal {$eligibility->min_gpa}",
-                    'user_value' => $profile?->gpa ? number_format($profile->gpa, 2) : 'Belum diisi',
-                    'status' => $profile?->gpa === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
-                ];
-            }
-
-            if ($eligibility->min_semester !== null || $eligibility->max_semester !== null) {
-                $min = $eligibility->min_semester ?? 1;
-                $max = $eligibility->max_semester ?? 14;
-                $meets = $profile?->semester !== null && $profile->semester >= $min && $profile->semester <= $max;
-                $evaluations[] = [
-                    'label' => 'Semester Aktif',
-                    'requirement' => "Semester {$min} s/d {$max}",
-                    'user_value' => $profile?->semester ? "Semester {$profile->semester}" : 'Belum diisi',
-                    'status' => $profile?->semester === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
-                ];
-            }
-
-            if ($eligibility->max_age !== null) {
-                $meets = $profile?->age !== null && $profile->age <= $eligibility->max_age;
-                $evaluations[] = [
-                    'label' => 'Batas Usia Maksimal',
-                    'requirement' => "Maksimal {$eligibility->max_age} tahun",
-                    'user_value' => $profile?->age ? "{$profile->age} tahun" : 'Belum diisi',
-                    'status' => $profile?->age === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
-                ];
-            }
-
-            if ($eligibility->requires_financial_need) {
-                $meets = $profile?->has_financial_need === true;
-                $evaluations[] = [
-                    'label' => 'Bantuan Ekonomi / Finansial',
-                    'requirement' => 'Memerlukan bantuan finansial (Need-based)',
-                    'user_value' => $profile?->has_financial_need ? 'Ya (Membutuhkan)' : ($profile?->has_financial_need === false ? 'Tidak' : 'Belum diisi'),
-                    'status' => $profile?->has_financial_need === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
-                ];
-            }
-        }
+        $match = $eligibilityService->check($profile, $scholarship);
 
         return view('scholarships.show', [
             'scholarship' => $scholarship,
             'isSaved' => $isSaved,
             'userApplication' => $userApplication,
-            'evaluations' => $evaluations,
+            'match' => $match,
             'hasProfile' => $profile !== null,
         ]);
     }
