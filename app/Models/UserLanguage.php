@@ -9,10 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'language_name',
-    'proficiency_level',
     'certificate_type',
     'certificate_score',
-    'certificate_expiry',
 ])]
 class UserLanguage extends Model
 {
@@ -27,13 +25,6 @@ class UserLanguage extends Model
     protected $keyType = 'string';
 
     public $timestamps = false;
-
-    protected function casts(): array
-    {
-        return [
-            'certificate_expiry' => 'date',
-        ];
-    }
 
     public function profile(): BelongsTo
     {

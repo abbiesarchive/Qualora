@@ -7,18 +7,38 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Light "what are you looking for" preferences. Used only to help order and
+ * suggest scholarships; never to pass or fail an eligibility rule.
+ */
 #[Fillable([
-    'desired_major',
     'study_field_category',
     'preferred_country',
-    'preferred_university',
-    'study_mode',
-    'preferred_start_year',
-    'preferred_duration',
 ])]
 class UserStudyPlan extends Model
 {
     use HasUuids;
+
+    public const FIELDS = [
+        'Technology & Computing',
+        'Engineering',
+        'Business & Economics',
+        'Health & Medicine',
+        'Science & Mathematics',
+        'Social Sciences & Law',
+        'Arts, Design & Humanities',
+        'Education',
+        'Other',
+    ];
+
+    public const LOCATIONS = [
+        'Indonesia',
+        'Asia (outside Indonesia)',
+        'Europe',
+        'North America',
+        'Oceania',
+        'Open to anywhere',
+    ];
 
     protected $table = 'user_study_plans';
 
@@ -29,13 +49,6 @@ class UserStudyPlan extends Model
     protected $keyType = 'string';
 
     public $timestamps = false;
-
-    protected function casts(): array
-    {
-        return [
-            'preferred_start_year' => 'integer',
-        ];
-    }
 
     public function profile(): BelongsTo
     {

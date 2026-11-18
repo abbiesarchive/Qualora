@@ -10,11 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'experience_type',
     'experience_name',
-    'position',
-    'organization_name',
     'description',
-    'start_date',
-    'end_date',
 ])]
 class UserExperience extends Model
 {
@@ -29,14 +25,6 @@ class UserExperience extends Model
     protected $keyType = 'string';
 
     public $timestamps = false;
-
-    protected function casts(): array
-    {
-        return [
-            'start_date' => 'date',
-            'end_date' => 'date',
-        ];
-    }
 
     public function profile(): BelongsTo
     {

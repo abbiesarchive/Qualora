@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 // user_id is deliberately not fillable: it is always set through $user->profile().
 #[Fillable([
     'campus', 'major', 'semester', 'gpa', 'age', 'nationality', 'has_financial_need',
-    'faculty', 'gender', 'city_of_residence', 'phone_number',
-    'graduation_year', 'graduation_status', 'university_accreditation',
 ])]
 class Profile extends Model
 {
@@ -25,7 +23,6 @@ class Profile extends Model
             'gpa' => 'decimal:2',
             'age' => 'integer',
             'has_financial_need' => 'boolean',
-            'graduation_year' => 'integer',
         ];
     }
 

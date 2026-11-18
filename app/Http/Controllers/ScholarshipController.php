@@ -116,16 +116,6 @@ class ScholarshipController extends Controller
                     'status' => $profile?->has_financial_need === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
                 ];
             }
-
-            if ($eligibility->min_university_accreditation) {
-                $meets = $profile?->university_accreditation !== null && strcasecmp($profile->university_accreditation, $eligibility->min_university_accreditation) <= 0;
-                $evaluations[] = [
-                    'label' => 'Akreditasi Kampus',
-                    'requirement' => "Minimal akreditasi {$eligibility->min_university_accreditation}",
-                    'user_value' => $profile?->university_accreditation ? "Akreditasi {$profile->university_accreditation}" : 'Belum diisi',
-                    'status' => $profile?->university_accreditation === null ? 'unknown' : ($meets ? 'pass' : 'fail'),
-                ];
-            }
         }
 
         return view('scholarships.show', [

@@ -7,17 +7,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 
 class UserLanguageController extends Controller
 {
-    private const PROFICIENCY_LEVELS = [
-        'Beginner',
-        'Elementary',
-        'Intermediate',
-        'Upper Intermediate',
-        'Advanced',
-        'Proficient / Native',
-    ];
+    public const LANGUAGES = ['English', 'Mandarin', 'Japanese', 'Korean', 'German', 'French', 'Arabic', 'Other'];
+
+    public const TESTS = ['IELTS', 'TOEFL iBT', 'TOEFL ITP', 'TOEIC', 'Duolingo', 'JLPT', 'TOPIK', 'HSK', 'Other'];
 
     public function store(Request $request): RedirectResponse
     {
@@ -57,11 +53,9 @@ class UserLanguageController extends Controller
     private function rules(): array
     {
         return [
-            'language_name' => ['required', 'string', 'max:255'],
-            'proficiency_level' => ['nullable', 'string', 'in:'.implode(',', self::PROFICIENCY_LEVELS)],
-            'certificate_type' => ['nullable', 'string', 'max:255'],
-            'certificate_score' => ['nullable', 'string'],
-            'certificate_expiry' => ['nullable', 'date'],
+            'language_name' => ['required', 'string', Rule::in(self::LANGUAGES)],
+            'certificate_type' => ['nullable', 'string', Rule::in(self::TESTS)],
+            'certificate_score' => ['nullable', 'string', 'max:20'],
         ];
     }
 
