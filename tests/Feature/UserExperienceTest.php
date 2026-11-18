@@ -19,11 +19,7 @@ class UserExperienceTest extends TestCase
             ->post('/profile/experiences', [
                 'experience_type' => 'Internship',
                 'experience_name' => 'Software Engineering Intern',
-                'position' => 'Engineering Intern',
-                'organization_name' => 'Qualora',
                 'description' => 'Built application features.',
-                'start_date' => '2025-01-10',
-                'end_date' => '2025-06-30',
             ])
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
@@ -33,8 +29,6 @@ class UserExperienceTest extends TestCase
         $this->post('/profile/experiences', [
             'experience_type' => 'Project',
             'experience_name' => 'Open Source Project',
-            'start_date' => '2025-03-01',
-            'end_date' => null,
         ])
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
@@ -44,13 +38,10 @@ class UserExperienceTest extends TestCase
             'user_experiences_id' => $internship->getKey(),
             'profile_id' => $profile->id,
             'experience_name' => 'Software Engineering Intern',
-            'position' => 'Engineering Intern',
-            'organization_name' => 'Qualora',
         ]);
         $this->assertDatabaseHas('user_experiences', [
             'profile_id' => $profile->id,
             'experience_name' => 'Open Source Project',
-            'end_date' => null,
         ]);
 
         $this->get('/profile')
@@ -63,20 +54,13 @@ class UserExperienceTest extends TestCase
             ->assertSee('x-on:click="startEdit($event.currentTarget.dataset)"', false)
             ->assertSee('data-update-url="'.route('profile.experiences.update', $internship->getKey()).'"', false)
             ->assertSee('Software Engineering Intern')
-            ->assertSee('Engineering Intern')
-            ->assertSee('Qualora')
             ->assertSee('Built application features.')
-            ->assertSee('2025-01-10')
-            ->assertSee('2025-06-30')
-            ->assertSee('Open Source Project')
-            ->assertSee('Present');
+            ->assertSee('Open Source Project');
 
         $this->patch("/profile/experiences/{$internship->getKey()}", [
             'experience_type' => 'Work Experience',
             'experience_name' => 'Software Engineer',
             'profile_id' => $profile->id + 1,
-            'start_date' => '2025-01-10',
-            'end_date' => '2025-07-01',
         ])
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
@@ -139,7 +123,7 @@ class UserExperienceTest extends TestCase
         ]);
     }
 
-    public function test_experience_name_is_required_type_is_validated_and_end_date_cannot_precede_start_date(): void
+    public function test_experience_name_is_required_type_is_validated(): void
     {
         $user = User::factory()->create();
         $user->profile()->create([]);
@@ -149,13 +133,10 @@ class UserExperienceTest extends TestCase
             ->from('/profile')
             ->post('/profile/experiences', [
                 'experience_type' => 'Invalid Type',
-                'start_date' => '2025-05-01',
-                'end_date' => '2025-04-30',
             ])
             ->assertOk()
             ->assertSee('The experience name field is required.')
-            ->assertSee('The selected experience type is invalid.')
-            ->assertSee('The end date field must be a date after or equal to start date.');
+            ->assertSee('The selected experience type is invalid.');
 
         $this->assertDatabaseCount('user_experiences', 0);
     }

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class UserExperienceController extends Controller
 {
-    private const EXPERIENCE_TYPES = [
+    public const EXPERIENCE_TYPES = [
         'Organization',
         'Internship',
         'Work Experience',
@@ -23,7 +23,7 @@ class UserExperienceController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate($this->rules($request));
+        $validated = $request->validate($this->rules());
         $profile = $request->user()->profile()->firstOrCreate([]);
         $profile->experiences()->create($validated);
 
@@ -32,7 +32,7 @@ class UserExperienceController extends Controller
 
     public function update(Request $request, string $userExperience): RedirectResponse
     {
-        $validated = $request->validate($this->rules($request));
+        $validated = $request->validate($this->rules());
         $this->profileForAuthenticatedUser()
             ->experiences()
             ->whereKey($userExperience)
@@ -56,23 +56,13 @@ class UserExperienceController extends Controller
     /**
      * @return array<string, array<int, string>>
      */
-    private function rules(Request $request): array
+    private function rules(): array
     {
-        $rules = [
+        return [
             'experience_type' => ['nullable', 'string', 'in:'.implode(',', self::EXPERIENCE_TYPES)],
             'experience_name' => ['required', 'string', 'max:255'],
-            'position' => ['nullable', 'string', 'max:255'],
-            'organization_name' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'start_date' => ['nullable', 'date'],
-            'end_date' => ['nullable', 'date'],
+            'description' => ['nullable', 'string', 'max:1000'],
         ];
-
-        if ($request->filled('start_date')) {
-            $rules['end_date'][] = 'after_or_equal:start_date';
-        }
-
-        return $rules;
     }
 
     private function profileForAuthenticatedUser(): Profile

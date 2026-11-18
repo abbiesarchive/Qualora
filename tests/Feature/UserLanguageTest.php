@@ -18,10 +18,8 @@ class UserLanguageTest extends TestCase
         $this->actingAs($user)
             ->post('/profile/languages', [
                 'language_name' => 'English',
-                'proficiency_level' => 'Advanced',
                 'certificate_type' => 'IELTS',
                 'certificate_score' => '8.0',
-                'certificate_expiry' => '2028-04-30',
             ])
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
@@ -30,7 +28,6 @@ class UserLanguageTest extends TestCase
 
         $this->post('/profile/languages', [
             'language_name' => 'French',
-            'proficiency_level' => 'Intermediate',
         ])
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
@@ -48,19 +45,19 @@ class UserLanguageTest extends TestCase
             ->assertSee('Add Language')
             ->assertSee('<table', false)
             ->assertSee('<th', false)
-            ->assertSee('Certificate Score')
+            ->assertSee('Score')
             ->assertSee('Edit')
             ->assertSee('x-on:click="startEdit($event.currentTarget.dataset)"', false)
             ->assertSee('data-update-url="'.route('profile.languages.update', $english->getKey()).'"', false)
             ->assertSee('English')
             ->assertSee('French')
             ->assertSee('IELTS')
-            ->assertSee('8.0')
-            ->assertSee('2028-04-30');
+            ->assertSee('8.0');
 
         $this->patch("/profile/languages/{$english->getKey()}", [
             'language_name' => 'English',
-            'proficiency_level' => 'Proficient / Native',
+            'certificate_type' => 'TOEFL iBT',
+            'certificate_score' => '100',
             'profile_id' => $profile->id + 1,
         ])
             ->assertSessionHasNoErrors()
@@ -70,7 +67,7 @@ class UserLanguageTest extends TestCase
         $this->assertDatabaseHas('user_language', [
             'user_language_id' => $english->getKey(),
             'profile_id' => $profile->id,
-            'proficiency_level' => 'Proficient / Native',
+            'certificate_type' => 'TOEFL iBT',
         ]);
 
         $this->delete("/profile/languages/{$english->getKey()}")
@@ -88,7 +85,7 @@ class UserLanguageTest extends TestCase
         $owner = User::factory()->create();
         $ownerProfile = $owner->profile()->create([]);
         $language = $ownerProfile->languages()->create([
-            'language_name' => 'Private Language',
+            'language_name' => 'German',
         ]);
 
         $otherUser = User::factory()->create();
@@ -97,17 +94,17 @@ class UserLanguageTest extends TestCase
         $this->actingAs($otherUser)
             ->get('/profile')
             ->assertOk()
-            ->assertDontSee('Private Language');
+            ->assertViewHas('languages', fn ($languages) => $languages->isEmpty());
 
         $this->post('/profile/languages', [
-            'language_name' => 'My Language',
+            'language_name' => 'Korean',
             'profile_id' => $ownerProfile->id,
         ])
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
 
         $this->patch("/profile/languages/{$language->getKey()}", [
-            'language_name' => 'Changed by another user',
+            'language_name' => 'Arabic',
         ])->assertNotFound();
 
         $this->delete("/profile/languages/{$language->getKey()}")->assertNotFound();
@@ -115,15 +112,15 @@ class UserLanguageTest extends TestCase
         $this->assertDatabaseHas('user_language', [
             'user_language_id' => $language->getKey(),
             'profile_id' => $ownerProfile->id,
-            'language_name' => 'Private Language',
+            'language_name' => 'German',
         ]);
         $this->assertDatabaseHas('user_language', [
             'profile_id' => $otherProfile->id,
-            'language_name' => 'My Language',
+            'language_name' => 'Korean',
         ]);
     }
 
-    public function test_language_name_is_required_and_proficiency_must_be_a_supported_level(): void
+    public function test_language_name_is_required_and_values_must_come_from_the_dropdowns(): void
     {
         $user = User::factory()->create();
         $user->profile()->create([]);
@@ -132,7 +129,7 @@ class UserLanguageTest extends TestCase
             ->followingRedirects()
             ->from('/profile')
             ->post('/profile/languages', [
-                'proficiency_level' => 'Fluentish',
+                'certificate_type' => 'Made Up Test',
             ])
             ->assertOk()
             ->assertSee('The language name field is required.');

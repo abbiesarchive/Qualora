@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
+use App\Models\UserStudyPlan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 
 class UserStudyPlanController extends Controller
 {
@@ -54,13 +56,8 @@ class UserStudyPlanController extends Controller
     private function rules(): array
     {
         return [
-            'desired_major' => ['nullable', 'string'],
-            'study_field_category' => ['nullable', 'string'],
-            'preferred_country' => ['nullable', 'string'],
-            'preferred_university' => ['nullable', 'string'],
-            'study_mode' => ['nullable', 'string'],
-            'preferred_start_year' => ['nullable', 'integer', 'min:1', 'max:9999'],
-            'preferred_duration' => ['nullable', 'string'],
+            'study_field_category' => ['nullable', 'string', Rule::in(UserStudyPlan::FIELDS)],
+            'preferred_country' => ['nullable', 'string', Rule::in(UserStudyPlan::LOCATIONS)],
         ];
     }
 

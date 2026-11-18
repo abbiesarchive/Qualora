@@ -40,9 +40,7 @@ class ProfileController extends Controller
         $validated = $request->validated();
         $profileFields = [
             'campus', 'major', 'semester', 'gpa', 'age', 'nationality',
-            'has_financial_need', 'faculty', 'gender', 'city_of_residence',
-            'phone_number', 'graduation_year', 'graduation_status',
-            'university_accreditation',
+            'has_financial_need',
         ];
         $profileData = Arr::only($validated, $profileFields);
         $userData = Arr::except($validated, $profileFields);

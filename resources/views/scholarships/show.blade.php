@@ -144,59 +144,52 @@
 
         {{-- DETAIL SECTIONS BELOW THE HERO CARD --}}
 
-        {{-- 1. HASIL PENGECEKAN KELAYAKAN (ELIGIBILITY CHECK) --}}
-        <section class="mt-10 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm">
-            <div class="flex items-center justify-between mb-4">
+        {{-- 1. HOW YOUR PROFILE MATCHES (from EligibilityService, never from AI) --}}
+        @php
+            $headline = match ($match['status']) {
+                'eligible' => ['You may be eligible', 'bg-sage-100 text-sage-800'],
+                'almost' => ['Almost there', 'bg-aura-100 text-aura-800'],
+                default => ['Not a match yet', 'bg-clay-100 text-clay-800'],
+            };
+        @endphp
+        <section class="mt-10 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm" aria-labelledby="match-heading">
+            <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
                 <div>
-                    <h2 class="font-display text-xl font-bold text-ink">Hasil Pengecekan Syarat Kamu</h2>
-                    <p class="text-xs text-ink-soft mt-0.5">Pencocokan otomatis berdasarkan data profil akademik kamu.</p>
+                    <h2 id="match-heading" class="font-display text-xl font-bold text-ink">How your profile matches</h2>
+                    <p class="text-xs text-ink-soft mt-0.5">
+                        {{ $match['met'] }} of {{ $match['total'] }} requirements met. Always verify on the official site, this is not a guarantee.
+                    </p>
                 </div>
-                @if (!$hasProfile)
-                    <a href="{{ route('profile.edit') }}" class="text-xs font-semibold text-brand-700 hover:underline">
-                        Lengkapi Profil &rarr;
-                    </a>
-                @endif
+                <div class="flex items-center gap-3">
+                    <span class="rounded-full px-3 py-1 text-xs font-bold {{ $headline[1] }}">{{ $headline[0] }}</span>
+                    @if (! $hasProfile)
+                        <a href="{{ route('profile.edit') }}" class="text-xs font-semibold text-brand-700 hover:underline">
+                            Add my details &rarr;
+                        </a>
+                    @endif
+                </div>
             </div>
 
-            @if (count($evaluations) > 0)
-                <div class="grid gap-3 sm:grid-cols-2">
-                    @foreach ($evaluations as $eval)
-                        <div class="rounded-2xl border p-4 flex items-start justify-between gap-3 {{ $eval['status'] === 'pass' ? 'border-sage-200 bg-sage-50/50' : ($eval['status'] === 'fail' ? 'border-clay-200 bg-clay-50/50' : 'border-cream-dark bg-white') }}">
-                            <div>
-                                <p class="text-xs font-semibold text-ink-soft">{{ $eval['label'] }}</p>
-                                <p class="text-sm font-bold text-ink mt-0.5">{{ $eval['requirement'] }}</p>
-                                <p class="text-xs mt-1 text-ink-soft">Profil kamu: <span class="font-medium text-ink">{{ $eval['user_value'] }}</span></p>
-                            </div>
-                            <div class="shrink-0">
-                                @if ($eval['status'] === 'pass')
-                                    <span class="inline-flex items-center gap-1 rounded-full bg-sage-100 px-2.5 py-1 text-xs font-semibold text-sage-800">
-                                        &check; Memenuhi
-                                    </span>
-                                @elseif ($eval['status'] === 'fail')
-                                    <span class="inline-flex items-center gap-1 rounded-full bg-clay-100 px-2.5 py-1 text-xs font-semibold text-clay-800">
-                                        &times; Belum Memenuhi
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center gap-1 rounded-full bg-cream-dark px-2.5 py-1 text-xs font-semibold text-ink-soft">
-                                        ? Belum Diisi
-                                    </span>
-                                @endif
-                            </div>
+            <ul class="grid gap-3 sm:grid-cols-2">
+                @foreach ($match['checks'] as $check)
+                    @php
+                        $state = match (true) {
+                            $check['passed'] === true => ['Met', 'bg-sage-100 text-sage-800', 'border-sage-200 bg-sage-50/50'],
+                            $check['passed'] === false && $check['near_miss'] => ['Almost', 'bg-aura-100 text-aura-800', 'border-aura-200 bg-aura-50/50'],
+                            $check['passed'] === false => ['Not met', 'bg-clay-100 text-clay-800', 'border-clay-200 bg-clay-50/50'],
+                            default => ['Add your data', 'bg-cream-dark text-ink-soft', 'border-cream-dark bg-white'],
+                        };
+                    @endphp
+                    <li class="rounded-2xl border p-4 flex items-start justify-between gap-3 {{ $state[2] }}">
+                        <div>
+                            <p class="text-xs font-semibold text-ink-soft">{{ $check['label'] }}</p>
+                            <p class="text-sm font-bold text-ink mt-0.5">{{ $check['requirement'] }}</p>
+                            <p class="text-xs mt-1 text-ink-soft">{{ $check['detail'] }}</p>
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="rounded-2xl bg-cream/30 p-4 text-sm text-ink-soft">
-                    Kriteria kelayakan umum: Terbuka untuk seluruh mahasiswa aktif dengan kualifikasi standar.
-                </div>
-            @endif
-
-            @if ($scholarship->eligibility?->additional_notes || $scholarship->other_requirements)
-                <div class="mt-4 rounded-2xl bg-cream/40 p-4 text-xs text-ink-soft leading-relaxed">
-                    <span class="font-bold text-ink">Catatan Kualifikasi Tambahan:</span>
-                    {{ $scholarship->eligibility?->additional_notes ?? $scholarship->other_requirements }}
-                </div>
-            @endif
+                        <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold {{ $state[1] }}">{{ $state[0] }}</span>
+                    </li>
+                @endforeach
+            </ul>
         </section>
 
         {{-- 2. FASILITAS & BENEFIT --}}

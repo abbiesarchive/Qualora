@@ -55,13 +55,6 @@ class ProfileTest extends TestCase
             'age' => 20,
             'nationality' => 'Indonesian',
             'has_financial_need' => '1',
-            'faculty' => 'Faculty of Computer Science',
-            'gender' => 'Prefer not to say',
-            'city_of_residence' => 'Depok',
-            'phone_number' => '+628123456789',
-            'graduation_year' => 2027,
-            'graduation_status' => 'In progress',
-            'university_accreditation' => 'Excellent',
         ];
 
         $this->actingAs($user)
@@ -82,13 +75,6 @@ class ProfileTest extends TestCase
             'age' => 20,
             'nationality' => 'Indonesian',
             'has_financial_need' => 1,
-            'faculty' => 'Faculty of Computer Science',
-            'gender' => 'Prefer not to say',
-            'city_of_residence' => 'Depok',
-            'phone_number' => '+628123456789',
-            'graduation_year' => 2027,
-            'graduation_status' => 'In progress',
-            'university_accreditation' => 'Excellent',
         ]);
 
         $this->patch('/profile', [
@@ -135,13 +121,6 @@ class ProfileTest extends TestCase
             'age',
             'nationality',
             'has_financial_need',
-            'faculty',
-            'gender',
-            'city_of_residence',
-            'phone_number',
-            'graduation_year',
-            'graduation_status',
-            'university_accreditation',
             'created_at',
             'updated_at',
         ]));
@@ -192,20 +171,10 @@ class ProfileTest extends TestCase
             ->assertSee('3.75');
     }
 
-    public function test_new_profile_fields_are_optional(): void
+    public function test_detailed_personal_fields_are_not_collected(): void
     {
-        $columns = collect(Schema::getColumns('profiles'))->keyBy('name');
-
-        foreach ([
-            'faculty',
-            'gender',
-            'city_of_residence',
-            'phone_number',
-            'graduation_year',
-            'graduation_status',
-            'university_accreditation',
-        ] as $column) {
-            $this->assertTrue($columns[$column]['nullable'], "The {$column} column should be nullable.");
+        foreach (['faculty', 'gender', 'city_of_residence', 'phone_number', 'graduation_year', 'graduation_status', 'university_accreditation'] as $column) {
+            $this->assertFalse(Schema::hasColumn('profiles', $column), "The {$column} column should not exist.");
         }
     }
 
