@@ -65,7 +65,7 @@
 
         <form method="GET" action="{{ route('scholarships.index') }}" class="rounded-2xl bg-white ring-1 ring-cream-dark p-4 sm:p-5">
             <input type="hidden" name="view" value="{{ $filters['view'] ?? 'all' }}">
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <label class="sm:col-span-2">
                     <span class="block text-sm font-medium text-ink mb-1">Search scholarships</span>
                     <input
@@ -86,13 +86,22 @@
                     </select>
                 </label>
 
+                <label>
+                    <span class="block text-sm font-medium text-ink mb-1">Location</span>
+                    <select name="location" class="w-full rounded-xl border-cream-dark bg-white text-ink focus:border-brand-500 focus:ring-brand-500">
+                        <option value="">All locations</option>
+                        <option value="domestic" @selected(($filters['location'] ?? '') === 'domestic')>Domestic</option>
+                        <option value="abroad" @selected(($filters['location'] ?? '') === 'abroad')>Abroad</option>
+                    </select>
+                </label>
+
             </div>
 
             <div class="mt-4 flex flex-wrap items-center gap-3">
                 <button type="submit" class="inline-flex items-center justify-center rounded-full bg-aura-gradient px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
                     Search
                 </button>
-                @if (! empty($filters['search']) || ! empty($filters['type']))
+                @if (! empty($filters['search']) || ! empty($filters['type']) || ! empty($filters['location']))
                     <a href="{{ route('scholarships.index', ($filters['view'] ?? 'all') === 'saved' ? ['view' => 'saved'] : []) }}" class="text-sm font-semibold text-brand-700 hover:text-brand-900">Clear filters</a>
                 @endif
                 <p class="text-sm text-ink-soft sm:ms-auto">

@@ -14,6 +14,7 @@ class ScholarshipController extends Controller
             'search' => ['nullable', 'string', 'max:100'],
             'type' => ['nullable', 'in:full,partial'],
             'category' => ['nullable', 'string', 'max:50'],
+            'location' => ['nullable', 'in:domestic,abroad'],
             'view' => ['nullable', 'in:all,saved'],
         ]);
 
@@ -49,6 +50,9 @@ class ScholarshipController extends Controller
             })
             ->when($filters['category'] ?? null, function ($query, string $category) {
                 $query->where('scholarship_category', $category);
+            })
+            ->when($filters['location'] ?? null, function ($query, string $location) {
+                $query->where('is_abroad', $location === 'abroad');
             })
             ->withExists([
                 'savedBy as is_saved' => fn ($query) => $query->where('user_id', $request->user()->getKey()),

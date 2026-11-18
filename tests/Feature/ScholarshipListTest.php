@@ -38,6 +38,28 @@ class ScholarshipListTest extends TestCase
             ->assertDontSee('Inactive');
     }
 
+    public function test_user_can_filter_scholarships_by_location(): void
+    {
+        $user = User::factory()->create();
+        $domestic = $this->createScholarship([
+            'name' => 'Domestic Grant',
+            'is_abroad' => false,
+            'deadline' => null,
+        ]);
+        $this->createScholarship([
+            'name' => 'Abroad Grant',
+            'is_abroad' => true,
+            'deadline' => null,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('scholarships.index', ['location' => 'domestic']))
+            ->assertOk()
+            ->assertSee($domestic->name)
+            ->assertDontSee('Abroad Grant')
+            ->assertSee('value="domestic" selected', false);
+    }
+
     public function test_closing_soon_scholarships_are_shown_at_the_top_of_the_list(): void
     {
         $user = User::factory()->create();
