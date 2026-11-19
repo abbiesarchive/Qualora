@@ -29,7 +29,7 @@ class ProfileController extends Controller
             'profile' => $profile,
             'studyPlan' => $profile?->studyPlan,
             'languages' => $profile?->languages()->orderBy('language_name')->get() ?? collect(),
-            'experiences' => $profile?->experiences()->orderByDesc('start_date')->orderBy('experience_name')->get() ?? collect(),
+            'experiences' => $profile?->experiences()->orderBy('experience_name')->get() ?? collect(),
         ]);
     }
 
