@@ -44,11 +44,9 @@ jobs:
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-          SSH_FINGERPRINT: ${{ secrets.SSH_FINGERPRINT }}
         run: |
           : "${SSH_HOST:?Set the SSH_HOST repository secret}"
           : "${SSH_USERNAME:?Set the SSH_USERNAME repository secret}"
-          : "${SSH_FINGERPRINT:?Set the SSH_FINGERPRINT repository secret}"
           if [ -z "$SSH_KEY" ] && [ -z "$SSH_PASSWORD" ]; then
             echo "Set SSH_KEY or SSH_PASSWORD as a repository secret." >&2
             exit 1
@@ -97,7 +95,6 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.SSH_PASSWORD }}
-          fingerprint: ${{ secrets.SSH_FINGERPRINT }}
           command_timeout: 20m
           envs: DEPLOY_SHA
           script: |
