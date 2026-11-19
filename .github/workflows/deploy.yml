@@ -1,4 +1,3 @@
-
 name: Deploy Laravel to VPS
 
 on:
@@ -15,12 +14,30 @@ concurrency:
 
 jobs:
   deploy:
-    name: Test, build, and SSH connection
+    name: Test, build, and deploy
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
 
     steps:
+
+      - name: Test SSH Connection
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          timeout: 60s
+          command_timeout: 30s
+          debug: true
+          script: |
+            echo "SSH CONNECTION SUCCESSFUL"
+            whoami
+            hostname
+            pwd
+
+
       - name: Validate SSH secrets
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -32,7 +49,6 @@ jobs:
           : "${SSH_HOST:?Set the SSH_HOST repository secret}"
           : "${SSH_USERNAME:?Set the SSH_USERNAME repository secret}"
           : "${SSH_FINGERPRINT:?Set the SSH_FINGERPRINT repository secret}"
-
           if [ -z "$SSH_KEY" ] && [ -z "$SSH_PASSWORD" ]; then
             echo "Set SSH_KEY or SSH_PASSWORD as a repository secret." >&2
             exit 1
@@ -71,26 +87,59 @@ jobs:
       - name: Run tests
         run: |
           php artisan test --compact
-        env:
-          APP_ENV: testing
-          GEMINI_API_KEY: dummy-not-used-in-tests
 
-      - name: Test SSH connection
+      - name: Deploy over SSH
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.SSH_PASSWORD }}
           fingerprint: ${{ secrets.SSH_FINGERPRINT }}
-          port: 22
-          timeout: 30s
-          command_timeout: 1m
-          debug: true
+          command_timeout: 20m
+          envs: DEPLOY_SHA
           script: |
-            echo "SSH connection successful!"
-            echo "Username:"
-            whoami
-            echo "Current directory:"
-            pwd
-            echo "SSH test completed successfully."
+            bash -se <<'DEPLOY'
+            set -euo pipefail
+            deploy_dir=/home/sift-qualora/htdocs/qualora.sift.my.id
+            cd "$deploy_dir"
+
+            for deploy_tool in git php composer node npm curl; do
+              if ! command -v "$deploy_tool" >/dev/null; then
+                echo "$deploy_tool is not available to the SSH user." >&2
+                exit 1
+              fi
+            done
+            test -f .env
+            test -f artisan
+            test -w storage
+            test -w bootstrap/cache
+            test "$(git branch --show-current)" = main
+            git diff --quiet
+            git diff --cached --quiet
+            php -r 'if (PHP_VERSION_ID < 80400 || !extension_loaded("gd")) { fwrite(STDERR, "PHP 8.4+ with GD is required.\n"); exit(1); }'
+            node -e 'const [major, minor] = process.versions.node.split(".").map(Number); if (!((major === 20 && minor >= 19) || (major === 22 && minor >= 12) || major > 22)) { throw new Error("Vite requires Node 20.19+ or 22.12+."); }'
+
+            git fetch origin main
+            git merge-base --is-ancestor HEAD "$DEPLOY_SHA"
+            php artisan down --retry=60
+            trap 'echo "Deployment failed; maintenance remains enabled. Check the Actions log before reopening the site." >&2' ERR
+            git merge --ff-only "$DEPLOY_SHA"
+            composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+            npm ci --include=dev --no-audit --no-fund
+            npm run build
+            php artisan config:clear --no-interaction
+            php artisan route:clear --no-interaction
+            php artisan view:clear --no-interaction
+            php artisan migrate --force --no-interaction
+            php artisan optimize --no-interaction
+            php artisan up --no-interaction
+
+            if ! curl --fail --silent --show-error --output /dev/null --retry 3 --retry-delay 3 --max-time 20 https://qualora.sift.my.id/up; then
+              php artisan down --retry=60
+              echo "The health check failed; maintenance has been re-enabled." >&2
+              exit 1
+            fi
+            DEPLOY
