@@ -11,7 +11,7 @@
                     </svg>
                     <span>{{ session('status') }}</span>
                 </div>
-                <a href="{{ route('dashboard') }}" class="text-xs font-semibold text-brand-700 hover:underline">View application tracker &rarr;</a>
+                <a href="{{ route('dashboard') }}" class="text-xs font-semibold text-brand-700 hover:underline">{{ __('View application tracker') }} &rarr;</a>
             </div>
         @endif
 
@@ -21,7 +21,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                <span>Back to scholarship list</span>
+                <span>{{ __('Back to scholarship list') }}</span>
             </a>
         </div>
 
@@ -35,19 +35,19 @@
                     </span>
                     @if ($scholarship->scholarship_category)
                         <span class="rounded-full bg-brand-50 px-3.5 py-1 text-xs font-semibold text-brand-700">
-                            {{ $scholarship->scholarship_category }}
+                            {{ __($scholarship->scholarship_category) }}
                         </span>
                     @endif
                     @if ($scholarship->scholarship_type)
                         <span class="rounded-full bg-cream-dark px-3.5 py-1 text-xs font-semibold text-ink-soft">
-                            {{ ucfirst($scholarship->scholarship_type) }}
+                            {{ __(ucfirst($scholarship->scholarship_type)) }}
                         </span>
                     @endif
                     <span @class([
                         'rounded-full px-3.5 py-1 text-xs font-semibold',
                         'bg-sage-100 text-sage-800' => $scholarship->is_active,
                         'bg-clay-100 text-clay-800' => ! $scholarship->is_active,
-                    ])>{{ $scholarship->is_active ? 'Active' : 'Closed' }}</span>
+                    ])>{{ $scholarship->is_active ? __('Active') : __('Closed') }}</span>
                 </div>
 
                 <div class="shrink-0 flex items-center">
@@ -62,7 +62,7 @@
 
             {{-- 3. Short description / subtitle --}}
             <p class="mt-2 text-sm text-ink-soft leading-relaxed">
-                {{ $scholarship->description ?? $scholarship->benefits ?? 'A higher education scholarship program for outstanding undergraduate students.' }}
+                {{ $scholarship->description ?? $scholarship->benefits ?? __('A higher education scholarship program for outstanding undergraduate students.') }}
             </p>
 
             {{-- 4. Full-width divider line --}}
@@ -73,14 +73,14 @@
                 <p class="font-display text-2xl sm:text-3xl font-bold {{ ($scholarship->days_until_deadline !== null && $scholarship->days_until_deadline <= 7) ? 'text-clay-600' : 'text-brand-700' }}">
                     @if ($scholarship->days_until_deadline !== null)
                         @if ($scholarship->days_until_deadline > 0)
-                            {{ $scholarship->days_until_deadline }} days remaining
+                            {{ __(':count days remaining', ['count' => $scholarship->days_until_deadline]) }}
                         @elseif ($scholarship->days_until_deadline === 0)
-                            Application deadline is today!
+                            {{ __('Application deadline is today!') }}
                         @else
-                            Applications are closed
+                            {{ __('Applications are closed') }}
                         @endif
                     @else
-                        Applications are open
+                        {{ __('Applications are open') }}
                     @endif
                 </p>
             </div>
@@ -88,18 +88,18 @@
             {{-- 6. Two columns: Deadline (Left) & Announcement (Right) --}}
             <div class="mt-4 grid grid-cols-2 gap-6">
                 <div>
-                    <p class="text-xs font-bold text-ink-soft uppercase tracking-wider">Deadline</p>
+                    <p class="text-xs font-bold text-ink-soft uppercase tracking-wider">{{ __('Deadline') }}</p>
                     <p class="mt-1 font-bold text-base sm:text-lg text-ink">
-                        {{ $scholarship->deadline?->format('d M Y') ?? 'Not specified' }}
+                        {{ $scholarship->deadline?->translatedFormat('d M Y') ?? __('Not specified') }}
                     </p>
                 </div>
                 <div>
-                    <p class="text-xs font-bold text-ink-soft uppercase tracking-wider">Announcement</p>
+                    <p class="text-xs font-bold text-ink-soft uppercase tracking-wider">{{ __('Announcement') }}</p>
                     <p class="mt-1 font-bold text-base sm:text-lg text-ink">
-                        {{ $scholarship->announcement_date?->format('d M Y') ?? 'To be announced' }}
+                        {{ $scholarship->announcement_date?->translatedFormat('d M Y') ?? __('To be announced') }}
                     </p>
                     @if ($scholarship->days_until_announcement !== null && $scholarship->days_until_announcement > 0)
-                        <span class="text-xs font-medium text-aura-700">({{ $scholarship->days_until_announcement }} days remaining)</span>
+                        <span class="text-xs font-medium text-aura-700">({{ __(':count days remaining', ['count' => $scholarship->days_until_announcement]) }})</span>
                     @endif
                 </div>
             </div>
@@ -113,8 +113,8 @@
                     rel="noopener noreferrer"
                     class="h-12 rounded-full border-2 border-brand-600 bg-white px-6 font-semibold text-sm sm:text-base text-brand-700 hover:bg-brand-50 flex items-center justify-center gap-2 transition shadow-sm"
                 >
-                    <span>Official website</span>
-                    <span class="sr-only">Visit official website</span>
+                    <span>{{ __('Official website') }}</span>
+                    <span class="sr-only">{{ __('Visit official website') }}</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
@@ -127,8 +127,8 @@
                         @click="openTrackModal = true"
                         class="h-12 rounded-full bg-brand-50 border-2 border-brand-500 px-6 font-semibold text-sm sm:text-base text-brand-800 hover:bg-brand-100 flex items-center justify-center gap-2 transition shadow-sm"
                     >
-                        <span>Status: {{ $userApplication->status_label }}</span>
-                        <span class="text-xs underline text-brand-600">(Update)</span>
+                        <span>{{ __('Status: :status', ['status' => $userApplication->status_label]) }}</span>
+                        <span class="text-xs underline text-brand-600">({{ __('Update') }})</span>
                     </button>
                 @else
                     <button
@@ -136,7 +136,7 @@
                         @click="openTrackModal = true"
                         class="h-12 rounded-full bg-aura-gradient px-6 font-semibold text-sm sm:text-base text-white hover:brightness-105 flex items-center justify-center gap-2 transition shadow-md"
                     >
-                        <span>Apply</span>
+                        <span>{{ __('Apply') }}</span>
                     </button>
                 @endif
             </div>
@@ -147,24 +147,24 @@
         {{-- 1. HOW YOUR PROFILE MATCHES (from EligibilityService, never from AI) --}}
         @php
             $headline = match ($match['status']) {
-                'eligible' => ['You may be eligible', 'bg-sage-100 text-sage-800'],
-                'almost' => ['Almost there', 'bg-aura-100 text-aura-800'],
-                default => ['Not a match yet', 'bg-clay-100 text-clay-800'],
+                'eligible' => [__('You may be eligible'), 'bg-sage-100 text-sage-800'],
+                'almost' => [__('Almost there'), 'bg-aura-100 text-aura-800'],
+                default => [__('Not a match yet'), 'bg-clay-100 text-clay-800'],
             };
         @endphp
         <section class="mt-10 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm" aria-labelledby="match-heading">
             <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
                 <div>
-                    <h2 id="match-heading" class="font-display text-xl font-bold text-ink">How your profile matches</h2>
+                    <h2 id="match-heading" class="font-display text-xl font-bold text-ink">{{ __('How your profile matches') }}</h2>
                     <p class="text-xs text-ink-soft mt-0.5">
-                        {{ $match['met'] }} of {{ $match['total'] }} requirements met. Always verify on the official site, this is not a guarantee.
+                        {{ __(':met of :total requirements met.', ['met' => $match['met'], 'total' => $match['total']]) }} {{ __('Always verify on the official site, this is not a guarantee.') }}
                     </p>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="rounded-full px-3 py-1 text-xs font-bold {{ $headline[1] }}">{{ $headline[0] }}</span>
                     @if (! $hasProfile)
                         <a href="{{ route('profile.edit') }}" class="text-xs font-semibold text-brand-700 hover:underline">
-                            Add my details &rarr;
+                            {{ __('Add my details') }} &rarr;
                         </a>
                     @endif
                 </div>
@@ -174,10 +174,10 @@
                 @foreach ($match['checks'] as $check)
                     @php
                         $state = match (true) {
-                            $check['passed'] === true => ['Met', 'bg-sage-100 text-sage-800', 'border-sage-200 bg-sage-50/50'],
-                            $check['passed'] === false && $check['near_miss'] => ['Almost', 'bg-aura-100 text-aura-800', 'border-aura-200 bg-aura-50/50'],
-                            $check['passed'] === false => ['Not met', 'bg-clay-100 text-clay-800', 'border-clay-200 bg-clay-50/50'],
-                            default => ['Add your data', 'bg-cream-dark text-ink-soft', 'border-cream-dark bg-white'],
+                            $check['passed'] === true => [__('Met'), 'bg-sage-100 text-sage-800', 'border-sage-200 bg-sage-50/50'],
+                            $check['passed'] === false && $check['near_miss'] => [__('Almost'), 'bg-aura-100 text-aura-800', 'border-aura-200 bg-aura-50/50'],
+                            $check['passed'] === false => [__('Not met'), 'bg-clay-100 text-clay-800', 'border-clay-200 bg-clay-50/50'],
+                            default => [__('Add your data'), 'bg-cream-dark text-ink-soft', 'border-cream-dark bg-white'],
                         };
                     @endphp
                     <li class="rounded-2xl border p-4 flex items-start justify-between gap-3 {{ $state[2] }}">
@@ -195,13 +195,13 @@
         {{-- 2. SCHOLARSHIP BENEFITS --}}
         @if ($scholarship->benefitsList->isNotEmpty() || $scholarship->benefits)
             <section class="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm">
-                <h2 class="font-display text-xl font-bold text-ink mb-4">Scholarship Benefits & Coverage</h2>
+                <h2 class="font-display text-xl font-bold text-ink mb-4">{{ __('Scholarship Benefits & Coverage') }}</h2>
                 @if ($scholarship->benefitsList->isNotEmpty())
                     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($scholarship->benefitsList as $benefit)
                             <div class="rounded-2xl bg-cream/40 p-4 border border-cream-dark">
                                 <span class="rounded-full bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-aura-800 border border-cream-dark">
-                                    {{ $benefit->benefit_type }}
+                                    {{ __($benefit->benefit_type) }}
                                 </span>
                                 <h3 class="font-semibold text-sm text-ink mt-2">{{ $benefit->benefit_name }}</h3>
                                 @if ($benefit->amount)
@@ -225,8 +225,8 @@
         <section class="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm" x-data="{ checkedDocs: {} }">
             <div class="flex items-center justify-between mb-2">
                 <div>
-                    <h2 class="font-display text-xl font-bold text-ink">Application Document Checklist</h2>
-                    <p class="text-xs text-ink-soft">Check off documents you have ready before applying on the official website.</p>
+                    <h2 class="font-display text-xl font-bold text-ink">{{ __('Application Document Checklist') }}</h2>
+                    <p class="text-xs text-ink-soft">{{ __('Check off documents you have ready before applying on the official website.') }}</p>
                 </div>
             </div>
 
@@ -245,7 +245,7 @@
                                         {{ $doc->document_name }}
                                     </span>
                                     @if ($doc->is_required)
-                                        <span class="rounded bg-clay-50 px-1.5 py-0.5 text-[10px] font-bold text-clay-700">Required</span>
+                                        <span class="rounded bg-clay-50 px-1.5 py-0.5 text-[10px] font-bold text-clay-700">{{ __('Required') }}</span>
                                     @endif
                                 </div>
                                 @if ($doc->document_description)
@@ -254,7 +254,7 @@
                             </div>
                             @if ($doc->template_url)
                                 <a href="{{ $doc->template_url }}" target="_blank" class="shrink-0 text-xs font-semibold text-brand-700 hover:underline">
-                                    Download Template &rarr;
+                                    {{ __('Download Template') }} &rarr;
                                 </a>
                             @endif
                         </label>
@@ -270,15 +270,15 @@
                     @endforeach
                 </ul>
             @else
-                <p class="text-sm text-ink-soft mt-3">Please check the organizer's official website for the complete list of required documents.</p>
+                <p class="text-sm text-ink-soft mt-3">{{ __("Please check the organizer's official website for the complete list of required documents.") }}</p>
             @endif
         </section>
 
         {{-- 4. SELECTION PROCESS & TIMELINE --}}
         @if ($scholarship->selections->isNotEmpty())
             <section class="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm">
-                <h2 class="font-display text-xl font-bold text-ink mb-1">Selection Process & Timeline</h2>
-                <p class="text-xs text-ink-soft mb-6">The application process through the announcement of scholarship recipients.</p>
+                <h2 class="font-display text-xl font-bold text-ink mb-1">{{ __('Selection Process & Timeline') }}</h2>
+                <p class="text-xs text-ink-soft mb-6">{{ __('The application process through the announcement of scholarship recipients.') }}</p>
 
                 <div class="relative pl-6 border-l-2 border-brand-200 space-y-6">
                     @foreach ($scholarship->selections as $stage)
@@ -289,7 +289,7 @@
                                     <span class="font-bold text-sm text-ink">{{ $stage->stage_order }}. {{ $stage->stage_name }}</span>
                                     @if ($stage->estimated_date)
                                         <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-aura-800 border border-cream-dark">
-                                            {{ $stage->estimated_date->format('d M Y') }}
+                                            {{ $stage->estimated_date->translatedFormat('d M Y') }}
                                         </span>
                                     @endif
                                 </div>
@@ -324,7 +324,7 @@
                     class="relative transform overflow-hidden rounded-3xl bg-white p-6 text-left shadow-xl transition-all sm:w-full sm:max-w-lg"
                 >
                     <div class="flex items-center justify-between pb-3 border-b border-cream-dark">
-                        <h3 class="font-display text-lg font-bold text-ink">Track My Application</h3>
+                        <h3 class="font-display text-lg font-bold text-ink">{{ __('Track My Application') }}</h3>
                         <button type="button" @click="openTrackModal = false" class="text-ink-soft hover:text-ink">
                             &times;
                         </button>
@@ -334,18 +334,18 @@
                         @csrf
 
                         <div>
-                            <label class="block text-xs font-semibold text-ink mb-1">Current Application Status</label>
+                            <label class="block text-xs font-semibold text-ink mb-1">{{ __('Current Application Status') }}</label>
                             <select name="status" class="w-full rounded-xl border-cream-dark text-sm focus:border-brand-500 focus:ring-brand-500">
-                                <option value="submitted" @selected(($userApplication->status ?? '') === 'submitted')>Submitted on the official website</option>
-                                <option value="preparing" @selected(($userApplication->status ?? '') === 'preparing')>Preparing documents</option>
-                                <option value="interview" @selected(($userApplication->status ?? '') === 'interview')>Advanced to interview</option>
-                                <option value="accepted" @selected(($userApplication->status ?? '') === 'accepted')>Accepted for the scholarship</option>
-                                <option value="rejected" @selected(($userApplication->status ?? '') === 'rejected')>Not selected</option>
+                                <option value="submitted" @selected(($userApplication->status ?? '') === 'submitted')>{{ __('Submitted on the official website') }}</option>
+                                <option value="preparing" @selected(($userApplication->status ?? '') === 'preparing')>{{ __('Preparing documents') }}</option>
+                                <option value="interview" @selected(($userApplication->status ?? '') === 'interview')>{{ __('Advanced to interview') }}</option>
+                                <option value="accepted" @selected(($userApplication->status ?? '') === 'accepted')>{{ __('Accepted for the scholarship') }}</option>
+                                <option value="rejected" @selected(($userApplication->status ?? '') === 'rejected')>{{ __('Not selected') }}</option>
                             </select>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-ink mb-1">Date submitted on the official website</label>
+                            <label class="block text-xs font-semibold text-ink mb-1">{{ __('Date submitted on the official website') }}</label>
                             <input
                                 type="date"
                                 name="applied_at"
@@ -356,22 +356,22 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-ink mb-1">Registration number / Application ID (Optional)</label>
+                            <label class="block text-xs font-semibold text-ink mb-1">{{ __('Registration number / Application ID (Optional)') }}</label>
                             <input
                                 type="text"
                                 name="registration_number"
-                                placeholder="e.g. BU-2026-98124"
+                                placeholder="{{ __('e.g. BU-2026-98124') }}"
                                 value="{{ old('registration_number', $userApplication?->registration_number ?? '') }}"
                                 class="w-full rounded-xl border-cream-dark text-sm focus:border-brand-500 focus:ring-brand-500"
                             >
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-ink mb-1">Personal notes (Optional)</label>
+                            <label class="block text-xs font-semibold text-ink mb-1">{{ __('Personal notes (Optional)') }}</label>
                             <textarea
                                 name="notes"
                                 rows="3"
-                                placeholder="e.g. Registered with my university email; interview scheduled for Dec 15 at 10 AM via Zoom."
+                                placeholder="{{ __('e.g. Registered with my university email; interview scheduled for Dec 15 at 10 AM via Zoom.') }}"
                                 class="w-full rounded-xl border-cream-dark text-sm focus:border-brand-500 focus:ring-brand-500"
                             >{{ old('notes', $userApplication?->notes ?? '') }}</textarea>
                         </div>
@@ -382,13 +382,13 @@
                                 @click="openTrackModal = false"
                                 class="rounded-full px-4 py-2 text-xs font-semibold text-ink-soft hover:bg-cream"
                             >
-                                Cancel
+                                {{ __('Cancel') }}
                             </button>
                             <button
                                 type="submit"
                                 class="rounded-full bg-aura-gradient px-5 py-2 text-xs font-semibold text-white shadow hover:brightness-105"
                             >
-                                Save to tracker
+                                {{ __('Save to tracker') }}
                             </button>
                         </div>
                     </form>

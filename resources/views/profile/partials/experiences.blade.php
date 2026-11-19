@@ -88,7 +88,7 @@
             @foreach ($experiences as $experience)
                     <tr class="align-middle">
                         <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900">{{ $experience->experience_name }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $experience->experience_type ?: __('Not provided') }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $experience->experience_type ? __($experience->experience_type) : __('Not provided') }}</td>
                         <td class="max-w-xs px-4 py-3 text-gray-700"><span class="line-clamp-2" title="{{ $experience->description }}">{{ $experience->description ?: __('Not provided') }}</span></td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-center gap-2">

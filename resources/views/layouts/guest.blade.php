@@ -16,6 +16,10 @@
     </head>
     <body class="font-sans text-ink antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-cream">
+            <div class="absolute top-4 right-4">
+                <x-language-switcher />
+            </div>
+
             <div>
                 <a href="/">
                     <x-wordmark class="scale-125" />

@@ -26,7 +26,7 @@ class UserApplicationController extends Controller
             $validated
         );
 
-        return back()->with('status', 'Your scholarship application has been saved. You can now track announcement dates.');
+        return back()->with('status', __('Your scholarship application has been saved. You can now track announcement dates.'));
     }
 
     /**
@@ -46,7 +46,7 @@ class UserApplicationController extends Controller
 
         $application->update($validated);
 
-        return back()->with('status', 'Your application status has been updated.');
+        return back()->with('status', __('Your application status has been updated.'));
     }
 
     /**
@@ -60,6 +60,6 @@ class UserApplicationController extends Controller
 
         $application->delete();
 
-        return back()->with('status', 'The scholarship has been removed from your application tracker.');
+        return back()->with('status', __('The scholarship has been removed from your application tracker.'));
     }
 }

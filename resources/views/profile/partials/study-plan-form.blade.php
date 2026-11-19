@@ -25,7 +25,7 @@
                 <select id="study_field_category" name="study_field_category" class="{{ $selectClass }}">
                     <option value="">{{ __('No preference') }}</option>
                     @foreach (\App\Models\UserStudyPlan::FIELDS as $field)
-                        <option value="{{ $field }}" @selected(old('study_field_category', $studyPlan?->study_field_category) === $field)>{{ $field }}</option>
+                        <option value="{{ $field }}" @selected(old('study_field_category', $studyPlan?->study_field_category) === $field)>{{ __($field) }}</option>
                     @endforeach
                 </select>
                 <x-input-error class="mt-2" :messages="$errors->get('study_field_category')" />
@@ -36,7 +36,7 @@
                 <select id="preferred_country" name="preferred_country" class="{{ $selectClass }}">
                     <option value="">{{ __('No preference') }}</option>
                     @foreach (\App\Models\UserStudyPlan::LOCATIONS as $location)
-                        <option value="{{ $location }}" @selected(old('preferred_country', $studyPlan?->preferred_country) === $location)>{{ $location }}</option>
+                        <option value="{{ $location }}" @selected(old('preferred_country', $studyPlan?->preferred_country) === $location)>{{ __($location) }}</option>
                     @endforeach
                 </select>
                 <x-input-error class="mt-2" :messages="$errors->get('preferred_country')" />
