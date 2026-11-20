@@ -292,4 +292,64 @@ class ProfileTest extends TestCase
 
         $this->assertNotNull($user->fresh());
     }
+
+    public function test_one_save_also_stores_the_study_preferences(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->patch(route('profile.update'), [
+            'name' => $user->name,
+            'major' => 'Informatics',
+            'study_field_category' => 'Technology & Computing',
+            'preferred_country' => 'Europe',
+        ])->assertRedirect(route('profile.edit'));
+
+        $profile = $user->fresh()->profile;
+        $this->assertSame('Informatics', $profile->major);
+        $this->assertSame('Technology & Computing', $profile->studyPlan->study_field_category);
+        $this->assertSame('Europe', $profile->studyPlan->preferred_country);
+    }
+
+    public function test_saving_with_empty_preferences_does_not_create_an_empty_study_plan(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->patch(route('profile.update'), [
+            'name' => $user->name,
+            'major' => 'Informatics',
+            'study_field_category' => '',
+            'preferred_country' => '',
+        ]);
+
+        $this->assertNull($user->fresh()->profile->studyPlan);
+    }
+
+    public function test_preferences_outside_the_allowed_list_are_rejected(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->patch(route('profile.update'), [
+            'name' => $user->name,
+            'preferred_country' => 'Atlantis',
+        ])->assertSessionHasErrors('preferred_country');
+    }
+
+    public function test_profile_page_has_one_floating_save_button_disabled_until_changes(): void
+    {
+        $html = $this->actingAs(User::factory()->create())->get(route('profile.edit'))->assertOk()->getContent();
+
+        $this->assertSame(1, substr_count($html, 'type="submit" form="profile-form"'));
+        $this->assertStringContainsString('x-bind:disabled="!dirty"', $html);
+        $this->assertStringContainsString('Leave without saving?', $html);
+        $this->assertStringContainsString('forced: false', $html);
+    }
+
+    public function test_page_starts_unsaved_after_the_ai_prefills_the_form(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->withSession(['ai_prefill' => ['major' => 'Law', 'semester' => 3]])
+            ->get(route('profile.edit'))
+            ->assertSee('forced: true', false);
+    }
 }
+

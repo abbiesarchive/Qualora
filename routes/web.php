@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\ScholarshipController as AdminScholarshipController;
+use App\Http\Controllers\Ai\ApplySuggestionsController;
 use App\Http\Controllers\Ai\ExplainController;
+use App\Http\Controllers\Ai\ExtractProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
@@ -61,6 +63,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/ai/explain', ExplainController::class)
         ->middleware(['verified', 'throttle:5,1'])
         ->name('ai.explain');
+    Route::post('/ai/extract-profile', ExtractProfileController::class)
+        ->middleware(['verified', 'throttle:5,1'])
+        ->name('ai.extract-profile');
+    Route::post('/ai/suggestions', ApplySuggestionsController::class)
+        ->middleware('verified')
+        ->name('ai.suggestions');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
