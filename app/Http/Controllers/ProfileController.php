@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Ai\ExtractProfileController;
 use App\Http\Requests\AccountUpdateRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Profile;
@@ -20,6 +21,14 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        // Pending AI pre-fill shows up through old(), unless the student's own failed
+        // Save already put their input there. now() lasts for this request only.
+        $prefill = $request->session()->get(ExtractProfileController::PREFILL_KEY);
+
+        if ($prefill && $request->session()->getOldInput() === []) {
+            $request->session()->now('_old_input', $prefill);
+        }
+
         $profile = Profile::query()
             ->where('user_id', Auth::id())
             ->first();
@@ -64,11 +73,13 @@ class ProfileController extends Controller
             'campus', 'major', 'semester', 'gpa', 'age', 'nationality',
             'has_financial_need',
         ];
+        $studyPlanFields = ['study_field_category', 'preferred_country'];
         $profileData = Arr::only($validated, $profileFields);
-        $userData = Arr::except($validated, $profileFields);
+        $studyPlanData = Arr::only($validated, $studyPlanFields);
+        $userData = Arr::except($validated, [...$profileFields, ...$studyPlanFields]);
         $user = $request->user();
 
-        DB::transaction(function () use ($user, $userData, $profileData): void {
+        DB::transaction(function () use ($user, $userData, $profileData, $studyPlanData): void {
             $user->fill($userData);
 
             if ($user->isDirty('email')) {
@@ -77,10 +88,21 @@ class ProfileController extends Controller
 
             $user->save();
 
-            if ($profileData !== []) {
-                $user->profile()->updateOrCreate([], $profileData);
+            $profile = $profileData !== [] ? $user->profile()->updateOrCreate([], $profileData) : $user->profile;
+
+            // Preferences ride along with the same Save. Don't create an empty row.
+            if ($studyPlanData !== []) {
+                $profile ??= $user->profile()->create([]);
+                $existing = $profile->studyPlan;
+
+                if ($existing || array_filter($studyPlanData) !== []) {
+                    $profile->studyPlan()->updateOrCreate([], $studyPlanData);
+                }
             }
         });
+
+        // The pre-filled values are now saved (or replaced), so stop re-applying them.
+        $request->session()->forget(ExtractProfileController::PREFILL_KEY);
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

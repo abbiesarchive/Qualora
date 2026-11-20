@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
+use App\Models\UserStudyPlan;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -34,6 +35,8 @@ class ProfileUpdateRequest extends FormRequest
             'age' => ['nullable', 'integer', 'min:15', 'max:60'],
             'nationality' => ['nullable', 'string', 'max:255'],
             'has_financial_need' => ['nullable', 'boolean'],
+            'study_field_category' => ['nullable', 'string', Rule::in(UserStudyPlan::FIELDS)],
+            'preferred_country' => ['nullable', 'string', Rule::in(UserStudyPlan::LOCATIONS)],
         ];
     }
 }

@@ -13,16 +13,12 @@
         </p>
     </header>
 
-    <form method="post" action="{{ $studyPlan ? route('profile.study-plan.update', $studyPlan->getKey()) : route('profile.study-plan.store') }}" class="mt-6 space-y-6">
-        @csrf
-        @if ($studyPlan)
-            @method('patch')
-        @endif
-
+    {{-- These fields belong to #profile-form, so the one floating Save button saves them too. --}}
+    <div class="mt-6 space-y-6">
         <div class="grid gap-6 sm:grid-cols-2">
             <div>
                 <x-input-label for="study_field_category" :value="__('Field of interest')" />
-                <select id="study_field_category" name="study_field_category" class="{{ $selectClass }}">
+                <select id="study_field_category" name="study_field_category" form="profile-form" class="{{ $selectClass }}">
                     <option value="">{{ __('No preference') }}</option>
                     @foreach (\App\Models\UserStudyPlan::FIELDS as $field)
                         <option value="{{ $field }}" @selected(old('study_field_category', $studyPlan?->study_field_category) === $field)>{{ __($field) }}</option>
@@ -33,7 +29,7 @@
 
             <div>
                 <x-input-label for="preferred_country" :value="__('Where would you like to study?')" />
-                <select id="preferred_country" name="preferred_country" class="{{ $selectClass }}">
+                <select id="preferred_country" name="preferred_country" form="profile-form" class="{{ $selectClass }}">
                     <option value="">{{ __('No preference') }}</option>
                     @foreach (\App\Models\UserStudyPlan::LOCATIONS as $location)
                         <option value="{{ $location }}" @selected(old('preferred_country', $studyPlan?->preferred_country) === $location)>{{ __($location) }}</option>
@@ -42,15 +38,5 @@
                 <x-input-error class="mt-2" :messages="$errors->get('preferred_country')" />
             </div>
         </div>
-
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save preferences') }}</x-primary-button>
-
-            @if (session('status') === 'study-plan-created' || session('status') === 'study-plan-updated')
-                <p class="text-sm text-gray-600">{{ __('Saved.') }}</p>
-            @elseif (session('status') === 'study-plan-already-exists')
-                <p class="text-sm text-amber-700">{{ __('Your preferences already exist. Update them instead.') }}</p>
-            @endif
-        </div>
-    </form>
+    </div>
 </section>
