@@ -300,4 +300,3 @@ class AiExtractProfileTest extends TestCase
         $this->actingAs($user)->get(route('profile.edit'))->assertSee('value="Medicine"', false);
     }
 }
-

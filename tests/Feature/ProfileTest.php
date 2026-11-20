@@ -352,4 +352,3 @@ class ProfileTest extends TestCase
             ->assertSee('forced: true', false);
     }
 }
-
