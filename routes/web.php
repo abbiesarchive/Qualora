@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ScholarshipController as AdminScholarshipController;
+use App\Http\Controllers\Ai\ExplainController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
@@ -55,6 +56,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/my-applications/{application}', [UserApplicationController::class, 'destroy'])
         ->middleware('verified')
         ->name('applications.destroy');
+
+    // AI endpoints: explicit button clicks only, signed-in and verified, rate limited.
+    Route::post('/ai/explain', ExplainController::class)
+        ->middleware(['verified', 'throttle:5,1'])
+        ->name('ai.explain');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

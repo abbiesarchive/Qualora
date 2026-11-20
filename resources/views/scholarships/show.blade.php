@@ -221,6 +221,45 @@
             </section>
         @endif
 
+        {{-- AI EXPLANATION (stored scholarship data only; generated on button click, then cached) --}}
+        <section id="ai-explanation" class="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm" x-data="{ loading: false }">
+            <div class="flex items-center justify-between gap-3">
+                <div>
+                    <h2 class="font-display text-xl font-bold text-ink">{{ __('Explained simply') }}</h2>
+                    <p class="text-xs text-ink-soft">{{ __('AI-written summary based only on the details above. It does not decide whether you qualify.') }}</p>
+                </div>
+            </div>
+
+            @if (session('ai_error'))
+                <p class="mt-4 rounded-2xl bg-clay-50 p-3 text-sm text-clay-800" role="alert">{{ session('ai_error') }}</p>
+            @endif
+
+            @if ($scholarship->ai_explanation)
+                <p class="mt-4 text-sm leading-relaxed text-ink whitespace-pre-line">{{ $scholarship->ai_explanation }}</p>
+
+                @if (is_array($scholarship->ai_checklist) && $scholarship->ai_checklist)
+                    <h3 class="mt-5 text-sm font-bold text-ink">{{ __('Suggested steps') }}</h3>
+                    <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm text-ink-soft">
+                        @foreach ($scholarship->ai_checklist as $step)
+                            <li>{{ $step }}</li>
+                        @endforeach
+                    </ol>
+                @endif
+
+                <p class="mt-4 text-xs text-ink-soft">{{ __('AI-generated. Please verify every detail on the official site.') }}</p>
+            @else
+                <form method="POST" action="{{ route('ai.explain') }}" class="mt-4" @submit="loading = true">
+                    @csrf
+                    <input type="hidden" name="scholarship_id" value="{{ $scholarship->id }}">
+                    <button type="submit" x-bind:disabled="loading"
+                        class="inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
+                        <span x-show="!loading">{{ __('Explain this scholarship') }}</span>
+                        <span x-show="loading" x-cloak>{{ __('Writing your explanation') }}</span>
+                    </button>
+                </form>
+            @endif
+        </section>
+
         {{-- 3. REQUIRED DOCUMENT CHECKLIST --}}
         <section class="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm" x-data="{ checkedDocs: {} }">
             <div class="flex items-center justify-between mb-2">
