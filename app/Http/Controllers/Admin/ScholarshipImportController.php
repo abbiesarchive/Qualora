@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\PageFetchException;
 use App\Http\Controllers\Controller;
 use App\Models\Scholarship;
+use App\Services\PageTextFetcher;
 use App\Services\ScholarshipExtractionService;
 use App\Support\ScholarshipRules;
 use Illuminate\Http\RedirectResponse;
@@ -78,6 +80,25 @@ class ScholarshipImportController extends Controller
         return redirect()
             ->route('admin.scholarships.index')
             ->with('status', count($clean).' scholarship(s) saved.');
+    }
+
+    /**
+     * Downloads one page the admin typed in and puts its text in the extraction box.
+     * No AI call and nothing saved: the admin reads the text, then clicks Extract.
+     */
+    public function fetch(Request $request, PageTextFetcher $fetcher): RedirectResponse
+    {
+        $url = $request->validate(['url' => ['required', 'url', 'max:2000']])['url'];
+
+        try {
+            $text = $fetcher->fetch($url);
+        } catch (PageFetchException $e) {
+            return redirect()->route('admin.scholarships.import')->withInput()->with('import_error', $e->getMessage());
+        }
+
+        return redirect()->route('admin.scholarships.import')
+            ->withInput(['text' => "Source URL: $url\n\n$text"])
+            ->with('import_notice', 'Page text loaded below. Read it, trim anything unrelated, then click Extract.');
     }
 
     public function discard(Request $request): RedirectResponse

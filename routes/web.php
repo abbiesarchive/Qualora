@@ -32,6 +32,9 @@ Route::middleware(['auth', 'admin'])
         // Import routes come before the resource so "import" is not read as a scholarship id.
         Route::get('scholarships/import', [ScholarshipImportController::class, 'create'])->name('scholarships.import');
         Route::post('scholarships/import', [ScholarshipImportController::class, 'store'])->name('scholarships.import.store');
+        Route::post('scholarships/import/fetch', [ScholarshipImportController::class, 'fetch'])
+            ->middleware('throttle:10,1')
+            ->name('scholarships.import.fetch');
         Route::delete('scholarships/import', [ScholarshipImportController::class, 'discard'])->name('scholarships.import.discard');
         Route::post('ai/extract-scholarships', ExtractScholarshipsController::class)
             ->middleware('throttle:5,1')

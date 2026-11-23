@@ -22,7 +22,22 @@
             <div role="alert" class="mt-5 rounded-xl bg-clay-100 px-4 py-3 text-sm text-clay-800">{{ session('import_error') }}</div>
         @endif
 
+        @if (session('import_notice'))
+            <div role="status" class="mt-5 rounded-xl bg-sage-100 px-4 py-3 text-sm font-medium text-sage-800">{{ session('import_notice') }}</div>
+        @endif
+
         @unless ($import)
+            <form method="POST" action="{{ route('admin.scholarships.import.fetch') }}" class="mt-6 rounded-2xl bg-white p-6 ring-1 ring-cream-dark" @submit="loading = true">
+                @csrf
+                <label for="url" class="block text-sm font-medium">Start from a web page (optional)</label>
+                <p class="mt-1 text-xs text-ink-soft">We load that one page's text into the box below so you can read it before extracting. Pages that need JavaScript or are PDFs won't work; paste the text instead.</p>
+                <div class="mt-2 flex flex-wrap gap-3">
+                    <input id="url" name="url" type="url" value="{{ old('url') }}" placeholder="https://..." class="{{ $inputClass }} flex-1">
+                    <button type="submit" :disabled="loading" class="inline-flex rounded-full border border-brand-200 bg-white px-5 py-2.5 text-sm font-semibold text-brand-700 hover:bg-brand-50 disabled:opacity-60">Load page text</button>
+                </div>
+                @error('url')<p class="mt-1 text-sm text-clay-700">{{ $message }}</p>@enderror
+            </form>
+
             <form method="POST" action="{{ route('admin.ai.extract-scholarships') }}" class="mt-6 rounded-2xl bg-white p-6 ring-1 ring-cream-dark" @submit="loading = true">
                 @csrf
                 <label for="text" class="block text-sm font-medium">Announcement text</label>

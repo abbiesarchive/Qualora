@@ -199,4 +199,53 @@ class AdminAiExtractScholarshipsTest extends TestCase
 
         $this->assertSame("help@example.org\n@beasiswa.official", Scholarship::sole()->contact_info);
     }
+
+    public function test_fetch_loads_page_text_into_the_box_without_calling_ai(): void
+    {
+        $html = '<html><head><style>x{}</style></head><body><nav>Menu</nav><h1>Beasiswa Unggulan</h1><p>'.str_repeat('Requirements apply to S1 students with GPA 3.25. ', 8).'</p></body></html>';
+        Http::fake(['*' => Http::response($html, 200, ['Content-Type' => 'text/html'])]);
+
+        $this->actingAs($this->admin())
+            ->post(route('admin.scholarships.import.fetch'), ['url' => 'http://93.184.216.34/beasiswa'])
+            ->assertRedirect(route('admin.scholarships.import'))
+            ->assertSessionHas('import_notice');
+
+        $this->assertStringContainsString('Beasiswa Unggulan', session()->getOldInput('text'));
+        $this->assertStringContainsString('Source URL: http://93.184.216.34/beasiswa', session()->getOldInput('text'));
+        $this->assertStringNotContainsString('Menu', session()->getOldInput('text'));
+        Http::assertSentCount(1);
+    }
+
+    public function test_fetch_refuses_internal_addresses(): void
+    {
+        Http::fake();
+
+        foreach (['http://127.0.0.1/admin', 'http://10.0.0.5/x', 'http://169.254.169.254/latest'] as $url) {
+            $this->actingAs($this->admin())
+                ->post(route('admin.scholarships.import.fetch'), ['url' => $url])
+                ->assertSessionHas('import_error');
+        }
+
+        Http::assertNothingSent();
+    }
+
+    public function test_fetch_is_admin_only(): void
+    {
+        Http::fake();
+
+        $this->actingAs(User::factory()->create())
+            ->post(route('admin.scholarships.import.fetch'), ['url' => 'http://93.184.216.34/'])
+            ->assertForbidden();
+
+        Http::assertNothingSent();
+    }
+
+    public function test_fetch_rejects_pages_with_no_readable_text(): void
+    {
+        Http::fake(['*' => Http::response('<html><body><div id="app"></div><script>x()</script></body></html>', 200, ['Content-Type' => 'text/html'])]);
+
+        $this->actingAs($this->admin())
+            ->post(route('admin.scholarships.import.fetch'), ['url' => 'http://93.184.216.34/'])
+            ->assertSessionHas('import_error');
+    }
 }
