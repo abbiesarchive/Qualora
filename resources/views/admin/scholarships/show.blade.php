@@ -38,9 +38,6 @@
                     'English test' => $scholarship->english_test_type,
                     'Minimum English score' => $scholarship->min_english_score,
                     'Allowed nationalities' => $scholarship->allowed_nationalities ? implode(', ', $scholarship->allowed_nationalities) : null,
-                    'Contact person' => $scholarship->contact_person,
-                    'Contact email' => $scholarship->contact_email,
-                    'Contact phone' => $scholarship->contact_phone,
                     'Last verified' => $scholarship->last_verified?->format('j M Y'),
                 ] as $label => $value)
                     <div>
@@ -61,6 +58,10 @@
                     @else
                         <dd class="mt-1 font-semibold">Any major</dd>
                     @endif
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-sm text-ink-soft">Contact</dt>
+                    <dd class="mt-1 whitespace-pre-line font-semibold">{{ $scholarship->contact_info ?: '—' }}</dd>
                 </div>
                 <div class="sm:col-span-2">
                     <dt class="text-sm text-ink-soft">Official URL</dt>

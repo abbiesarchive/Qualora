@@ -37,7 +37,7 @@ Return only JSON matching the schema. If a value is not stated, use null (or an 
 - benefits: what the scholarship gives, as written.
 - open_date / deadline: YYYY-MM-DD, only if a full date is stated.
 - official_url: only a URL that appears in the text; otherwise null.
-- contact_person / contact_email / contact_phone: only if the text names a contact for questions. Copy exactly; never invent one.
+- contact_info: only contact details the text gives for questions (email, phone, Instagram, form link, office name), one per line, copied exactly. Never invent one.
 - year: the intake or award year if stated, otherwise null.
 TXT;
 
@@ -87,9 +87,7 @@ TXT;
             'open_date' => $nullable('string'),
             'deadline' => $nullable('string'),
             'official_url' => $nullable('string'),
-            'contact_person' => $nullable('string'),
-            'contact_email' => $nullable('string'),
-            'contact_phone' => $nullable('string'),
+            'contact_info' => $nullable('string'),
             'year' => $nullable('integer'),
         ];
 
@@ -179,9 +177,7 @@ TXT;
             'open_date' => ['nullable', 'date_format:Y-m-d'],
             'deadline' => ['nullable', 'date_format:Y-m-d'],
             'official_url' => ['nullable', 'url', 'max:255'],
-            'contact_person' => ['nullable', 'string', 'max:255'],
-            'contact_email' => ['nullable', 'email', 'max:255'],
-            'contact_phone' => ['nullable', 'string', 'max:50'],
+            'contact_info' => ['nullable', 'string', 'max:1000'],
             'year' => ['nullable', 'integer', 'min:2000', 'max:2100'],
         ]);
 

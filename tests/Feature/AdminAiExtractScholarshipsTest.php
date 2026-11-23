@@ -41,7 +41,7 @@ class AdminAiExtractScholarshipsTest extends TestCase
             'requires_financial_need' => null, 'majors' => [], 'allowed_nationalities' => [],
             'english_test_type' => null, 'min_english_score' => null, 'scholarship_type' => null,
             'is_abroad' => null, 'other_requirements' => null, 'required_documents' => ['KTP'],
-            'contact_person' => null, 'contact_email' => null, 'contact_phone' => null,
+            'contact_info' => null,
             'benefits' => null, 'open_date' => null, 'deadline' => '2026-12-31', 'official_url' => null, 'year' => 2026,
         ];
     }
@@ -189,19 +189,14 @@ class AdminAiExtractScholarshipsTest extends TestCase
         );
     }
 
-    public function test_contact_details_are_saved_and_a_bad_email_is_blanked_by_extraction(): void
+    public function test_contact_info_is_saved(): void
     {
-        Http::fake(['*' => Http::response($this->reply([$this->item(['contact_email' => 'not-an-email', 'contact_person' => 'Scholarship Office'])]))]);
-        $admin = $this->admin();
+        $this->actingAs($this->admin())
+            ->post(route('admin.scholarships.import.store'), ['items' => [
+                $this->row(['contact_info' => "help@example.org\n@beasiswa.official"]),
+            ]])
+            ->assertRedirect(route('admin.scholarships.index'));
 
-        $this->actingAs($admin)->post(route('admin.ai.extract-scholarships'), ['text' => self::TEXT]);
-        $this->assertNull(session('admin_import.items.0.contact_email'));
-        $this->assertSame('Scholarship Office', session('admin_import.items.0.contact_person'));
-
-        $this->post(route('admin.scholarships.import.store'), ['items' => [
-            $this->row(['contact_person' => 'Scholarship Office', 'contact_email' => 'help@example.org', 'contact_phone' => '+62 21 555 0100']),
-        ]])->assertRedirect(route('admin.scholarships.index'));
-
-        $this->assertSame('help@example.org', Scholarship::sole()->contact_email);
+        $this->assertSame("help@example.org\n@beasiswa.official", Scholarship::sole()->contact_info);
     }
 }

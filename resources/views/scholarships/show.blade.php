@@ -354,27 +354,23 @@
         {{-- 5. CONTACT (stored data only; "not stated" when missing) --}}
         <section class="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm">
             <h2 class="font-display text-xl font-bold text-ink mb-4">{{ __('Contact') }}</h2>
-            @if ($scholarship->contact_person || $scholarship->contact_email || $scholarship->contact_phone)
-                <dl class="grid gap-4 sm:grid-cols-3 text-sm">
-                    <div>
-                        <dt class="text-xs font-semibold text-ink-soft">{{ __('Contact person') }}</dt>
-                        <dd class="mt-0.5 font-bold text-ink">{{ $scholarship->contact_person ?: __('Not stated') }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-xs font-semibold text-ink-soft">{{ __('Email') }}</dt>
-                        <dd class="mt-0.5 font-bold text-ink break-all">
-                            @if ($scholarship->contact_email)
-                                <a href="mailto:{{ $scholarship->contact_email }}" class="text-brand-700 hover:underline">{{ $scholarship->contact_email }}</a>
+            @php
+                $contacts = array_values(array_filter(array_map('trim', preg_split('/\R+/', (string) $scholarship->contact_info))));
+            @endphp
+            @if ($contacts)
+                <ul class="space-y-2 text-sm font-bold text-ink">
+                    @foreach ($contacts as $contact)
+                        <li class="break-all">
+                            @if (filter_var($contact, FILTER_VALIDATE_EMAIL))
+                                <a href="mailto:{{ $contact }}" class="text-brand-700 hover:underline">{{ $contact }}</a>
+                            @elseif (preg_match('#^https?://#i', $contact) && filter_var($contact, FILTER_VALIDATE_URL))
+                                <a href="{{ $contact }}" target="_blank" rel="noopener noreferrer" class="text-brand-700 hover:underline">{{ $contact }}</a>
                             @else
-                                {{ __('Not stated') }}
+                                {{ $contact }}
                             @endif
-                        </dd>
-                    </div>
-                    <div>
-                        <dt class="text-xs font-semibold text-ink-soft">{{ __('Phone') }}</dt>
-                        <dd class="mt-0.5 font-bold text-ink">{{ $scholarship->contact_phone ?: __('Not stated') }}</dd>
-                    </div>
-                </dl>
+                        </li>
+                    @endforeach
+                </ul>
             @else
                 <p class="text-sm text-ink-soft">{{ __('No contact details are stated. Please check the official site.') }}</p>
             @endif

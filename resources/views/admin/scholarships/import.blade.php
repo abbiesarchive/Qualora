@@ -139,13 +139,8 @@
                                 <label class="sm:col-span-2"><span class="{{ $label }}">Official URL * (confirm it on the provider's site)</span>
                                     <input type="url" name="items[{{ $i }}][official_url]" value="{{ $v('official_url') }}" required maxlength="255" class="{{ $inputClass }}">
                                     @error("items.$i.official_url")<span class="text-xs text-clay-700">{{ $message }}</span>@enderror</label>
-                                <label><span class="{{ $label }}">Contact person</span>
-                                    <input name="items[{{ $i }}][contact_person]" value="{{ $v('contact_person') }}" maxlength="255" class="{{ $inputClass }}"></label>
-                                <label><span class="{{ $label }}">Contact email</span>
-                                    <input type="email" name="items[{{ $i }}][contact_email]" value="{{ $v('contact_email') }}" maxlength="255" class="{{ $inputClass }}">
-                                    @error("items.$i.contact_email")<span class="text-xs text-clay-700">{{ $message }}</span>@enderror</label>
-                                <label><span class="{{ $label }}">Contact phone</span>
-                                    <input name="items[{{ $i }}][contact_phone]" value="{{ $v('contact_phone') }}" maxlength="50" class="{{ $inputClass }}"></label>
+                                <label class="sm:col-span-2"><span class="{{ $label }}">Contact (one per line: email, phone, Instagram, link...)</span>
+                                    <textarea name="items[{{ $i }}][contact_info]" rows="2" maxlength="1000" class="{{ $inputClass }}">{{ $v('contact_info') }}</textarea></label>
                                 <label><span class="{{ $label }}">Last verified * (the date you checked the official site)</span>
                                     <input type="date" name="items[{{ $i }}][last_verified]" value="{{ old("items.$i.last_verified") }}" required class="{{ $inputClass }}">
                                     @error("items.$i.last_verified")<span class="text-xs text-clay-700">{{ $message }}</span>@enderror</label>

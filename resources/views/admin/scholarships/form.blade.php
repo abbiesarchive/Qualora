@@ -136,17 +136,9 @@
                 <span class="mb-1 block text-sm font-medium">Official URL *</span>
                 <input type="url" name="official_url" required maxlength="255" value="{{ old('official_url', $scholarship->official_url) }}" placeholder="https://" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">
             </label>
-            <label>
-                <span class="mb-1 block text-sm font-medium">Contact person</span>
-                <input name="contact_person" maxlength="255" value="{{ old('contact_person', $scholarship->contact_person) }}" placeholder="Name or office, e.g. Scholarship Office" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">
-            </label>
-            <label>
-                <span class="mb-1 block text-sm font-medium">Contact email</span>
-                <input type="email" name="contact_email" maxlength="255" value="{{ old('contact_email', $scholarship->contact_email) }}" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">
-            </label>
-            <label>
-                <span class="mb-1 block text-sm font-medium">Contact phone</span>
-                <input name="contact_phone" maxlength="50" value="{{ old('contact_phone', $scholarship->contact_phone) }}" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">
+            <label class="sm:col-span-2">
+                <span class="mb-1 block text-sm font-medium">Contact</span>
+                <textarea name="contact_info" rows="3" maxlength="1000" placeholder="One per line: email, phone, Instagram, a contact form link, or an office name" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">{{ old('contact_info', $scholarship->contact_info) }}</textarea>
             </label>
             <label class="sm:col-span-2">
                 <span class="mb-1 block text-sm font-medium">Benefits</span>
