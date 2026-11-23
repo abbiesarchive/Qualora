@@ -398,5 +398,13 @@
     "to": "sampai",
     "{0} Nothing was added.|{1} Added :count item to your profile.|[2,*] Added :count items to your profile.": "{0} Tidak ada yang ditambahkan.|{1} :count item ditambahkan ke profilmu.|[2,*] :count item ditambahkan ke profilmu.",
     "{1} :count scholarship found|[0,*] :count scholarships found": ":count beasiswa ditemukan",
-    "{1} We filled in :count detail. Please check it below, then press Save.|[2,*] We filled in :count details. Please check them below, then press Save.": "{1} Kami mengisi :count detail. Silakan periksa di bawah, lalu tekan Simpan.|[2,*] Kami mengisi :count detail. Silakan periksa di bawah, lalu tekan Simpan."
+    "{1} We filled in :count detail. Please check it below, then press Save.|[2,*] We filled in :count details. Please check them below, then press Save.": "{1} Kami mengisi :count detail. Silakan periksa di bawah, lalu tekan Simpan.|[2,*] Kami mengisi :count detail. Silakan periksa di bawah, lalu tekan Simpan.",
+    "We could not find a scholarship in that text. Check that you pasted the announcement and try again.": "Kami tidak menemukan beasiswa dalam teks itu. Pastikan kamu menempelkan pengumuman beasiswa lalu coba lagi.",
+    ":major is not one of the accepted majors listed above.": ":major tidak termasuk jurusan yang diterima di atas.",
+    "Accepted majors": "Jurusan yang diterima",
+    "Contact": "Kontak",
+    "Contact person": "Narahubung",
+    "Not stated": "Tidak disebutkan",
+    "Phone": "Telepon",
+    "No contact details are stated. Please check the official site.": "Tidak ada kontak yang dicantumkan. Silakan cek situs resmi."
 }

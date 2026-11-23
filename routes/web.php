@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\ScholarshipController as AdminScholarshipController;
+use App\Http\Controllers\Admin\ScholarshipImportController;
 use App\Http\Controllers\Ai\ApplySuggestionsController;
 use App\Http\Controllers\Ai\ExplainController;
 use App\Http\Controllers\Ai\ExtractProfileController;
+use App\Http\Controllers\Ai\ExtractScholarshipsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
@@ -27,6 +29,13 @@ Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        // Import routes come before the resource so "import" is not read as a scholarship id.
+        Route::get('scholarships/import', [ScholarshipImportController::class, 'create'])->name('scholarships.import');
+        Route::post('scholarships/import', [ScholarshipImportController::class, 'store'])->name('scholarships.import.store');
+        Route::delete('scholarships/import', [ScholarshipImportController::class, 'discard'])->name('scholarships.import.discard');
+        Route::post('ai/extract-scholarships', ExtractScholarshipsController::class)
+            ->middleware('throttle:5,1')
+            ->name('ai.extract-scholarships');
         Route::resource('scholarships', AdminScholarshipController::class);
     });
 
