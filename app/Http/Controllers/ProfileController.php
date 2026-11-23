@@ -19,8 +19,13 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request): View|RedirectResponse
     {
+        // The student profile (GPA, major, AI extraction...) is not for admins.
+        if ($request->user()->is_admin) {
+            return redirect()->route('account.edit');
+        }
+
         // Pending AI pre-fill shows up through old(), unless the student's own failed
         // Save already put their input there. now() lasts for this request only.
         $prefill = $request->session()->get(ExtractProfileController::PREFILL_KEY);

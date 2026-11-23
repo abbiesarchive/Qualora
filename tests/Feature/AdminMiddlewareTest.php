@@ -47,4 +47,15 @@ class AdminMiddlewareTest extends TestCase
 
         $this->assertFalse($user->fresh()->is_admin);
     }
+
+    public function test_admin_has_no_student_profile_page_or_nav_link(): void
+    {
+        $admin = User::factory()->create();
+        $admin->forceFill(['is_admin' => true])->save();
+
+        $this->actingAs($admin)->get(route('profile.edit'))->assertRedirect(route('account.edit'));
+
+        $this->actingAs($admin)->get(route('admin.scholarships.index'))
+            ->assertDontSee(route('profile.edit'), false);
+    }
 }
