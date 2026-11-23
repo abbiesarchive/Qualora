@@ -100,11 +100,11 @@
             </label>
             <label>
                 <span class="mb-1 block text-sm font-medium">Major options</span>
-                <textarea name="majors" rows="2" placeholder="Separate items with commas or new lines" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">{{ old('majors', implode(', ', $scholarship->majors ?? [])) }}</textarea>
+                <textarea name="majors" rows="5" placeholder="One major per line (leave empty for any major)" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">{{ old('majors', implode("\n", $scholarship->majors ?? [])) }}</textarea>
             </label>
             <label>
                 <span class="mb-1 block text-sm font-medium">Allowed nationalities</span>
-                <textarea name="allowed_nationalities" rows="2" placeholder="Separate items with commas or new lines" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">{{ old('allowed_nationalities', implode(', ', $scholarship->allowed_nationalities ?? [])) }}</textarea>
+                <textarea name="allowed_nationalities" rows="3" placeholder="One nationality per line (leave empty for any)" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">{{ old('allowed_nationalities', implode("\n", $scholarship->allowed_nationalities ?? [])) }}</textarea>
             </label>
             <label>
                 <span class="mb-1 block text-sm font-medium">English test type</span>
@@ -135,6 +135,10 @@
             <label>
                 <span class="mb-1 block text-sm font-medium">Official URL *</span>
                 <input type="url" name="official_url" required maxlength="255" value="{{ old('official_url', $scholarship->official_url) }}" placeholder="https://" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">
+            </label>
+            <label class="sm:col-span-2">
+                <span class="mb-1 block text-sm font-medium">Contact</span>
+                <textarea name="contact_info" rows="3" maxlength="1000" placeholder="One per line: email, phone, Instagram, a contact form link, or an office name" class="w-full rounded-xl border-cream-dark focus:border-brand-500 focus:ring-brand-500">{{ old('contact_info', $scholarship->contact_info) }}</textarea>
             </label>
             <label class="sm:col-span-2">
                 <span class="mb-1 block text-sm font-medium">Benefits</span>

@@ -37,7 +37,6 @@
                     'Scholarship location' => $scholarship->is_abroad ? 'Abroad' : 'Domestic',
                     'English test' => $scholarship->english_test_type,
                     'Minimum English score' => $scholarship->min_english_score,
-                    'Allowed majors' => $scholarship->majors ? implode(', ', $scholarship->majors) : null,
                     'Allowed nationalities' => $scholarship->allowed_nationalities ? implode(', ', $scholarship->allowed_nationalities) : null,
                     'Last verified' => $scholarship->last_verified?->format('j M Y'),
                 ] as $label => $value)
@@ -46,6 +45,24 @@
                         <dd class="mt-1 font-semibold">{{ filled($value) ? $value : '—' }}</dd>
                     </div>
                 @endforeach
+                <div class="sm:col-span-2">
+                    <dt class="text-sm text-ink-soft">Allowed majors</dt>
+                    @if ($scholarship->majors)
+                        <dd class="mt-1">
+                            <ul class="list-inside list-disc space-y-1 font-semibold">
+                                @foreach ($scholarship->majors as $major)
+                                    <li>{{ $major }}</li>
+                                @endforeach
+                            </ul>
+                        </dd>
+                    @else
+                        <dd class="mt-1 font-semibold">Any major</dd>
+                    @endif
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-sm text-ink-soft">Contact</dt>
+                    <dd class="mt-1 whitespace-pre-line font-semibold">{{ $scholarship->contact_info ?: '—' }}</dd>
+                </div>
                 <div class="sm:col-span-2">
                     <dt class="text-sm text-ink-soft">Official URL</dt>
                     <dd class="mt-1 break-all font-semibold">

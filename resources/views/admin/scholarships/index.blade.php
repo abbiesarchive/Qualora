@@ -10,9 +10,14 @@
                     <h1 class="font-display text-3xl sm:text-4xl font-semibold tracking-tight">Scholarships</h1>
                     <p class="mt-2 text-ink-soft">{{ $scholarships->total() }} scholarships</p>
                 </div>
-                <a href="{{ route('admin.scholarships.create') }}" class="inline-flex items-center justify-center rounded-full bg-aura-gradient px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
-                    Add scholarship
-                </a>
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('admin.scholarships.import') }}" class="inline-flex items-center justify-center rounded-full border border-brand-200 bg-white px-5 py-2.5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
+                        Import with AI
+                    </a>
+                                    <a href="{{ route('admin.scholarships.create') }}" class="inline-flex items-center justify-center rounded-full bg-aura-gradient px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
+                        Add scholarship
+                    </a>
+                </div>
             </div>
         </div>
     </div>

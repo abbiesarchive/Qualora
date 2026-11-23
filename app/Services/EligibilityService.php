@@ -241,14 +241,14 @@ class EligibilityService
         $requirement = implode(', ', $majors);
 
         if ($this->blank($p?->major)) {
-            return $this->unknown('major', __('Major'), $requirement, __('Add your major to check this rule.'));
+            return $this->makeCheck('major', __('Major'), $requirement, null, null, __('Add your major to check this rule.'), false, $majors);
         }
 
         $ok = $this->inList($p->major, $majors);
 
         return $this->makeCheck('major', __('Major'), $requirement, $p->major, $ok, $ok
             ? __(':major is one of the accepted majors.', ['major' => $p->major])
-            : __(':major, accepted majors: :list.', ['major' => $p->major, 'list' => $requirement]));
+            : __(':major is not one of the accepted majors listed above.', ['major' => $p->major]), false, $majors);
     }
 
     private function campusCheck(?Profile $p, Scholarship $s): ?array
@@ -364,7 +364,7 @@ class EligibilityService
         return $this->makeCheck($rule, $label, $requirement, null, null, $detail);
     }
 
-    private function makeCheck(string $rule, string $label, string $requirement, ?string $value, ?bool $passed, string $detail, bool $nearMiss = false): array
+    private function makeCheck(string $rule, string $label, string $requirement, ?string $value, ?bool $passed, string $detail, bool $nearMiss = false, array $items = []): array
     {
         return [
             'rule' => $rule,
@@ -374,6 +374,7 @@ class EligibilityService
             'passed' => $passed,
             'detail' => $detail,
             'near_miss' => $nearMiss,
+            'items' => $items,
         ];
     }
 }

@@ -183,7 +183,16 @@
                     <li class="rounded-2xl border p-4 flex items-start justify-between gap-3 {{ $state[2] }}">
                         <div>
                             <p class="text-xs font-semibold text-ink-soft">{{ $check['label'] }}</p>
-                            <p class="text-sm font-bold text-ink mt-0.5">{{ $check['requirement'] }}</p>
+                            @if (! empty($check['items']))
+                                <p class="text-sm font-bold text-ink mt-0.5">{{ __('Accepted majors') }}</p>
+                                <ul class="mt-1 list-disc space-y-0.5 pl-5 text-sm font-medium text-ink">
+                                    @foreach ($check['items'] as $item)
+                                        <li>{{ $item }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-sm font-bold text-ink mt-0.5">{{ $check['requirement'] }}</p>
+                            @endif
                             <p class="text-xs mt-1 text-ink-soft">{{ $check['detail'] }}</p>
                         </div>
                         <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold {{ $state[1] }}">{{ $state[0] }}</span>
@@ -341,6 +350,31 @@
                 </div>
             </section>
         @endif
+
+        {{-- 5. CONTACT (stored data only; "not stated" when missing) --}}
+        <section class="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-cream-dark shadow-sm">
+            <h2 class="font-display text-xl font-bold text-ink mb-4">{{ __('Contact') }}</h2>
+            @php
+                $contacts = array_values(array_filter(array_map('trim', preg_split('/\R+/', (string) $scholarship->contact_info))));
+            @endphp
+            @if ($contacts)
+                <ul class="space-y-2 text-sm font-bold text-ink">
+                    @foreach ($contacts as $contact)
+                        <li class="break-all">
+                            @if (filter_var($contact, FILTER_VALIDATE_EMAIL))
+                                <a href="mailto:{{ $contact }}" class="text-brand-700 hover:underline">{{ $contact }}</a>
+                            @elseif (preg_match('#^https?://#i', $contact) && filter_var($contact, FILTER_VALIDATE_URL))
+                                <a href="{{ $contact }}" target="_blank" rel="noopener noreferrer" class="text-brand-700 hover:underline">{{ $contact }}</a>
+                            @else
+                                {{ $contact }}
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <p class="text-sm text-ink-soft">{{ __('No contact details are stated. Please check the official site.') }}</p>
+            @endif
+        </section>
 
         {{-- MODAL: TRACK MY APPLICATION --}}
         <div
