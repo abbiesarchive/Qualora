@@ -35,6 +35,14 @@ return [
         'timeout' => (int) env('GEMINI_TIMEOUT', 30),
     ],
 
+    // Supabase Realtime Broadcast (live page updates). Only the publishable (anon) key is used:
+    // it is public by design, and RLS on every table keeps it from reading data.
+    'supabase' => [
+        'url' => env('SUPABASE_URL'),
+        'publishable_key' => env('SUPABASE_PUBLISHABLE_KEY'),
+        'realtime_timeout' => (int) env('SUPABASE_REALTIME_TIMEOUT', 3),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
