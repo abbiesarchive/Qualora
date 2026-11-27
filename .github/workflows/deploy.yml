@@ -116,7 +116,19 @@ jobs:
             test "$(git branch --show-current)" = main
             git diff --quiet
             git diff --cached --quiet
-            php -r 'if (PHP_VERSION_ID < 80400 || !extension_loaded("gd") || !extension_loaded("pdo_pgsql")) { fwrite(STDERR, "PHP 8.4+ with GD and pdo_pgsql is required.\n"); exit(1); }'
+            echo "Using PHP binary: $(command -v php)"
+            php -r '
+              $problems = [];
+              if (PHP_VERSION_ID < 80400) { $problems[] = "PHP 8.4+ required, found " . PHP_VERSION; }
+              foreach (["gd", "pdo_pgsql"] as $ext) {
+                if (!extension_loaded($ext)) { $problems[] = "missing extension: $ext"; }
+              }
+              if ($problems) {
+                fwrite(STDERR, "Server PHP check failed (" . PHP_BINARY . ", ini: " . (php_ini_loaded_file() ?: "none") . "):\n  - " . implode("\n  - ", $problems) . "\n");
+                exit(1);
+              }
+              echo "PHP " . PHP_VERSION . " OK (" . PHP_BINARY . ")\n";
+            '
             node -e 'const [major, minor] = process.versions.node.split(".").map(Number); if (!((major === 20 && minor >= 19) || (major === 22 && minor >= 12) || major > 22)) { throw new Error("Vite requires Node 20.19+ or 22.12+."); }'
 
             git fetch origin main
