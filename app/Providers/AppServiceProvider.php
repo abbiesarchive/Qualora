@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\RealtimeBroadcaster;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +12,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // One instance per request so realtime hints are batched into a single call.
+        $this->app->singleton(RealtimeBroadcaster::class);
     }
 
     /**
