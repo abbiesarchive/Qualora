@@ -403,5 +403,10 @@
     ":major is not one of the accepted majors listed above.": ":major tidak termasuk jurusan yang diterima di atas.",
     "Accepted majors": "Jurusan yang diterima",
     "Contact": "Kontak",
-    "No contact details are stated. Please check the official site.": "Tidak ada kontak yang dicantumkan. Silakan cek situs resmi."
+    "No contact details are stated. Please check the official site.": "Tidak ada kontak yang dicantumkan. Silakan cek situs resmi.",
+    "Refresh": "Muat ulang",
+    "This page was just updated with the latest scholarship information.": "Halaman ini baru saja diperbarui dengan informasi beasiswa terbaru.",
+    "A scholarship on this page has changed. Refresh to see the latest details.": "Ada beasiswa di halaman ini yang berubah. Muat ulang untuk melihat detail terbaru.",
+    "This scholarship is no longer listed. Please check the official site before applying.": "Beasiswa ini sudah tidak tercantum. Silakan cek situs resminya sebelum mendaftar.",
+    "Your saved scholarships were updated.": "Beasiswa tersimpan kamu telah diperbarui."
 }

@@ -1,5 +1,6 @@
 <x-app-layout>
     <x-slot name="title">{{ __('Scholarships') }}</x-slot>
+    <div data-live-page="catalog" hidden></div>
 
     <div class="relative overflow-hidden">
         <div class="absolute inset-0 bg-aura-glow pointer-events-none" aria-hidden="true"></div>

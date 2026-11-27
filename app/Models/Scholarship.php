@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Observers\ScholarshipObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+#[ObservedBy(ScholarshipObserver::class)]
 class Scholarship extends Model
 {
     protected $guarded = ['id'];
